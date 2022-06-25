@@ -11,3 +11,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px , 1fr));
+}
+
+.playlistItem {
+  background: #3399ff;
+  margin-bottom: 3px;
+
+}
