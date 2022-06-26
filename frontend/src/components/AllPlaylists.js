@@ -6,7 +6,6 @@ class AllPlaylists extends React.Component {
     render() {
         return (
             <div>
-                <Header />
                 <PlaylistContainer />
             </div>
         )

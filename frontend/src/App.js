@@ -4,14 +4,18 @@ import React from "react";
 import Home from "./components/Home"
 import Main from "./components/Main"
 import AllPlaylists from "./components/AllPlaylists";
+import ShufflePage from "./components/ShufflePage";
+import Header from "./components/Header";
 
 function App() {
   return (
     <div className="App">
+
+      <Header/>
         <Routes>
             <Route path="/" element={<Main />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="playlists" element={<AllPlaylists />} />
+            <Route path="/playlists" element={<AllPlaylists />} />
+            <Route path="/shuffle" element={<ShufflePage />} />
         </Routes>
     </div>
   );

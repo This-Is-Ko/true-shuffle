@@ -1,18 +1,25 @@
 import React from "react";
 import SpotifyLogin from "./SpotifyLogin";
+import Header from "./Header";
+import {Link} from "react-router-dom";
 
-class Main extends React.Component {
+const Main = () => {
+  const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
 
-  render() {
-    return (
-      <>
-        <main>
-          <h2>Main</h2>
-        </main>
-        <SpotifyLogin/>
-      </>
-    );
-  }
+  return (
+    <>
+      <main>
+        <h2>Main</h2>
+      </main>
+      <nav>
+        {auth ?
+          <Link to="/playlists">Playlists</Link>
+        :
+          <div></div>
+        }
+      </nav>
+    </>
+  );
 }
 
 export default Main;
