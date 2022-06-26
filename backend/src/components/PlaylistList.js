@@ -5,6 +5,7 @@ import PlaylistItem from "./PlaylistItem";
 
 class PlaylistList extends React.Component {
   render() {
+    // console.log(this.props.playlists)
     return (
         <Grid container spacing={2} justifyContent="center" alignItems="flex-start">
             {this.props.playlists.map(playlist => (

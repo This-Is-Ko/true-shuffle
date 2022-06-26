@@ -24,7 +24,7 @@ export function getAccessTokenUsingRefreshCall () {
   if (localStorage.getItem('refreshToken') != null) {
     axios.get(REFRESH_TOKEN_URL + localStorage.getItem('refreshToken'))
       .then(result => {
-        console.log(result)
+        // console.log(result)
         localStorage.setItem('accessToken', result.data.spotifyAccessToken);
         console.log("Retry...")
         // Refresh page after obtaining a new token

@@ -2,6 +2,7 @@ import axios from "axios";
 import React from "react";
 import Button from "@mui/material/Button";
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import CircularProgress from "@mui/material/CircularProgress";
 
 class SpotifyLogin extends React.Component {
 
@@ -10,20 +11,27 @@ class SpotifyLogin extends React.Component {
 
     axios.get(`http://localhost:8080/auth/spotify/auth-login`)
       .then(result => {
-        console.log(result.data.loginUri);
+        // console.log(result.data.loginUri);
         this.setState({
           loginUri: result.data.loginUri,
           isLoading: false
         });
       })
       .catch(error => {
-          console.log(error)
+        if (error.code === "ERR_NETWORK"){
           this.setState({
             error,
-            isLoading: false
+            isLoading: false,
+            isError: true
+          })
+        } else {
+          this.setState({
+            error,
+            isLoading: false,
+            isError: true
           })
         }
-      );
+      });
   };
 
   state = {
@@ -39,7 +47,10 @@ class SpotifyLogin extends React.Component {
     const { loginUri, isLoading } = this.state;
 
     return (
-      <Button variant="contained" href={loginUri} startIcon={<VpnKeyIcon/>}>Spotify Login</Button>
+      !isLoading ?
+        <Button variant="contained" href={loginUri} startIcon={<VpnKeyIcon/>} disableElevation>Spotify Login</Button>
+      :
+        <CircularProgress />
     )
   }
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import React from "react";
 import {getAccessTokenCall} from "../utils/SpotifyAuthService";
+import Header from "./Header";
 
 class Home extends React.Component {
 
