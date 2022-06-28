@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const AUTH_CODE_URL = "http://localhost:8080/auth/spotify/handle-auth-code?code=";
-const REFRESH_TOKEN_URL = "http://localhost:8080/auth/spotify/handle-refresh-token?refreshToken=";
+const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/handle-auth-code?code=";
+const REFRESH_TOKEN_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/handle-refresh-token?refreshToken=";
 
 export function getAccessTokenCall (code) {
   if (localStorage.getItem('accessToken') == null) {
@@ -41,7 +41,7 @@ export function getAccessTokenUsingRefreshCall () {
 // export function getPlaylists() {
 //   if (localStorage.getItem('accessToken') != null) {
 //     axios
-//       .post(`http://localhost:8080/playlist/my-playlists`,
+//       .post(process.env.REACT_APP_BACKEND_PATH + `/playlist/my-playlists`,
 //         {
 //           spotifyAccessToken: localStorage.getItem('accessToken'),
 //           spotifyRefreshToken: localStorage.getItem('refreshToken')
