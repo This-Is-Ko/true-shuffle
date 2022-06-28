@@ -14,6 +14,7 @@ function App() {
       <Header/>
         <Routes>
             <Route path="/" element={<Main />} />
+            <Route path="/Home" element={<Home />} />
             <Route path="/playlists" element={<AllPlaylists />} />
             <Route path="/shuffle" element={<ShufflePage />} />
         </Routes>
