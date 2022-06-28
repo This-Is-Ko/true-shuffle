@@ -35,7 +35,7 @@ class ShufflePlaylistContainer extends React.Component {
         axios
           .post(process.env.REACT_APP_BACKEND_PATH + `/playlist/shuffle`,
             {
-              isUseLikedTracks: "true",
+              isUseLikedTracks: "false",
               playlistId: this.useQuery().get('playlistId'),
               isMakeNewPlaylist: "false",
               spotifyAccessToken: localStorage.getItem('accessToken')
