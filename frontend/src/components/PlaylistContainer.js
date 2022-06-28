@@ -13,7 +13,7 @@ class PlaylistContainer extends React.Component {
     this.setState({ isLoading: true, isError: false });
 
     axios
-      .post(`http://localhost:8080/playlist/my-playlists`,
+      .post(process.env.REACT_APP_BACKEND_PATH +`/playlist/my-playlists`,
         {
           spotifyAccessToken: localStorage.getItem('accessToken')
         })

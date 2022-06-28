@@ -19,7 +19,7 @@ class ShufflePlaylistContainer extends React.Component {
 
     if (!(this.useQuery().get('playlistId') == null || this.useQuery().get('playlistId') === "")){
       // Get selected playlist info
-      axios.post(`http://localhost:8080/playlist/get-playlist-info`,
+      axios.post(process.env.REACT_APP_BACKEND_PATH + `/playlist/get-playlist-info`,
         {
           playlistId: this.useQuery().get('playlistId'),
           spotifyAccessToken: localStorage.getItem('accessToken')
@@ -33,7 +33,7 @@ class ShufflePlaylistContainer extends React.Component {
 
         // Call shuffle
         axios
-          .post(`http://localhost:8080/playlist/shuffle`,
+          .post(process.env.REACT_APP_BACKEND_PATH + `/playlist/shuffle`,
             {
               isUseLikedTracks: "true",
               playlistId: this.useQuery().get('playlistId'),

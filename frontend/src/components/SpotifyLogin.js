@@ -9,7 +9,7 @@ class SpotifyLogin extends React.Component {
   getLoginUriApi = () => {
     this.setState({ isLoading: true });
 
-    axios.get(`http://localhost:8080/auth/spotify/auth-login`)
+    axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
       .then(result => {
         // console.log(result.data.loginUri);
         this.setState({
