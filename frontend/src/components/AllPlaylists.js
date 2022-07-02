@@ -6,6 +6,7 @@ class AllPlaylists extends React.Component {
     render() {
         return (
             <div>
+                <h1>Select a playlist</h1>
                 <PlaylistContainer />
             </div>
         )

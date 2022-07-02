@@ -10,7 +10,7 @@ import SpotifyLogin from "./SpotifyLogin";
 import SpotifyLogout from "./SpotifyLogout";
 
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Shuffle', 'Contact', 'About'];
 
 const Header = () => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
