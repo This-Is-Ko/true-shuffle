@@ -20,5 +20,25 @@ code {
 .playlistItem {
   background: #3399ff;
   margin-bottom: 3px;
+}
 
+.homepageIconHolder {
+  width: 90%;
+  margin: 0 auto;
+}
+
+.homepageIcon {
+  width: 300px;
+  height: 300px;
+}
+
+@media (min-width:1020px) {
+  .homepageIconHolder {
+    width: 90%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-gap: 20px;
+    padding:30px
+  }
 }

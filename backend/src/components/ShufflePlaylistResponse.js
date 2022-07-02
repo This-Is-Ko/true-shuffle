@@ -1,5 +1,7 @@
 import React from "react";
 import PlaylistItem from "./PlaylistItem";
+import ShuffleIcon from "@mui/icons-material/Shuffle";
+import Button from "@mui/material/Button";
 
 class ShufflePlaylistResponse extends React.Component {
   render() {
@@ -8,7 +10,8 @@ class ShufflePlaylistResponse extends React.Component {
         <h2>
           Find your shuffled playlist here
         </h2>
-        <a href={this.props.playlistUrl}>Go to Spotify</a>
+        <Button variant="contained" href={this.props.playlistUrl} target="_blank">Open shuffled playlist</Button>
+        <Button variant="contained" href="/playlists">Shuffle another playlist</Button>
       </div>
     )
   }
