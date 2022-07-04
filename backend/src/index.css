@@ -32,6 +32,10 @@ code {
     height: 300px;
 }
 
+.textOnBackground {
+    color: white;
+}
+
 @media (min-width: 1020px) {
     .homepageIconHolder {
         width: 90%;
