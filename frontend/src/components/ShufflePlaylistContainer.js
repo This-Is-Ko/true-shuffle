@@ -1,6 +1,5 @@
 import React from "react";
 import ErrorMessage from "./ErrorMessage";
-import PlaylistList from "./PlaylistList";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import * as StatusCodes from "http-status-codes";
@@ -10,14 +9,14 @@ import ShuffleLoading from "./ShuffleLoading";
 
 class ShufflePlaylistContainer extends React.Component {
 
-  useQuery= () => {
+  useQuery = () => {
     return new URLSearchParams(window.location.search);
   }
 
   getShuffleCall = () => {
-    this.setState({ isLoading: true, isError: false });
+    this.setState({isLoading: true, isError: false});
 
-    if (!(this.useQuery().get('playlistId') == null || this.useQuery().get('playlistId') === "")){
+    if (!(this.useQuery().get('playlistId') == null || this.useQuery().get('playlistId') === "")) {
       // Get selected playlist info
       axios.post(process.env.REACT_APP_BACKEND_PATH + `/playlist/get-playlist-info`,
         {
@@ -49,7 +48,7 @@ class ShufflePlaylistContainer extends React.Component {
             });
           })
           .catch(error => {
-            if (error.code === "ERR_NETWORK"){
+            if (error.code === "ERR_NETWORK") {
               this.setState({
                 error,
                 isLoading: false,
@@ -58,7 +57,7 @@ class ShufflePlaylistContainer extends React.Component {
             } else {
               let errorObject = error.response.data;
               let errorStatus = errorObject.status;
-              if (errorStatus === StatusCodes.UNAUTHORIZED){
+              if (errorStatus === StatusCodes.UNAUTHORIZED) {
                 getAccessTokenUsingRefreshCall();
               } else {
                 this.setState({
@@ -71,7 +70,7 @@ class ShufflePlaylistContainer extends React.Component {
           });
 
       }).catch(error => {
-        if (error.code === "ERR_NETWORK"){
+        if (error.code === "ERR_NETWORK") {
           this.setState({
             error,
             isLoading: false,
@@ -80,7 +79,7 @@ class ShufflePlaylistContainer extends React.Component {
         } else {
           let errorObject = error.response.data;
           let errorStatus = errorObject.status;
-          if (errorStatus === StatusCodes.UNAUTHORIZED){
+          if (errorStatus === StatusCodes.UNAUTHORIZED) {
             getAccessTokenUsingRefreshCall();
           } else {
             this.setState({
@@ -121,11 +120,11 @@ class ShufflePlaylistContainer extends React.Component {
         ) : (
           this.state.playlistUrl != null ? (
             <ShufflePlaylistResponse playlistUrl={this.state.playlistUrl}/>
-          ):(
+          ) : (
             this.state.selectedPlaylist != null ? (
               <ShuffleLoading playlist={this.state.selectedPlaylist}/>
             ) : (
-              <CircularProgress />
+              <CircularProgress/>
             )
           )
         )}

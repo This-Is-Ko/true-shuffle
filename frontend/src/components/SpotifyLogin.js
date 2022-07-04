@@ -7,7 +7,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 class SpotifyLogin extends React.Component {
 
   getLoginUriApi = () => {
-    this.setState({ isLoading: true });
+    this.setState({isLoading: true});
 
     axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
       .then(result => {
@@ -18,7 +18,7 @@ class SpotifyLogin extends React.Component {
         });
       })
       .catch(error => {
-        if (error.code === "ERR_NETWORK"){
+        if (error.code === "ERR_NETWORK") {
           this.setState({
             error,
             isLoading: false,
@@ -44,15 +44,16 @@ class SpotifyLogin extends React.Component {
   }
 
   render() {
-    const { loginUri, isLoading } = this.state;
+    const {loginUri, isLoading} = this.state;
 
     return (
       !isLoading ?
         <Button variant="contained" href={loginUri} startIcon={<VpnKeyIcon/>} disableElevation>Spotify Login</Button>
-      :
-        <CircularProgress />
+        :
+        <CircularProgress/>
     )
   }
 
 }
+
 export default SpotifyLogin;

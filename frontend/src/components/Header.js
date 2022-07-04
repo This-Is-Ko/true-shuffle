@@ -9,8 +9,20 @@ import ShuffleIcon from '@mui/icons-material/Shuffle';
 import SpotifyLogin from "./SpotifyLogin";
 import SpotifyLogout from "./SpotifyLogout";
 
-
-const pages = ['Shuffle', 'Contact', 'About'];
+const pages = [
+  {
+    "title": "Shuffle",
+    "link": "/playlists"
+  },
+  {
+    "title": "About",
+    "link": "/about"
+  },
+  {
+    "title": "Contact",
+    "link": "/contact"
+  }
+];
 
 const Header = () => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
@@ -24,7 +36,7 @@ const Header = () => {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <ShuffleIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+          <ShuffleIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
           <Typography
             variant="h6"
             noWrap
@@ -32,7 +44,7 @@ const Header = () => {
             href="/"
             sx={{
               mr: 2,
-              display: { xs: 'none', md: 'flex' },
+              display: {xs: 'none', md: 'flex'},
               fontFamily: 'monospace',
               fontWeight: 700,
               letterSpacing: '.3rem',
@@ -42,23 +54,24 @@ const Header = () => {
           >
             TRUE SHUFFLE
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+          <Box sx={{flexGrow: 1, display: {xs: 'none', md: 'flex'}}}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.title}
                 onClick={handleCloseNavMenu}
                 variant="contained"
                 disableElevation
-                sx={{ my: 2, color: 'white', display: 'block' }}
+                sx={{my: 2, color: 'white', display: 'block'}}
+                href={page.link}
               >
-                {page}
+                {page.title}
               </Button>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0 }}>
+          <Box sx={{flexGrow: 0}}>
             {auth ?
               <SpotifyLogout/>
-            :
+              :
               <SpotifyLogin/>
             }
           </Box>

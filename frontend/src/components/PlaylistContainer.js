@@ -2,7 +2,7 @@ import React from "react"
 import axios from "axios";
 
 import PlaylistList from "./PlaylistList";
-import {getAccessTokenUsingRefreshCall, getPlaylists} from "../utils/SpotifyAuthService";
+import {getAccessTokenUsingRefreshCall} from "../utils/SpotifyAuthService";
 import * as StatusCodes from "http-status-codes";
 import ErrorMessage from "./ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -10,10 +10,10 @@ import CircularProgress from "@mui/material/CircularProgress";
 class PlaylistContainer extends React.Component {
 
   getPlaylistsCall = () => {
-    this.setState({ isLoading: true, isError: false });
+    this.setState({isLoading: true, isError: false});
 
     axios
-      .post(process.env.REACT_APP_BACKEND_PATH +`/playlist/my-playlists`,
+      .post(process.env.REACT_APP_BACKEND_PATH + `/playlist/my-playlists`,
         {
           spotifyAccessToken: localStorage.getItem('accessToken')
         })
@@ -27,7 +27,7 @@ class PlaylistContainer extends React.Component {
       })
       .catch(error => {
         console.log(error);
-        if (error.code === "ERR_NETWORK"){
+        if (error.code === "ERR_NETWORK") {
           this.setState({
             error,
             isLoading: false,
@@ -36,7 +36,7 @@ class PlaylistContainer extends React.Component {
         } else {
           let errorObject = error.response.data;
           let errorStatus = errorObject.status;
-          if (errorStatus === StatusCodes.UNAUTHORIZED){
+          if (errorStatus === StatusCodes.UNAUTHORIZED) {
             getAccessTokenUsingRefreshCall();
           } else {
             this.setState({
@@ -67,14 +67,15 @@ class PlaylistContainer extends React.Component {
         {isError ? (
           <ErrorMessage error={this.state.error}/>
         ) : (
-          this.state.playlists.length > 0?(
+          this.state.playlists.length > 0 ? (
             <PlaylistList playlists={this.state.playlists}/>
-          ):(
-            <CircularProgress />
+          ) : (
+            <CircularProgress/>
           )
         )}
       </div>
     )
   }
 }
+
 export default PlaylistContainer
