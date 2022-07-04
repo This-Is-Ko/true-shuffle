@@ -19,4 +19,5 @@ class ShufflePage extends React.Component {
     )
   }
 }
+
 export default ShufflePage

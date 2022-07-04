@@ -1,6 +1,4 @@
 import React from "react";
-import PlaylistItem from "./PlaylistItem";
-import ShuffleIcon from "@mui/icons-material/Shuffle";
 import Button from "@mui/material/Button";
 
 class ShufflePlaylistResponse extends React.Component {
@@ -16,4 +14,5 @@ class ShufflePlaylistResponse extends React.Component {
     )
   }
 }
+
 export default ShufflePlaylistResponse
