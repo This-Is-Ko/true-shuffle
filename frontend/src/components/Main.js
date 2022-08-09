@@ -9,7 +9,6 @@ const Main = () => {
   const [loginUri, setLoginUri] = React.useState("/#");
 
   function getLoginUriApi() {
-
     axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
       .then(result => {
         // console.log(result.data.loginUri);
@@ -48,28 +47,28 @@ const Main = () => {
                   onClick={""}
                   variant="contained"
                   disableElevation
-                  sx={{my: 2, color: 'white', display: 'block'}}
+                  sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
                   href={loginUri}
-                >Try it now</Button>
+                >Get started</Button>
               </div>
 
               <div className={"homepageIconHolder"}>
                 <div>
                   <img className={"homepageIcon"}
                        src={"https://4197r62cmrjs32n9dndpi2o1-wpengine.netdna-ssl.com/wp-content/uploads/2020/07/square-placeholder.jpg"} alt={"login image"}/>
-                  <h2>Login to Spotify</h2>
+                  <h2 className={"homepageIconText"}>Login to Spotify</h2>
                   <p></p>
                 </div>
                 <div>
                   <img className={"homepageIcon"}
                        src={"https://4197r62cmrjs32n9dndpi2o1-wpengine.netdna-ssl.com/wp-content/uploads/2020/07/square-placeholder.jpg"} alt={"shuffle image"}/>
-                  <h2>Select playlist to shuffle</h2>
+                  <h2 className={"homepageIconText"}>Select playlist to shuffle</h2>
                   <p></p>
                 </div>
                 <div>
                   <img className={"homepageIcon"}
                        src={"https://4197r62cmrjs32n9dndpi2o1-wpengine.netdna-ssl.com/wp-content/uploads/2020/07/square-placeholder.jpg"} alt={"music image"}/>
-                  <h2>Start listening</h2>
+                  <h2 className={"homepageIconText"}>Start listening</h2>
                   <p></p>
                 </div>
               </div>

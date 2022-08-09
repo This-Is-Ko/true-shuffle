@@ -48,7 +48,7 @@ class SpotifyLogin extends React.Component {
 
     return (
       !isLoading ?
-        <Button variant="contained" href={loginUri} startIcon={<VpnKeyIcon/>} disableElevation>Spotify Login</Button>
+        <Button variant="contained" href={loginUri} startIcon={<VpnKeyIcon/>} disableElevation sx={{bgcolor: "#161817"}}>Spotify Login</Button>
         :
         <CircularProgress/>
     )
