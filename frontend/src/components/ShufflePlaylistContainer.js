@@ -38,7 +38,8 @@ class ShufflePlaylistContainer extends React.Component {
               playlistId: this.useQuery().get('playlistId'),
               isMakeNewPlaylist: "false",
               spotifyAccessToken: localStorage.getItem('accessToken')
-            })
+            },
+            {headers:{"Content-Type" : "application/json"}})
           .then(result => {
             console.log(result.data);
             this.setState({
