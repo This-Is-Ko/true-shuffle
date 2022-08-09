@@ -1,10 +1,28 @@
 import React, {useEffect} from "react";
 import {Link} from "react-router-dom";
 import {getAccessTokenCall} from "../utils/SpotifyAuthService";
+import Button from "@mui/material/Button";
+import axios from "axios";
 
 const Main = () => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
+  const [loginUri, setLoginUri] = React.useState("/#");
 
+  function getLoginUriApi() {
+
+    axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
+      .then(result => {
+        // console.log(result.data.loginUri);
+        setLoginUri(result.data.loginUri)
+      })
+      .catch(error => {
+        if (error.code === "ERR_NETWORK") {
+          setLoginUri("/error")
+        } else {
+          setLoginUri("/error")
+        }
+      });
+  };
 
   function useQuery() {
     return new URLSearchParams(window.location.search);
@@ -12,6 +30,7 @@ const Main = () => {
 
   useEffect(() => {
     getAccessTokenCall(useQuery().get('code'), setAuth);
+    getLoginUriApi();
   });
 
   return (
@@ -22,14 +41,18 @@ const Main = () => {
             <Link to="/playlists">Playlists</Link>
             :
             <div>
-              <div style={{
-                display: "block",
-                backgroundImage: "linear-gradient(-45deg, rgb(86, 11, 179) -5%, rgb(167, 13, 105)",
-                height: "500px"
-              }}>
-                <h1 className={"textOnBackground"}>True Shuffle</h1>
+              <h1 className={"mainTitle"}>Welcome to True Shuffle</h1>
+              <div className={"centerSpacingContainer"}>
+                <Button
+                  className={"largeButton"}
+                  onClick={""}
+                  variant="contained"
+                  disableElevation
+                  sx={{my: 2, color: 'white', display: 'block'}}
+                  href={loginUri}
+                >Try it now</Button>
               </div>
-              <h1>Get started</h1>
+
               <div className={"homepageIconHolder"}>
                 <div>
                   <img className={"homepageIcon"}
