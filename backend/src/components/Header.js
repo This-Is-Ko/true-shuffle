@@ -33,7 +33,7 @@ const Header = () => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="static" sx={{ bgcolor: "#161817" }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <ShuffleIcon sx={{display: {xs: 'none', md: 'flex'}, mr: 1}}/>
@@ -61,7 +61,7 @@ const Header = () => {
                 onClick={handleCloseNavMenu}
                 variant="contained"
                 disableElevation
-                sx={{my: 2, color: 'white', display: 'block'}}
+                sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
                 href={page.link}
               >
                 {page.title}
