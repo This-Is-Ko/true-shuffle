@@ -108,6 +108,14 @@ class ShufflePlaylistContainer extends React.Component {
 
   componentDidMount() {
     this.getShuffleCall();
+    this.timer = setInterval(() => {
+        this.props.history.push('/playlists')
+      },
+      60000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer);
   }
 
   render() {
