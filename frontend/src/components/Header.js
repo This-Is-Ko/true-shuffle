@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useEffect} from "react"
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -24,13 +24,17 @@ const pages = [
   }
 ];
 
-const Header = () => {
+const Header = ({loginUri}) => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+
+  useEffect(() => {
+    setAuth(localStorage.getItem("accessToken") != null);
+  }, [loginUri]);
 
   return (
     <AppBar position="static" sx={{ bgcolor: "#161817" }}>
@@ -72,7 +76,7 @@ const Header = () => {
             {auth ?
               <SpotifyLogout/>
               :
-              <SpotifyLogin/>
+              <SpotifyLogin loginUri={loginUri}/>
             }
           </Box>
         </Toolbar>
