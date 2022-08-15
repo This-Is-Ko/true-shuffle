@@ -1,7 +1,7 @@
 import React from "react";
 import ContactPage from "./ContactPage";
 
-const HowItWorksPage = () => {
+const Features = () => {
   return (
     <div>
       Under Construction
@@ -9,4 +9,4 @@ const HowItWorksPage = () => {
   )
 }
 
-export default HowItWorksPage
+export default Features

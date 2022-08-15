@@ -7,39 +7,20 @@ import headphonesIcon from '../images/headphonesIconWhite.png';
 import shuffleIcon from '../images/shuffleIconWhite.png';
 
 
-const Main = ({loginUri}) => {
+const Main = ({loginUri, isAuth, setIsAuth}) => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
   const [localLoginUri, setLocalLoginUri] = React.useState("/#");
-
-  // function getLoginUriApi() {
-  //   console.log("Retrieve login uri")
-  //   if (loginUri === "/#"){
-  //     axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
-  //       .then(result => {
-  //         console.log("Dhat")
-  //
-  //         // console.log(result.data.loginUri);
-  //         setLoginUri(result.data.loginUri)
-  //       })
-  //       .catch(error => {
-  //         if (error.code === "ERR_NETWORK") {
-  //           setLoginUri("/error")
-  //         } else {
-  //           setLoginUri("/error")
-  //         }
-  //       });
-  //   }
-  // };
 
   function useQuery() {
     return new URLSearchParams(window.location.search);
   }
 
   useEffect(() => {
-    console.log("On page load")
-    getAccessTokenCall(useQuery().get('code'), setAuth);
+    getAccessTokenCall(useQuery().get('code'), setIsAuth);
+    // Set global values to local values
     setLocalLoginUri(loginUri)
-  }, [loginUri]);
+    setAuth(isAuth);
+  }, [loginUri, isAuth]);
 
   return (
     <>

@@ -24,7 +24,7 @@ const pages = [
   }
 ];
 
-const Header = ({loginUri}) => {
+const Header = ({loginUri, isAuth}) => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
   const [anchorElNav, setAnchorElNav] = React.useState(null);
 
@@ -33,8 +33,8 @@ const Header = ({loginUri}) => {
   };
 
   useEffect(() => {
-    setAuth(localStorage.getItem("accessToken") != null);
-  }, [loginUri]);
+    setAuth(isAuth);
+  }, [loginUri, isAuth]);
 
   return (
     <AppBar position="static" sx={{ bgcolor: "#161817" }}>
