@@ -1,59 +1,21 @@
-import axios from "axios";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Button from "@mui/material/Button";
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import CircularProgress from "@mui/material/CircularProgress";
 
-class SpotifyLogin extends React.Component {
+function SpotifyLogin({loginUri}) {
+  const [localLoginUri, setLocalLoginUri] = useState("/#");
 
-  getLoginUriApi = () => {
-    this.setState({isLoading: true});
+  useEffect(() => {
+    setLocalLoginUri(loginUri)
+  }, [loginUri]);
 
-    axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
-      .then(result => {
-        // console.log(result.data.loginUri);
-        this.setState({
-          loginUri: result.data.loginUri,
-          isLoading: false
-        });
-      })
-      .catch(error => {
-        if (error.code === "ERR_NETWORK") {
-          this.setState({
-            error,
-            isLoading: false,
-            isError: true
-          })
-        } else {
-          this.setState({
-            error,
-            isLoading: false,
-            isError: true
-          })
-        }
-      });
-  };
-
-  state = {
-    loginUri: "/#",
-    isLoading: false
-  };
-
-  componentDidMount() {
-    this.getLoginUriApi();
-  }
-
-  render() {
-    const {loginUri, isLoading} = this.state;
-
-    return (
-      !isLoading ?
-        <Button variant="contained" href={loginUri} startIcon={<VpnKeyIcon/>} disableElevation sx={{bgcolor: "#161817"}}>Spotify Login</Button>
-        :
-        <CircularProgress/>
-    )
-  }
-
+  return (
+    localLoginUri !== "/#" ?
+      <Button variant="contained" href={localLoginUri} startIcon={<VpnKeyIcon/>} disableElevation sx={{bgcolor: "#161817"}}>Spotify Login</Button>
+      :
+      <CircularProgress/>
+  );
 }
 
 export default SpotifyLogin;

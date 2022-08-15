@@ -1,37 +1,35 @@
 import React, {useEffect} from "react";
-import {Link} from "react-router-dom";
 import {getAccessTokenCall} from "../utils/SpotifyAuthService";
 import Button from "@mui/material/Button";
-import axios from "axios";
 
 import loginIcon from '../images/loginIconWhite.png';
 import headphonesIcon from '../images/headphonesIconWhite.png';
 import shuffleIcon from '../images/shuffleIconWhite.png';
 
 
-const Main = () => {
+const Main = ({loginUri}) => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
-  const [loginUri, setLoginUri] = React.useState("/#");
+  const [localLoginUri, setLocalLoginUri] = React.useState("/#");
 
-  function getLoginUriApi() {
-    console.log("Retrieve login uri")
-    if (loginUri === "/#"){
-      axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
-        .then(result => {
-          console.log("Dhat")
-
-          // console.log(result.data.loginUri);
-          setLoginUri(result.data.loginUri)
-        })
-        .catch(error => {
-          if (error.code === "ERR_NETWORK") {
-            setLoginUri("/error")
-          } else {
-            setLoginUri("/error")
-          }
-        });
-    }
-  };
+  // function getLoginUriApi() {
+  //   console.log("Retrieve login uri")
+  //   if (loginUri === "/#"){
+  //     axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
+  //       .then(result => {
+  //         console.log("Dhat")
+  //
+  //         // console.log(result.data.loginUri);
+  //         setLoginUri(result.data.loginUri)
+  //       })
+  //       .catch(error => {
+  //         if (error.code === "ERR_NETWORK") {
+  //           setLoginUri("/error")
+  //         } else {
+  //           setLoginUri("/error")
+  //         }
+  //       });
+  //   }
+  // };
 
   function useQuery() {
     return new URLSearchParams(window.location.search);
@@ -40,8 +38,8 @@ const Main = () => {
   useEffect(() => {
     console.log("On page load")
     getAccessTokenCall(useQuery().get('code'), setAuth);
-    getLoginUriApi();
-  }, []);
+    setLocalLoginUri(loginUri)
+  }, [loginUri]);
 
   return (
     <>
@@ -96,7 +94,7 @@ const Main = () => {
                   variant="contained"
                   disableElevation
                   sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
-                  href={loginUri}
+                  href={localLoginUri}
                 >Get started</Button>
               </div>
 
