@@ -15,8 +15,8 @@ const pages = [
     "link": "/playlists"
   },
   {
-    "title": "About",
-    "link": "/about"
+    "title": "How it works",
+    "link": "/how-it-works"
   },
   {
     "title": "Contact",

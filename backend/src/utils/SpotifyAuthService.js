@@ -6,7 +6,6 @@ const REFRESH_TOKEN_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/ha
 export function getAccessTokenCall(code, setAuth) {
   if (localStorage.getItem('accessToken') == null) {
     if (code != null) {
-      console.log(code)
       axios.get(AUTH_CODE_URL + code)
         .then(result => {
           console.log(result)
