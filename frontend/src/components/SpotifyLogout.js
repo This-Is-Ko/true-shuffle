@@ -15,8 +15,15 @@ class SpotifyLogout extends React.Component {
 
   render() {
     return (
-      <Button variant="contained" href={"/"} startIcon={<VpnKeyIcon/>} onClick={() => this.logout()}
-              disableElevation>Logout</Button>
+      <Button variant="contained"
+              href={"/"}
+              startIcon={<VpnKeyIcon/>}
+              onClick={() => this.logout()}
+              disableElevation
+              sx={{bgcolor: "#1DB954",
+                '&:hover': {backgroundColor: '#1DB954'}
+              }}
+      >Logout</Button>
     )
   }
 

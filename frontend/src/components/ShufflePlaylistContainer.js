@@ -8,6 +8,9 @@ import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
 import ShuffleLoading from "./ShuffleLoading";
 
 class ShufflePlaylistContainer extends React.Component {
+  constructor(props) {
+    super(props);
+  }
 
   useQuery = () => {
     return new URLSearchParams(window.location.search);
@@ -108,10 +111,10 @@ class ShufflePlaylistContainer extends React.Component {
 
   componentDidMount() {
     this.getShuffleCall();
-    this.timer = setInterval(() => {
-        this.props.history.push('/playlists')
-      },
-      60000);
+    // this.timer = setInterval(() => {
+    //     this.props.history.push('/playlists')
+    //   },
+    //   60000);
   }
 
   componentWillUnmount() {
