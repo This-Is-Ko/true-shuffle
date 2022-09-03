@@ -15,11 +15,12 @@ code {
 
 h1, h2, h3, p {
     color: white;
+    margin: 0;
 }
 
-h1 {
-    margin:0;
-}
+/*h1, h2 {*/
+/*    margin: 0;*/
+/*}*/
 
 .header {
     background-color: #161817;
@@ -40,18 +41,29 @@ h1 {
 }
 
 .mainTitle {
-    font-size: 48px!important;
+    font-size: 55px!important;
     color: white;
     padding-top: 20px;
 }
 
 .mainTopContainer {
     background: #181a1b;
+    padding-bottom: 10px;
+}
+
+.normalTitle {
+    padding-top: 20px;
+    padding-bottom: 20px;
 }
 
 .largeButton {
     width: 250px;
     font-size: 24px!important;
+}
+
+.normalButton {
+    width: 250px;
+    justify-content: center;
 }
 
 .centerSpacingContainer{
@@ -62,28 +74,42 @@ h1 {
     justify-content: center;
 }
 
-.homepageIconHolder {
-    width: 70%;
-    margin: 0 auto;
-}
+
 
 .homepageIcon {
-    width: 150px;
-    height: 150px;
+    width: 130px;
+    height: 130px;
 }
 
 .homepageIconText {
     color: white;
 }
 
+.homepageGif {
+    /*width: 400px;*/
+    /*height: 200px;*/
+}
+
+.featureTitle {
+    font-size: 45px!important;
+    color: white;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.featureSubtitle {
+    padding-top: 5px;
+}
+
 .featuresContainer{
     padding-bottom: 32px;
     justify-content: center;
+    width: 70%;
+    margin: 0 auto;
 }
 
 .featureItem{
-    padding-left: 30px;
-    padding-right: 30px;
+
 }
 
 
@@ -96,5 +122,21 @@ h1 {
         grid-gap: 20px;
         padding: 30px;
         max-width: 980px
+    }
+}
+
+@media (max-width: 700px) {
+    .homepageIconHolder {
+        width: 70%;
+        margin: 0 auto;
+    }
+
+    .iconSet {
+        padding-bottom: 10px;
+    }
+
+    .homepageGif {
+        padding-top: 10px;
+        width: 90%;
     }
 }

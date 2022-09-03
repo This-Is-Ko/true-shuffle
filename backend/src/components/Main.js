@@ -5,6 +5,8 @@ import Button from "@mui/material/Button";
 import loginIcon from '../images/loginIconWhite.png';
 import headphonesIcon from '../images/headphonesIconWhite.png';
 import shuffleIcon from '../images/shuffleIconWhite.png';
+import shuffleStep1 from '../images/shuffleStep1.gif';
+import Box from "@mui/material/Box";
 
 
 const Main = ({loginUri, isAuth, setIsAuth}) => {
@@ -54,19 +56,19 @@ const Main = ({loginUri, isAuth, setIsAuth}) => {
           </div>
 
           <div className={"homepageIconHolder"}>
-            <div>
+            <div className={"iconSet"}>
               <img className={"homepageIcon"}
                    src={loginIcon} alt={"login"}/>
               <h2 className={"homepageIconText"}>Login to Spotify</h2>
               <p></p>
             </div>
-            <div>
+            <div className={"iconSet"}>
               <img className={"homepageIcon"}
                    src={shuffleIcon} alt={"shuffle"}/>
               <h2 className={"homepageIconText"}>Select playlist</h2>
               <p></p>
             </div>
-            <div>
+            <div className={"iconSet"}>
               <img className={"homepageIcon"}
                    src={headphonesIcon} alt={"headphones"}/>
               <h2 className={"homepageIconText"}>Start listening</h2>
@@ -75,41 +77,34 @@ const Main = ({loginUri, isAuth, setIsAuth}) => {
           </div>
         </div>
         <div className={"featuresContainer"}>
-          <h1 className={"mainTitle"}>Features</h1>
+          <h1 className={"featureTitle"}>Features</h1>
           <div className={"featureItem"}>
             <h2>True Shuffle</h2>
-            <p>Shuffle your playlists easily</p>
-            {/*Demo with screenshots or gifs*/}
+            <p className={"featureSubtitle"}>Shuffle your playlists easily</p>
             <div>
-              <p>Select playlist to shuffle</p>
-              <img className={"homepageIcon"}
-                   src={"https://4197r62cmrjs32n9dndpi2o1-wpengine.netdna-ssl.com/wp-content/uploads/2020/07/square-placeholder.jpg"} alt={"login"}/>
-              <p>In Spotify a new playlist will be created titled prefixed with [Shuffled]</p>
-              <img className={"homepageIcon"}
-                   src={"https://4197r62cmrjs32n9dndpi2o1-wpengine.netdna-ssl.com/wp-content/uploads/2020/07/square-placeholder.jpg"} alt={"login"}/>
-              <p>Ensure shuffle is turned off and start listening</p>
-              <img className={"homepageIcon"}
-                   src={"https://4197r62cmrjs32n9dndpi2o1-wpengine.netdna-ssl.com/wp-content/uploads/2020/07/square-placeholder.jpg"} alt={"login"}/>
+                <img className={"homepageGif"} src={"shuffleStep1"} alt={"login"}/>
             </div>
             <Button
-              onClick={""}
+              className={"normalButton"}
+              // onClick={""}
               variant="contained"
               disableElevation
-              sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
+              sx={{my: 2, color: 'white', bgcolor: "#1DB954"}}
               href={"/playlists"}
             >Select</Button>
           </div>
-          <div className={"featureItem"}>
+          <Box textAlign='center' className={"featureItem"}>
             <h2>Remove shuffled playlists</h2>
             <p>Quickly remove custom shuffled playlists</p>
             <Button
-              onClick={""}
+              className={"normalButton"}
+              // onClick={""}
               variant="contained"
               disableElevation
-              sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
+              sx={{my: 2, color: 'white', bgcolor: "#1DB954"}}
               href={"/#"}
             >Select</Button>
-          </div>
+          </Box >
         </div>
       </main>
     </>

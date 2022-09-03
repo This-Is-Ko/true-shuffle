@@ -40,6 +40,7 @@ const PlaylistItem = (props) => {
             {props.playlist.owner.displayName}
           </Typography>
           <Button variant="contained" href={"/shuffle?playlistId=" + props.playlist.id}
+                  sx={{color: 'white', bgcolor: "#1DB954"}}
                   startIcon={<ShuffleIcon/>}>Shuffle</Button>
         </CardContent>
       </Card>

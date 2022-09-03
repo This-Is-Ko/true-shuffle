@@ -13,18 +13,18 @@ const AllPlaylists = ({loginUri}) => {
   return (
     auth ?
       <div>
-        <h1>Select a playlist</h1>
+        <h1 className={"normalTitle"}>Select a playlist</h1>
         <PlaylistContainer/>
       </div>
       :
       <div>
-        <h1>Login to your spotify account to continue</h1>
+        <h1 className={"normalTitle"}>Login to your spotify account to continue</h1>
         <div className={"centerSpacingContainer"}>
           <Button
-            className={"largeButton"}
+            className={"normalButton"}
             variant="contained"
             disableElevation
-            sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817",
+            sx={{my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
               '&:hover': {backgroundColor: '#1DB954'}
             }}
             href={localLoginUri}
