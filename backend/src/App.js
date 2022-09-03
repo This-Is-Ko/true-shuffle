@@ -22,13 +22,11 @@ function App() {
 
   return (
     <div className="App">
-
       <Header loginUri={loginUri} isAuth={isAuth}/>
       <Routes>
         <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
         <Route path="/playlists" element={<AllPlaylists loginUri={loginUri}/>}/>
         <Route path="/shuffle" element={<ShufflePage/>}/>
-        <Route path="/features" element={<Features/>}/>
         <Route path="/contact" element={<ContactPage/>}/>
       </Routes>
     </div>

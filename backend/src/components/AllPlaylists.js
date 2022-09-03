@@ -1,8 +1,6 @@
 import React, {useEffect} from "react";
 import PlaylistContainer from "./PlaylistContainer";
-import SpotifyLogin from "./SpotifyLogin";
 import Button from "@mui/material/Button";
-import axios from "axios";
 
 const AllPlaylists = ({loginUri}) => {
   const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
@@ -26,7 +24,9 @@ const AllPlaylists = ({loginUri}) => {
             className={"largeButton"}
             variant="contained"
             disableElevation
-            sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
+            sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817",
+              '&:hover': {backgroundColor: '#1DB954'}
+            }}
             href={localLoginUri}
           >Get started</Button>
         </div>

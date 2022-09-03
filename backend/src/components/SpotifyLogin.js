@@ -12,7 +12,14 @@ function SpotifyLogin({loginUri}) {
 
   return (
     localLoginUri !== "/#" ?
-      <Button variant="contained" href={localLoginUri} startIcon={<VpnKeyIcon/>} disableElevation sx={{bgcolor: "#161817"}}>Spotify Login</Button>
+      <Button variant="contained"
+              href={localLoginUri}
+              startIcon={<VpnKeyIcon/>}
+              disableElevation
+              sx={{bgcolor: "#1DB954",
+                '&:hover': {backgroundColor: '#1DB954'}
+              }}
+      >Login</Button>
       :
       <CircularProgress/>
   );

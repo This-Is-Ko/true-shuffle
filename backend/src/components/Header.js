@@ -15,10 +15,6 @@ const pages = [
     "link": "/playlists"
   },
   {
-    "title": "How it works",
-    "link": "/how-it-works"
-  },
-  {
     "title": "Contact",
     "link": "/contact"
   }
@@ -65,7 +61,9 @@ const Header = ({loginUri, isAuth}) => {
                 onClick={handleCloseNavMenu}
                 variant="contained"
                 disableElevation
-                sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817"}}
+                sx={{my: 2, color: 'white', display: 'block', bgcolor: "#161817",
+                  '&:hover': {backgroundColor: '#1DB954'}
+                }}
                 href={page.link}
               >
                 {page.title}
