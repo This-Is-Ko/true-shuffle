@@ -7,6 +7,9 @@ class SpotifyLogout extends React.Component {
   logout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("expiresAt");
+    localStorage.removeItem("scope");
+    localStorage.removeItem("tokenType");
   };
 
   state = {

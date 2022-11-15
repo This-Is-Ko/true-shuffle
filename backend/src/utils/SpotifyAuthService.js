@@ -1,11 +1,11 @@
 import axios from "axios";
 
-const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/handle-auth-code?code=";
+const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
 const REFRESH_TOKEN_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/handle-refresh-token?refreshToken=";
 
-export function getLoginUriApi (setLoginUri) {
+export function getLoginUriApi(setLoginUri) {
   console.debug("Retrieving login uri")
-  axios.get(process.env.REACT_APP_BACKEND_PATH + `/auth/spotify/auth-login`)
+  axios.get(process.env.REACT_APP_BACKEND_PATH + `/api/spotify/auth/login`)
     .then(result => {
       setLoginUri(result.data.loginUri)
     })
@@ -19,20 +19,27 @@ export function getLoginUriApi (setLoginUri) {
     });
 }
 
-export function getAccessTokenCall(code, setAuth) {
+export const getAccessTokenCall = (code, setAuth, navigate) => {
   if (localStorage.getItem('accessToken') == null) {
     if (code != null) {
-      axios.get(AUTH_CODE_URL + code)
+      axios.post(AUTH_CODE_URL,
+        {
+          code: code
+        }
+      )
         .then(result => {
-          console.log(result)
-          localStorage.setItem('accessToken', result.data.spotifyAccessToken);
-          localStorage.setItem('refreshToken', result.data.spotifyRefreshToken);
+          localStorage.setItem('accessToken', result.data.access_token);
+          localStorage.setItem('refreshToken', result.data.refresh_token);
+          localStorage.setItem('expiresAt', result.data.expires_at);
+          localStorage.setItem('scope', result.data.scope);
+          localStorage.setItem('tokenType', result.data.token_type);
+          setAuth(true);
+          navigate("/");
         })
         .catch(error => {
-            console.log(error)
-          }
+          console.log(error)
+        }
         );
-      setAuth(true);
     }
   }
 }
@@ -49,8 +56,8 @@ export function getAccessTokenUsingRefreshCall() {
         // callToRetry();
       })
       .catch(error => {
-          console.log(error)
-        }
+        console.log(error)
+      }
       );
   }
 }
