@@ -9,7 +9,7 @@ class ShufflePlaylistResponse extends React.Component {
           Find your shuffled playlist here
         </h2>
         <Button variant="contained" href={this.props.playlistUrl} target="_blank">Open shuffled playlist</Button>
-        <Button variant="contained" href="/playlists">Shuffle another playlist</Button>
+        <Button variant="contained" href="/shuffle">Shuffle another playlist</Button>
       </div>
     )
   }

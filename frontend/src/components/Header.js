@@ -12,7 +12,7 @@ import SpotifyLogout from "./SpotifyLogout";
 const pages = [
   {
     "title": "Shuffle",
-    "link": "/playlists"
+    "link": "/shuffle"
   },
   {
     "title": "Contact",
@@ -30,6 +30,7 @@ const Header = ({loginUri, isAuth}) => {
 
   useEffect(() => {
     setAuth(isAuth);
+    console.log("Header load")
   }, [loginUri, isAuth]);
 
   return (
