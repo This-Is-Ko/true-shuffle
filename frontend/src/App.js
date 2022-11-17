@@ -1,14 +1,13 @@
 import './App.css';
 import {Route, Routes} from "react-router-dom";
 import React, {useEffect, useState} from "react";
+import {Typography} from "@mui/material";
+
 import Main from "./components/Main"
-import AllPlaylists from "./components/AllPlaylists";
 import ShufflePlaylistContainer from "./components/ShufflePlaylistContainer";
-import NewShufflePage from "./pages/NewShufflePage";
-import Features from "./components/Features";
-import ContactPage from "./components/ContactPage";
+import ShufflePage from "./pages/ShufflePage";
+import AboutPage from "./pages/AboutPage";
 import Header from "./components/Header";
-import {getLoginUriApi} from "./utils/SpotifyAuthService";
 
 function App() {
   const [loginUri, setLoginUri] = useState(process.env.REACT_APP_SPOTIFY_AUTH_URI);
@@ -23,12 +22,11 @@ function App() {
   // }, []);
 
   const ShufflePages = (isAuth, setIsAuth) => {
-    console.log("MAIN LOAD")
     return (
       <div>
-        <h1>Shuffle</h1>
+        <Typography variant='h2' component="div" sx={{paddingTop:"20px", color:"white"}}>Shuffle</Typography>
         <Routes>
-          <Route path="/" element={<NewShufflePage isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
+          <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
           <Route path="/playlist" element={<ShufflePlaylistContainer isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
         </Routes>
       </div>
@@ -43,7 +41,7 @@ function App() {
         {/* <Route path="/playlists" element={<AllPlaylists loginUri={loginUri}/>}/> */}
         <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
         {/* <Route path="/shuffle/playlist" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth}/>}/> */}
-        <Route path="/contact" element={<ContactPage/>}/>
+        <Route path="/about" element={<AboutPage/>}/>
       </Routes>
     </div>
   );

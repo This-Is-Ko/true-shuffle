@@ -3,7 +3,7 @@ import React from "react";
 const ErrorMessage = (props) => {
 
   return (
-    <div>
+    <div className="loading-container">
       <h2>{props.error.message}</h2>
     </div>
   )

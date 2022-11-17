@@ -5,9 +5,8 @@ import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
 import ShuffleIcon from '@mui/icons-material/Shuffle';
-import Button from "@mui/material/Button";
+import { Typography, Button } from "@mui/material";
 
 const PlaylistItem = (props) => {
 
@@ -19,7 +18,7 @@ const PlaylistItem = (props) => {
                 background: "#181818",
                 "borderRadius": "5px",
                 "height": "auto",
-                "maxHeight": "355px",
+                "maxHeight": "360px",
                 "width": "auto",
                 "maxWidth": "250px"
             }}>
@@ -37,7 +36,7 @@ const PlaylistItem = (props) => {
                     </Typography>
                     <Typography variant="subtitle1" color="common.white" component="div"
                         sx={{ "fontSize": "0.85rem", "overflow": "hidden", "textOverflow": "ellipsis", "maxWidth": "230px", "whiteSpace": "nowrap", "paddingBottom": "5px" }}>
-                        {props.playlist.owner.displayName}
+                        {props.playlist.owner.display_name}
                     </Typography>
                     <Button variant="contained"
                         // onClick={() => { props.selectPlaylist(props.playlist.id, props.playlist.name) }}
