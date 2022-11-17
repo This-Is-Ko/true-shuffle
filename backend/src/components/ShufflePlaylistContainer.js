@@ -5,7 +5,7 @@ import axios from "axios";
 import * as StatusCodes from "http-status-codes";
 import { getAccessTokenUsingRefreshCall } from "../utils/SpotifyAuthService";
 import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
-import ShuffleLoading from "./ShuffleLoading";
+import LoadingMessage from "./LoadingMessage";
 
 // class ShufflePlaylistContainer extends React.Component {
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
@@ -58,14 +58,17 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     }, []);
 
     return (
-        <div>
+        <div className="shuffle-container">
             {isError ? (
                 <ErrorMessage error={isError} />
             ) : (
                 playlistUri !== "" ? (
                     <ShufflePlaylistResponse playlistUri={playlistUri} />
                 ) : (
-                    <CircularProgress />
+                    <div className="loading-container">
+                        <CircularProgress />
+                        <LoadingMessage/>
+                    </div>
                 )
             )}
         </div>

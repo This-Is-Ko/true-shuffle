@@ -25,7 +25,7 @@ const AllPlaylists = ({loginUri}) => {
             variant="contained"
             disableElevation
             sx={{my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
-              '&:hover': {backgroundColor: '#1DB954'}
+              '&:hover': {backgroundColor: '#ac2ca5'}
             }}
             href={localLoginUri}
           >Get started</Button>

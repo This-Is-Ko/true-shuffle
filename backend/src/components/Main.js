@@ -1,12 +1,14 @@
 import React, { useEffect } from "react";
 import { getAccessTokenCall } from "../utils/SpotifyAuthService";
-import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Typography, Button, Grid } from "@mui/material";
 
-import loginIcon from '../images/loginIconWhite.png';
-import headphonesIcon from '../images/headphonesIconWhite.png';
-import shuffleIcon from '../images/shuffleIconWhite.png';
+// import loginIcon from '../images/loginIconWhite.png';
+// import headphonesIcon from '../images/headphonesIconWhite.png';
+// import shuffleIcon from '../images/shuffleIconWhite.png';
+// import loginIcon from ;
+// import headphonesIcon from ;
+// import shuffleIcon from ;
 import shuffleStep1 from '../images/shuffleStep1.gif';
 import Box from "@mui/material/Box";
 const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
@@ -24,17 +26,18 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
 
     useEffect(() => {
         getAccessTokenCall(useQuery().get('code'), setIsAuth, navigate);
-        // Set global values to local values
-        // setAuth(isAuth);
-        // console.log(isAuth);
-        // console.log(auth);
     }, [isAuth]);
 
     return (
         <>
             <main>
                 <div className={"mainTopContainer"}>
-                    <h1 className={"mainTitle"}>Welcome to True Shuffle</h1>
+                    <Typography variant='h1' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                        True Shuffle
+                    </Typography>
+                    <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                        Randomly shuffle your Spotify playlists
+                    </Typography>
                     <div className={"centerSpacingContainer"}>
                         <Button
                             className={"largeButton"}
@@ -42,7 +45,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                             disableElevation
                             sx={{
                                 my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
-                                '&:hover': { backgroundColor: '#1DB954' }
+                                "&:hover": { backgroundColor: "#ac2ca5" },
                             }}
                             href="/shuffle"
                         >Get started</Button>
@@ -51,53 +54,79 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     <div className={"homepageIconHolder"}>
                         <div className={"iconSet"}>
                             <img className={"homepageIcon"}
-                                src={loginIcon} alt={"login"} />
-                            <h2 className={"homepageIconText"}>Login to Spotify</h2>
-                            <p></p>
+                                src={process.env.PUBLIC_URL + '/assets/icons/video-player.png'} alt={"login"} />
+                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                Login to Spotify
+                            </Typography>
                         </div>
                         <div className={"iconSet"}>
                             <img className={"homepageIcon"}
-                                src={shuffleIcon} alt={"shuffle"} />
-                            <h2 className={"homepageIconText"}>Select playlist</h2>
-                            <p></p>
+                                src={process.env.PUBLIC_URL + 'assets/icons/shuffle.png'} alt={"shuffle"} />
+                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                Select a playlist
+                            </Typography>
                         </div>
                         <div className={"iconSet"}>
                             <img className={"homepageIcon"}
-                                src={headphonesIcon} alt={"headphones"} />
-                            <h2 className={"homepageIconText"}>Start listening</h2>
-                            <p></p>
+                                src={process.env.PUBLIC_URL + 'assets/icons/headphones.png'} alt={"headphones"} />
+                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                Start listening
+                            </Typography>
                         </div>
                     </div>
                 </div>
                 <div className={"featuresContainer"}>
-                    <h1 className={"featureTitle"}>Features</h1>
-                    <div className={"featureItem"}>
-                        <h2>True Shuffle</h2>
-                        <p className={"featureSubtitle"}>Shuffle your playlists easily</p>
-                        <div>
-                            <img className={"homepageGif"} src={shuffleStep1} alt={"login"} />
-                        </div>
-                        <Button
-                            className={"normalButton"}
-                            // onClick={""}
-                            variant="contained"
-                            disableElevation
-                            sx={{ my: 2, color: 'white', bgcolor: "#1DB954" }}
-                            href={"/playlists"}
-                        >Select</Button>
-                    </div>
-                    <Box textAlign='center' className={"featureItem"}>
-                        <h2>Remove shuffled playlists</h2>
-                        <p>Quickly remove custom shuffled playlists</p>
-                        <Button
-                            className={"normalButton"}
-                            // onClick={""}
-                            variant="contained"
-                            disableElevation
-                            sx={{ my: 2, color: 'white', bgcolor: "#1DB954" }}
-                            href={"/#"}
-                        >Select</Button>
-                    </Box >
+                    <Typography variant='h3' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                        Features
+                    </Typography>
+                    <Grid
+                        sx={{ paddingTop: "20px", margin: "0 auto" }}
+                        container
+                        spacing={2}
+                        justifyContent="center"
+                        alignItems="flex-start"
+                    >
+                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
+                            <img className={"featureIcon"}
+                                src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"headphones"} />
+                            <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                Shuffle
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                                Create shuffled playlists at the click of a button without affecting your original playlist order
+                            </Typography>
+                            <Button
+                                className={"normalButton"}
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2, color: 'white', bgcolor: "#1DB954",
+                                    "&:hover": { backgroundColor: "#ac2ca5" },
+                                }}
+                                href={"/playlists"}
+                            >Select</Button>
+                        </Grid>
+                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
+                            <img className={"featureIcon"}
+                                src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"headphones"} />
+                            <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                Remove all shuffled
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                                Easy function to clean up created shuffled playlists while keeping all your original playlists
+                            </Typography>
+                            <Button
+                                className={"normalButton"}
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2, color: 'white', bgcolor: "#1DB954",
+                                    "&:hover": { backgroundColor: "#ac2ca5" },
+                                }}
+                                href={"/#"}
+                            >Select</Button>
+                        </Grid>
+                    </Grid>
                 </div>
             </main>
         </>

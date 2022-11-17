@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "@mui/material/Button";
+import {Button} from "@mui/material";
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 
 class SpotifyLogout extends React.Component {
@@ -24,7 +24,7 @@ class SpotifyLogout extends React.Component {
               onClick={() => this.logout()}
               disableElevation
               sx={{bgcolor: "#1DB954",
-                '&:hover': {backgroundColor: '#1DB954'}
+                '&:hover': {backgroundColor: '#ac2ca5'}
               }}
       >Logout</Button>
     )

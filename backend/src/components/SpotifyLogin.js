@@ -17,7 +17,7 @@ function SpotifyLogin({loginUri}) {
               startIcon={<VpnKeyIcon/>}
               disableElevation
               sx={{bgcolor: "#1DB954",
-                '&:hover': {backgroundColor: '#1DB954'}
+                '&:hover': {backgroundColor: '#ac2ca5'}
               }}
       >Login</Button>
       :

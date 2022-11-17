@@ -45,7 +45,9 @@ const PlaylistContainer = ({ selectPlaylist }) => {
             ) : playlists.length > 0 ? (
                 <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} />
             ) : (
-                <CircularProgress />
+                <div className="loading-container">
+                    <CircularProgress />
+                </div>
             )}
         </div>
     );
