@@ -3,14 +3,6 @@ import { getAccessTokenCall } from "../utils/SpotifyAuthService";
 import { useNavigate } from "react-router-dom";
 import { Typography, Button, Grid } from "@mui/material";
 
-// import loginIcon from '../images/loginIconWhite.png';
-// import headphonesIcon from '../images/headphonesIconWhite.png';
-// import shuffleIcon from '../images/shuffleIconWhite.png';
-// import loginIcon from ;
-// import headphonesIcon from ;
-// import shuffleIcon from ;
-import shuffleStep1 from '../images/shuffleStep1.gif';
-import Box from "@mui/material/Box";
 const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
 
 const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
