@@ -95,7 +95,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                                     my: 2, color: 'white', bgcolor: "#1DB954",
                                     "&:hover": { backgroundColor: "#ac2ca5" },
                                 }}
-                                href={"/playlists"}
+                                href={"/shuffle"}
                             >Select</Button>
                         </Grid>
                         <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
