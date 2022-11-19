@@ -2,8 +2,6 @@ import React, { useEffect } from "react";
 import ErrorMessage from "./ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import * as StatusCodes from "http-status-codes";
-import { getAccessTokenUsingRefreshCall } from "../utils/SpotifyAuthService";
 import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
 import LoadingMessage from "./LoadingMessage";
 

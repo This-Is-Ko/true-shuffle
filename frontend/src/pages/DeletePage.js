@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Typography, Button, Box } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Helmet } from "react-helmet";
 
 const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
 
@@ -49,8 +50,11 @@ const DeletePage = ({ isAuth }) => {
 
     return (
         <main>
+            <Helmet>
+                <title>Delete Playlists | True Shuffle</title>
+            </Helmet>
             <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
-            {auth == true ? (
+            {auth === true ? (
                 <Box>
                     <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                         Clear all shuffled playlists

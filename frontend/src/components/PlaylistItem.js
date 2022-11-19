@@ -1,6 +1,5 @@
 import React from "react"
 
-import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
@@ -9,8 +8,6 @@ import ShuffleIcon from '@mui/icons-material/Shuffle';
 import { Typography, Button } from "@mui/material";
 
 const PlaylistItem = (props) => {
-
-    // console.log(props.playlist)
     return (
         <Grid item>
             <Card sx={{

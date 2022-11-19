@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography, MenuItem, Link } from '@mui/material';
+import { Typography, MenuItem } from '@mui/material';
 
 const SpotifyMenuLogout = ({ handleCloseNavMenu }) => {
 

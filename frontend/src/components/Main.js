@@ -3,14 +3,9 @@ import { getAccessTokenCall } from "../utils/SpotifyAuthService";
 import { useNavigate } from "react-router-dom";
 import { Typography, Button, Grid, Backdrop, CircularProgress, Snackbar, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
-
-const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
-
-const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
+import { Helmet } from "react-helmet";
 
 const Main = ({ loginUri, isAuth, setIsAuth }) => {
-    // const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
-    // const [localLoginUri, setLocalLoginUri] = React.useState("/#");
     const [loadingAccessToken, setLoadingAccessToken] = React.useState(false);
     const [showErrorMessage, setShowErrorMessage] = React.useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
@@ -36,6 +31,11 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
 
     return (
         <main>
+            <Helmet>
+                <title>Home | True Shuffle</title>
+                <meta name='description' content='Create shuffled Spotify playlists that are randomly ordered' />
+                <link rel="canonical" href="https://www.trueshuffle.top/" />
+            </Helmet>
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
                 open={loadingAccessToken}
