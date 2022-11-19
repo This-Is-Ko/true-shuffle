@@ -1,28 +1,31 @@
 import React from "react";
 import Button from "@mui/material/Button";
-import { Typography, Grid } from "@mui/material";
+import { Typography, Grid, Box } from "@mui/material";
 
 class ShufflePlaylistResponse extends React.Component {
     render() {
         return (
-            <div>
+            <Box
+                justifyContent="center"
+                alignItems="center"
+            >
                 <Typography variant='h4' component="div" sx={{ paddingBottom: "10px", color: "white" }}>
                     Finished shuffling your playlist
                 </Typography>
                 <img className="about-image"
                     src={process.env.PUBLIC_URL + '/assets/images/headset.png'} alt={"listening to music"} />
                 <Grid
-                    sx={{ paddingTop: "20px", margin: "0 auto" }}
+                    sx={{ paddingTop: "20px", width: "100%", margin: "auto" }}
                     container
                     spacing={2}
-                    justifyContent="center"
-                    alignItems="flex-start">
+                    justifyContent="center">
                     <Grid item>
                         <Button
                             variant="contained"
                             disableElevation
                             sx={{
                                 my: 2, color: 'white', bgcolor: "#1DB954",
+                                width: "30rem", maxWidth: "300px",
                                 "&:hover": { backgroundColor: "#ac2ca5" },
                             }}
                             href={this.props.playlistUri} target="_blank">
@@ -35,6 +38,7 @@ class ShufflePlaylistResponse extends React.Component {
                             disableElevation
                             sx={{
                                 my: 2, color: 'white', bgcolor: "#1DB954",
+                                width: "30rem", maxWidth: "300px",
                                 "&:hover": { backgroundColor: "#ac2ca5" },
                             }}
                             href="/shuffle">
@@ -42,7 +46,7 @@ class ShufflePlaylistResponse extends React.Component {
                         </Button>
                     </Grid>
                 </Grid>
-            </div>
+            </Box>
         )
     }
 }
