@@ -19,9 +19,10 @@ export function getLoginUriApi(setLoginUri) {
     });
 }
 
-export const getAccessTokenCall = (code, setAuth, navigate) => {
+export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToken, setAccessTokenError, setShowSuccessMessage) => {
   if (localStorage.getItem('accessToken') == null) {
     if (code != null) {
+      setLoadingAccessToken(true)
       axios.post(AUTH_CODE_URL,
         {
           code: code
@@ -35,9 +36,13 @@ export const getAccessTokenCall = (code, setAuth, navigate) => {
           localStorage.setItem('tokenType', result.data.token_type);
           setAuth(true);
           navigate("/");
+          setLoadingAccessToken(false)
+          setShowSuccessMessage(true)
         })
         .catch(error => {
-          console.log(error)
+          // console.log(error)
+          setLoadingAccessToken(false)
+          setAccessTokenError(true)
         }
         );
     }
