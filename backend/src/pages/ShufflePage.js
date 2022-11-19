@@ -5,7 +5,7 @@ import { Typography, Button, Box } from "@mui/material";
 
 const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
 
-const ShufflePage = ({ isAuth, setIsAuth }) => {
+const ShufflePage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
         localStorage.getItem("accessToken") != null
     );

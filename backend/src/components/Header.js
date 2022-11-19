@@ -21,6 +21,10 @@ const pages = [
         "link": "/shuffle"
     },
     {
+        "title": "Delete",
+        "link": "/delete"
+    },
+    {
         "title": "About",
         "link": "/about"
     }
