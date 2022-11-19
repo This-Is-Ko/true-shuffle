@@ -6,20 +6,13 @@ import {Typography} from "@mui/material";
 import Main from "./components/Main"
 import ShufflePlaylistContainer from "./components/ShufflePlaylistContainer";
 import ShufflePage from "./pages/ShufflePage";
+import DeletePage from "./pages/DeletePage";
 import AboutPage from "./pages/AboutPage";
 import Header from "./components/Header";
 
 function App() {
   const [loginUri, setLoginUri] = useState(process.env.REACT_APP_SPOTIFY_AUTH_URI);
   const [isAuth, setIsAuth] = useState(localStorage.getItem("accessToken") != null);
-
-  // useEffect(() => {
-  //   if (!loginUri){
-  //     setLoginUri(process.env.REACT_APP_SPOTIFY_AUTH_URI)
-  //     // getLoginUriApi(setLoginUri);
-  //   }
-  //   setIsAuth(localStorage.getItem("accessToken") != null);
-  // }, []);
 
   const ShufflePages = (isAuth, setIsAuth) => {
     return (
@@ -38,9 +31,8 @@ function App() {
       <Header loginUri={loginUri} isAuth={isAuth}/>
       <Routes>
         <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
-        {/* <Route path="/playlists" element={<AllPlaylists loginUri={loginUri}/>}/> */}
         <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth}/>}/>
-        {/* <Route path="/shuffle/playlist" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth}/>}/> */}
+        <Route path="/delete" element={<DeletePage isAuth={isAuth}/>}/>
         <Route path="/about" element={<AboutPage/>}/>
       </Routes>
     </div>
