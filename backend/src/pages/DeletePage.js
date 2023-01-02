@@ -84,15 +84,16 @@ const DeletePage = ({ isAuth }) => {
                         <Box
                             sx={{
                                 margin: "auto",
-                                width: "90%"
+                                width: { xs: "90%", sm: '90%', md: "50%" },
+                                textAlign:"left"
                             }}>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                                 Instructions:
                             </Typography>
-                            <Typography variant='body1' component="div" sx={{ color: "white" }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 1. Just use the below function to remove all shuffled playlists from your Spotify account
                             </Typography>
-                            <Typography variant='body1' component="div" sx={{ color: "white" }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 Note: You don't need to remove an existing shuffled playlist to re-shuffle it
                             </Typography>
                         </Box>

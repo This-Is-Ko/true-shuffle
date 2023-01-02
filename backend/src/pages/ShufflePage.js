@@ -57,21 +57,22 @@ const ShufflePage = ({ isAuth }) => {
                         <Box
                             sx={{
                                 margin: "auto",
-                                width: "90%"
+                                width: { xs: "90%", sm: '90%', md: "50%" },
+                                textAlign:"left",
                             }}>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                                 Instructions:
                             </Typography>
-                            <Typography variant='body1' component="div" sx={{ color: "white" }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 1. Select a playlist below. If the playlist you want isn't appearing, ensure it is either a playlist you created or are following
                             </Typography>
-                            <Typography variant='body1' component="div" sx={{ color: "white" }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 2. A new playlist will be created titled starting with Shuffled and your playlist name e.g. [Shuffled] My Playlist
                             </Typography>
-                            <Typography variant='body1' component="div" sx={{ color: "white" }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 3. If you have already shuffled the playlist before, the existing shuffled one will be replaced
                             </Typography>
-                            <Typography variant='body1' component="div" sx={{ color: "white" }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 4. Enjoy!
                             </Typography>
                         </Box>
