@@ -45,6 +45,10 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
 
             <Snackbar
                 open={showErrorMessage}
+                anchorOrigin= {{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }}
                 autoHideDuration={10000}
                 onClose={handleMessageClose}
                 message="Login error. Please try again later"
@@ -59,6 +63,10 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
             />
             <Snackbar
                 open={showSuccessMessage}
+                anchorOrigin= {{
+                        vertical: 'top',
+                        horizontal: 'center'
+                    }}
                 autoHideDuration={10000}
                 onClose={handleMessageClose}
                 message="Successfully logged in"
