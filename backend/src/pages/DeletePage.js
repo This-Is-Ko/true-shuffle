@@ -104,9 +104,9 @@ const DeletePage = ({ isAuth }) => {
                         justifyContent: "center",
                     }}>
                         {isSuccess &&
-                            <Box>
-                                <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                                    Successfully deleted
+                            <Box sx={{ paddingTop: "10px"}}>
+                                <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                                    <strong>Successfully deleted</strong>
                                 </Typography>
                                 <Button
                                     variant="contained"
