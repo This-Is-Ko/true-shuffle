@@ -26,6 +26,11 @@ h1, h2, h3, p {
     background-color: #161817;
 }
 
+.footer-links {
+    text-decoration: none;
+    color: lightgrey;
+}
+
 .container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

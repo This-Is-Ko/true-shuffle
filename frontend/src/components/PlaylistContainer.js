@@ -4,6 +4,7 @@ import axios from "axios";
 import PlaylistList from "./PlaylistList";
 import ErrorMessage from "./ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
+import { Box } from "@mui/material";
 
 const PlaylistContainer = ({ selectPlaylist }) => {
     const [playlists, setPlaylists] = React.useState([]);
@@ -39,7 +40,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
     }, []);
 
     return (
-        <div>
+        <Box sx={{paddingBottom: "10px"}}>
             {error ? (
                 <ErrorMessage error={error} />
             ) : playlists.length > 0 ? (
@@ -49,7 +50,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                     <CircularProgress />
                 </div>
             )}
-        </div>
+        </Box>
     );
 };
 
