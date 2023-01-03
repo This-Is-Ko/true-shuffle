@@ -21,11 +21,7 @@ function App() {
                 <Helmet>
                     <title>Shuffle | True Shuffle</title>
                 </Helmet>
-                <div className={"titleContainer"}>
-                    <img className={"spotifyLogo"}
-                                src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green.png'} alt={"spotify logo"} />
-                    <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
-                </div>
+                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
                 <Routes>
                     <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} />} />
                     <Route path="/playlist" element={<ShufflePlaylistContainer isAuth={isAuth} setIsAuth={setIsAuth} />} />

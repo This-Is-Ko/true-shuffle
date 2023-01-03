@@ -29,9 +29,13 @@ const ShufflePage = ({ isAuth }) => {
         <main>
             {auth === true ? (
                 <Box>
-                    <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                        Select a playlist
-                    </Typography>
+                    <div className={"titleContainer"}>
+                        <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                            Select a playlist from 
+                        </Typography>
+                        <img className={"spotifyNameLogoSubtitle"}
+                                src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
+                    </div>
                     <Box sx={{
                         textAlign: "center",
                         display: "flex",
@@ -44,7 +48,7 @@ const ShufflePage = ({ isAuth }) => {
                                 my: 2,
                                 color: "white",
                                 display: "block",
-                                bgcolor: "#1DB954",
+                                bgcolor: "##2c359f",
                                 "&:hover": { backgroundColor: "#1DB954" },
 
                             }}

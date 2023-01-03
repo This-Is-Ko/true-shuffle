@@ -53,16 +53,17 @@ const DeletePage = ({ isAuth }) => {
             <Helmet>
                 <title>Delete Playlists | True Shuffle</title>
             </Helmet>
-            <div className={"titleContainer"}>
-                <img className={"spotifyLogo"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green.png'} alt={"spotify logo"} />
-                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
-            </div>
+            <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
             {auth === true ? (
                 <Box>
-                    <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                        Clear all shuffled playlists
-                    </Typography>
+                    <div className={"titleContainer"}>
+                        <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                            Clear shuffled playlists from
+                        </Typography>
+                        <img className={"spotifyNameLogoSubtitle"}
+                                src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
+                    </div>
+                    
                     <Box sx={{
                         textAlign: "center",
                         display: "flex",
@@ -75,7 +76,7 @@ const DeletePage = ({ isAuth }) => {
                                 my: 2,
                                 color: "white",
                                 display: "block",
-                                bgcolor: "#1DB954",
+                                bgcolor: "#2c359f",
                                 "&:hover": { backgroundColor: "#1DB954" },
 
                             }}
