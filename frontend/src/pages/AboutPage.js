@@ -25,6 +25,9 @@ const AboutPage = () => {
                 and icons by
                 <Link underline="none" href={"https://www.flaticon.com/authors/freepik"}> Freepik </Link>
             </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                Spotify brand logos have been provided by Spotify.
+            </Typography>
         </Box>
     );
 }

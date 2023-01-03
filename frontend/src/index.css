@@ -41,6 +41,12 @@ h1, h2, h3, p {
     padding-bottom: 10px;
 }
 
+.titleContainer {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
 .normalTitle {
     padding-top: 20px;
     padding-bottom: 20px;
@@ -67,6 +73,17 @@ h1, h2, h3, p {
 .homepageIcon {
     width: 130px;
     height: 130px;
+}
+
+.spotifyLogo {
+    padding-top: 23px;
+    padding-right: 10px;
+    height: 60px;
+}
+
+.spotifyNameLogo {
+    padding-top: 10px;
+    height: 60px;
 }
 
 .featureIcon {
