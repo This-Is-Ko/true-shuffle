@@ -48,7 +48,7 @@ const ShufflePage = ({ isAuth }) => {
                                 my: 2,
                                 color: "white",
                                 display: "block",
-                                bgcolor: "##2c359f",
+                                bgcolor: "#ac2ca5",
                                 "&:hover": { backgroundColor: "#1DB954" },
 
                             }}
@@ -61,7 +61,7 @@ const ShufflePage = ({ isAuth }) => {
                         <Box
                             sx={{
                                 margin: "auto",
-                                width: { xs: "90%", sm: '90%', md: "50%" },
+                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%" , xl: "35%"  },
                                 textAlign:"left",
                             }}>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>

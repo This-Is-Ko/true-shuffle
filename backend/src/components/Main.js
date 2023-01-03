@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Typography, Button, Grid, Backdrop, CircularProgress, Snackbar, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { Helmet } from "react-helmet";
+import Footer from "./Footer";
 
 const Main = ({ loginUri, isAuth, setIsAuth }) => {
     const [loadingAccessToken, setLoadingAccessToken] = React.useState(false);
@@ -179,6 +180,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     </Grid>
                 </Grid>
             </div>
+            <Footer></Footer>
         </main>
     );
 }

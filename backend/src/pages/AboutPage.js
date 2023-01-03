@@ -3,7 +3,6 @@ import { Typography, Link, Box } from "@mui/material";
 import { Helmet } from "react-helmet";
 
 const AboutPage = () => {
-    const [contactEmailAddress, setContactEmailAddress] = useState(process.env.REACT_APP_CONTACT_EMAIL_ADDRESS);
 
     return (
         <Box sx={{ width: "90%", margin: "auto" }}>
@@ -31,7 +30,7 @@ const AboutPage = () => {
                 Spotify brand logos have been provided by Spotify.
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                To contact, send a email <Link underline="none" href={"mailto:"+ contactEmailAddress}>here</Link>.
+                To contact, send a email <Link underline="none" href={"mailto:"+ process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
             </Typography>
         </Box>
     );
