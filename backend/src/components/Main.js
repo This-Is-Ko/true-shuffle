@@ -84,6 +84,8 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                 <Typography variant='h1' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                     True Shuffle
                 </Typography>
+                <img className={"spotifyNameLogo"}
+                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                 <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                     Randomly shuffle your Spotify playlists
                 </Typography>
