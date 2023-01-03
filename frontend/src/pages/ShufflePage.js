@@ -71,7 +71,7 @@ const ShufflePage = ({ isAuth }) => {
                                 1. Select a playlist below. If the playlist you want isn't appearing, ensure it is either a playlist you created or are following
                             </Typography>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                2. A new playlist will be created titled starting with Shuffled and your playlist name e.g. [Shuffled] My Playlist
+                                2. A new playlist will be created named "[Shuffled]" and your playlist name e.g. [Shuffled] My Playlist
                             </Typography>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                 3. If you have already shuffled the playlist before, the existing shuffled one will be replaced
