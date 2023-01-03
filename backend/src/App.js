@@ -35,7 +35,7 @@ function App() {
     return (
         <div className="App">
             {/* Set a global message to display on all pages of the site */}
-            {showGlobalMessage && 
+            {showGlobalMessage === "true" && 
                 <div className='globalMessage'>
                     <Typography variant='caption' component="div" sx={{ paddingTop: "3px", color: "red" }}>{globalMessageContent}</Typography>
                 </div>
