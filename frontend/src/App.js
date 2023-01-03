@@ -14,6 +14,8 @@ import Header from "./components/Header";
 function App() {
     const [loginUri, setLoginUri] = useState(process.env.REACT_APP_SPOTIFY_AUTH_URI);
     const [isAuth, setIsAuth] = useState(localStorage.getItem("accessToken") != null);
+    const [showGlobalMessage, setShowGlobalMessage] = useState(process.env.REACT_APP_SHOW_GLOBAL_MESSAGE);
+    const [globalMessageContent, setGlobalMessageContent] = useState(process.env.REACT_APP_GLOBAL_MESSAGE_CONTENT);
 
     const ShufflePages = (isAuth, setIsAuth) => {
         return (
@@ -32,6 +34,12 @@ function App() {
 
     return (
         <div className="App">
+            {/* Set a global message to display on all pages of the site */}
+            {showGlobalMessage && 
+                <div className='globalMessage'>
+                    <Typography variant='caption' component="div" sx={{ paddingTop: "3px", color: "red" }}>{globalMessageContent}</Typography>
+                </div>
+            }
             <Header loginUri={loginUri} isAuth={isAuth} />
             <Routes>
                 <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth} />} />
