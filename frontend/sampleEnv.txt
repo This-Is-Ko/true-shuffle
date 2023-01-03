@@ -1,0 +1,6 @@
+FAST_REFRESH=false
+REACT_APP_BACKEND_PATH=http://localhost:5000
+REACT_APP_SPOTIFY_AUTH_URI=https://accounts.spotify.com/authorize?client_id=****
+REACT_APP_SHOW_GLOBAL_MESSAGE=true
+REACT_APP_GLOBAL_MESSAGE_CONTENT=Hello there
+REACT_APP_CONTACT_EMAIL_ADDRESS=someEmail
