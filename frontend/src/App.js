@@ -21,7 +21,7 @@ function App() {
         return (
             <div>
                 <Helmet>
-                    <title>Shuffle | True Shuffle</title>
+                    <title>Shuffle | True Shuffle for Spotify</title>
                 </Helmet>
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
                 <Routes>

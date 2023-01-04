@@ -33,7 +33,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
     return (
         <main>
             <Helmet>
-                <title>Home | True Shuffle</title>
+                <title>Home | True Shuffle for Spotify</title>
                 <meta name='description' content='Create shuffled Spotify playlists that are randomly ordered' />
                 <link rel="canonical" href="https://www.trueshuffle.top/" />
             </Helmet>
