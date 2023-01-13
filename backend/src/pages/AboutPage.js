@@ -15,10 +15,28 @@ const AboutPage = () => {
             <img className="about-image"
                 src={process.env.PUBLIC_URL + '/assets/images/listening.png'} alt={"listening to music"} />
             <Typography variant='body1' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                Welcome to True Shuffle, a way to shuffle your Spotify music without the same music being recommended repeatedly.
+                Have you been wondering how to get a truly random shuffle experience on Spotify?
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                This application doesn't store any user data and all authentication is handled by Spotify.
+                Welcome to True Shuffle, a way to shuffle your Spotify music without the same music being recommended repeatedly.
+            </Typography>
+            <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white" }}>
+                How does it work?
+            </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                True Shuffle allows you to randomly reorder your playlists to create a shuffled experience.
+            </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                In case you have a custom playlist order you would like to keep, we create a copy of your playlist which can easily be deleted at any time.
+            </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                If you add new music on Spotify, just shuffle again and the new tracks will be added to your shuffled playlist.
+            </Typography>
+            <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white" }}>
+                Privacy and Credit
+            </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                This application doesn't store any of your data and all authentication is handled by Spotify.
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 Images were created by

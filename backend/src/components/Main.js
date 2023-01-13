@@ -162,7 +162,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                         <img className={"featureIcon"}
                             src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"headphones"} />
                         <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Remove all shuffled
+                            Remove shuffled
                         </Typography>
                         <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                             Easy function to clean up created shuffled playlists while keeping all your original playlists
