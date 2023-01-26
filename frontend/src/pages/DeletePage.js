@@ -76,9 +76,7 @@ const DeletePage = ({ isAuth }) => {
                                 my: 2,
                                 color: "white",
                                 display: "block",
-                                bgcolor: "#ac2ca5",
-                                "&:hover": { backgroundColor: "#1DB954" },
-
+                                bgcolor: "#1DB954",
                             }}
                             onClick={() => setShowDetailsTab(prev => !prev)}
                         >
@@ -145,7 +143,6 @@ const DeletePage = ({ isAuth }) => {
                                         color: "white",
                                         display: "block",
                                         bgcolor: "#1DB954",
-                                        "&:hover": { backgroundColor: "#1DB954" },
                                     }}
                                     onClick={() => deleteShuffledPlaylistsCall()}
                                 >

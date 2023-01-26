@@ -23,8 +23,7 @@ const SpotifyMenuLogout = ({ handleCloseNavMenu }) => {
             key={"logout"}
             onClick={handleMenuLogout}
             sx={{
-                color: 'white', display: 'block', bgcolor: "#161817",
-                '&:hover': { backgroundColor: '#1DB954' }
+                color: 'white', display: 'block', bgcolor: "#161817"
             }}>
             <Typography textAlign="center">Logout</Typography>
 
