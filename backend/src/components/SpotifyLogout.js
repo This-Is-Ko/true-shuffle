@@ -23,8 +23,8 @@ class SpotifyLogout extends React.Component {
               startIcon={<VpnKeyIcon/>}
               onClick={() => this.logout()}
               disableElevation
-              sx={{bgcolor: "#1DB954",
-                '&:hover': {backgroundColor: '#ac2ca5'}
+              sx={{
+                bgcolor: "#1DB954"
               }}
       >Logout</Button>
     )

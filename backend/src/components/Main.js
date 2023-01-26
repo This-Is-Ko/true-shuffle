@@ -96,8 +96,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                         variant="contained"
                         disableElevation
                         sx={{
-                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
-                            "&:hover": { backgroundColor: "#ac2ca5" },
+                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954"
                         }}
                         href="/shuffle"
                     >Get started</Button>
@@ -152,8 +151,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                             variant="contained"
                             disableElevation
                             sx={{
-                                my: 2, color: 'white', bgcolor: "#1DB954",
-                                "&:hover": { backgroundColor: "#ac2ca5" },
+                                my: 2, color: 'white', bgcolor: "#1DB954"
                             }}
                             href={"/shuffle"}
                         >Select</Button>
@@ -172,8 +170,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                             variant="contained"
                             disableElevation
                             sx={{
-                                my: 2, color: 'white', bgcolor: "#1DB954",
-                                "&:hover": { backgroundColor: "#ac2ca5" },
+                                my: 2, color: 'white', bgcolor: "#1DB954"
                             }}
                             href={"/#"}
                         >Select</Button>
