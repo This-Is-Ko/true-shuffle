@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import { Typography, Link, Box } from "@mui/material";
 import { Helmet } from "react-helmet";
+import Footer from "../components/Footer";
+import { getStatisticsApi } from "../utils/StatisticsService";
 
 const AboutPage = () => {
+    const [trackCounter, setTrackCounter] = React.useState(null);
+    const [playlistCounter, setPlaylistCounter] = React.useState(null);
+
+    useEffect(() => {
+        getStatisticsApi(setTrackCounter, setPlaylistCounter);
+    }, []);
 
     return (
         <Box sx={{ width: "90%", margin: "auto" }}>
@@ -32,6 +40,14 @@ const AboutPage = () => {
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 If you add new music on Spotify, just shuffle again and the new tracks will be added to your shuffled playlist.
             </Typography>
+            {trackCounter !== null && playlistCounter !== null && 
+                <div>
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white" }}>
+                        Statistics
+                    </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>Shuffled tracks: {trackCounter} | Shuffled playlists: {playlistCounter}</Typography>
+                </div>
+            }
             <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white" }}>
                 Privacy and Credit
             </Typography>
@@ -47,9 +63,10 @@ const AboutPage = () => {
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 Spotify brand logos have been provided by Spotify.
             </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", paddingBottom: "20px", color: "white" }}>
                 To contact, send a email <Link underline="none" href={"mailto:"+ process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
             </Typography>
+            <Footer></Footer>
         </Box>
     );
 }
