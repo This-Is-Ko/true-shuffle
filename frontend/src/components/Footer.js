@@ -13,6 +13,8 @@ function Footer(props) {
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 <Link className="footer-links" to="/delete">Delete</Link>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
+                <Link className="footer-links" to="/faq">FAQ</Link>
+                &nbsp;&nbsp;|&nbsp;&nbsp;
                 <Link className="footer-links" to="/about">About</Link>
                 &nbsp;&nbsp;|&nbsp;&nbsp;
                 <MuiLink sx={{ color:"lightgrey" }} variant="caption" underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>Contact</MuiLink>

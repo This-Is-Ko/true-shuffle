@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
 
-const loadingMessages = ["Grabbing your playlist", "Mixing up the tracks"];
+const loadingMessages = ["Looking for your playlist", "Grabbing your music", "Randomising your tracks", "Creating a shuffled playlist", "You've got a lot of tracks!"];
 
 function LoadingMessage() {
     const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);

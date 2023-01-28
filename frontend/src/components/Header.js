@@ -25,6 +25,10 @@ const pages = [
         "link": "/delete"
     },
     {
+        "title": "FAQ",
+        "link": "/faq"
+    },
+    {
         "title": "About",
         "link": "/about"
     }

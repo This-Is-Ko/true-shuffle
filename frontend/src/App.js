@@ -9,6 +9,7 @@ import ShufflePlaylistContainer from "./components/ShufflePlaylistContainer";
 import ShufflePage from "./pages/ShufflePage";
 import DeletePage from "./pages/DeletePage";
 import AboutPage from "./pages/AboutPage";
+import FAQPage from "./pages/FAQPage";
 import Header from "./components/Header";
 
 function App() {
@@ -45,6 +46,7 @@ function App() {
                 <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth} />} />
                 <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth} />} />
                 <Route path="/delete" element={<DeletePage isAuth={isAuth} />} />
+                <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutPage />} />
             </Routes>
         </div>
