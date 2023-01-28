@@ -47,13 +47,15 @@ const FAQPage = () => {
 
             <Box sx={{ paddingBottom: "20px" }} >
                 {faqs.map((faqItem) => (
-                <Accordion disableGutters sx={{ width: "50%", backgroundColor: "#292e2f", textAlign: "center", margin:"auto" }} elevation={0}>
+                <Accordion disableGutters sx={{ 
+                    width: { xs: "90%", sm: '90%', md: "70%", lg: "60%" , xl: "50%"  },
+                     backgroundColor: "#292e2f", textAlign: "center", margin:"auto" }} elevation={0}>
                     <AccordionSummary
                         expandIcon={<ExpandMoreIcon />}
                         aria-controls="panel1a-content"
                         id={faqItem.id}
                     >
-                        <Typography variant='h6' component="div" sx={{ color: "white" }}>{faqItem.question}</Typography>
+                        <Typography variant='h6' component="div" sx={{ color: "white", fontWeight: 'bold'}}>{faqItem.question}</Typography>
                     </AccordionSummary>
                     <AccordionDetails sx={{ textAlign: "left" }}>
                         <Typography>
