@@ -25,8 +25,7 @@ class ShufflePlaylistResponse extends React.Component {
                             disableElevation
                             sx={{
                                 my: 2, color: 'white', bgcolor: "#1DB954",
-                                width: "30rem", maxWidth: "300px",
-                                "&:hover": { backgroundColor: "#ac2ca5" },
+                                width: "30rem", maxWidth: "300px"
                             }}
                             href={this.props.playlistUri} target="_blank">
                             Open shuffled playlist
@@ -38,8 +37,7 @@ class ShufflePlaylistResponse extends React.Component {
                             disableElevation
                             sx={{
                                 my: 2, color: 'white', bgcolor: "#1DB954",
-                                width: "30rem", maxWidth: "300px",
-                                "&:hover": { backgroundColor: "#ac2ca5" },
+                                width: "30rem", maxWidth: "300px"
                             }}
                             href="/shuffle">
                             Shuffle another playlist
