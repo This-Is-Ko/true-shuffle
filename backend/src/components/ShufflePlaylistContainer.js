@@ -8,7 +8,6 @@ import LoadingMessage from "./LoadingMessage";
 // class ShufflePlaylistContainer extends React.Component {
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     const [playlistUri, setPlaylistUri] = React.useState("");
-    const [isLoading, setIsLoading] = React.useState(true);
     const [isError, setIsError] = React.useState(false);
 
     const useQuery = () => {
@@ -37,16 +36,13 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                 .then(result => {
                     // console.log(result.data);
                     setPlaylistUri(result.data.playlistUri);
-                    setIsLoading(false);
                     setIsError(false);
                 })
                 .catch(error => {
                     // console.log(error)
-                    setIsLoading(false);
                     setIsError(error);
                 });
         } else {
-            setIsLoading(false);
             setIsError({ message: "No playlist selected" });
         }
     };

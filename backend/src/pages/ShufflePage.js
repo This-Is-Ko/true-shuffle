@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import PlaylistContainer from "../components/PlaylistContainer";
 import { Typography, Button, Box } from "@mui/material";
 
-
 const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
 
 const ShufflePage = ({ isAuth }) => {
@@ -11,10 +10,6 @@ const ShufflePage = ({ isAuth }) => {
     );
     const [newPlaylistUri, setNewPlaylistUri] = React.useState("");
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
-
-    function useQuery() {
-        return new URLSearchParams(window.location.search);
-    }
 
     const selectPlaylist = (playlistId, playlistName) => {
         console.log("clicked playlist " + playlistId + " " + playlistName);

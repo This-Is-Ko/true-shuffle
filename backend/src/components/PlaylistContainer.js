@@ -8,7 +8,6 @@ import { Box } from "@mui/material";
 
 const PlaylistContainer = ({ selectPlaylist }) => {
     const [playlists, setPlaylists] = React.useState([]);
-    const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
 
     const getPlaylistsCall = () => {
@@ -24,12 +23,10 @@ const PlaylistContainer = ({ selectPlaylist }) => {
             })
             .then((result) => {
                 setPlaylists(result.data.allPlaylists);
-                setIsLoading(false);
                 setError(false);
             })
             .catch((error) => {
                 console.log(error);
-                setIsLoading(false);
                 setError({message: "Unable to connect to Spotify, please try again later"});
             });
     };
