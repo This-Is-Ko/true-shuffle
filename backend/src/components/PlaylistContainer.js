@@ -23,7 +23,6 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                 },
             })
             .then((result) => {
-                // console.log("THEN>>>" + result.data);
                 setPlaylists(result.data.allPlaylists);
                 setIsLoading(false);
                 setError(false);
@@ -31,7 +30,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
             .catch((error) => {
                 console.log(error);
                 setIsLoading(false);
-                setError(true);
+                setError({message: "Unable to connect to Spotify, please try again later"});
             });
     };
 
