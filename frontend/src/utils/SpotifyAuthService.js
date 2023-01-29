@@ -40,7 +40,6 @@ export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToke
           setShowSuccessMessage(true)
         })
         .catch(error => {
-          // console.log(error)
           setLoadingAccessToken(false)
           setAccessTokenError(true)
         }
@@ -53,7 +52,6 @@ export function getAccessTokenUsingRefreshCall() {
   if (localStorage.getItem('refreshToken') != null) {
     axios.get(REFRESH_TOKEN_URL + localStorage.getItem('refreshToken'))
       .then(result => {
-        // console.log(result)
         localStorage.setItem('accessToken', result.data.spotifyAccessToken);
         console.log("Retry...")
         // Refresh page after obtaining a new token
@@ -61,30 +59,8 @@ export function getAccessTokenUsingRefreshCall() {
         // callToRetry();
       })
       .catch(error => {
-        console.log(error)
+        // console.log(error)
       }
       );
   }
 }
-
-// export function getPlaylists() {
-//   if (localStorage.getItem('accessToken') != null) {
-//     axios
-//       .post(process.env.REACT_APP_BACKEND_PATH + `/playlist/my-playlists`,
-//         {
-//           spotifyAccessToken: localStorage.getItem('accessToken'),
-//           spotifyRefreshToken: localStorage.getItem('refreshToken')
-//         })
-//       .then(result => {
-//         console.log(result.data.allPlaylists);
-//         this.setState({
-//           playlists: result.data.allPlaylists,
-//           isLoading: false
-//         });
-//       })
-//       .catch(error => {
-//           console.log(error)
-//         }
-//       );
-//   }
-// }
