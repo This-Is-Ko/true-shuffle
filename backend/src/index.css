@@ -133,6 +133,10 @@ h1, h2, h3, p {
     width: 80%;
 }
 
+.accordionIcon {
+    color: white;
+}
+
 
 @media (min-width: 1020px) {
     .homepageIconHolder {

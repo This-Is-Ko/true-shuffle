@@ -51,7 +51,7 @@ const FAQPage = () => {
                     width: { xs: "90%", sm: '90%', md: "70%", lg: "60%" , xl: "50%"  },
                      backgroundColor: "#292e2f", textAlign: "center", margin:"auto" }} elevation={0}>
                     <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
+                        expandIcon={<ExpandMoreIcon className="accordionIcon"/>}
                         aria-controls="panel1a-content"
                         id={faqItem.id}
                     >
