@@ -3,6 +3,7 @@ import { Typography, Button, Box } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
+import ErrorMessage from "../components/ErrorMessage";
 
 const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
 
@@ -39,7 +40,7 @@ const DeletePage = ({ isAuth }) => {
             .catch(error => {
                 console.log(error)
                 setIsLoading(false);
-                setIsError(error);
+                setIsError({message: "Unable to connect to Spotify, please try again later"});
             });
     }
 
@@ -149,6 +150,9 @@ const DeletePage = ({ isAuth }) => {
                                     Delete shuffled playlists
                                 </Button>
                             </Box>
+                        }
+                        {isError &&
+                            <ErrorMessage error={isError} />
                         }
                     </Box>
                 </Box>
