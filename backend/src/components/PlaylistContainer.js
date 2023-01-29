@@ -26,7 +26,6 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                 setError(false);
             })
             .catch((error) => {
-                console.log(error);
                 setError({message: "Unable to connect to Spotify, please try again later"});
             });
     };

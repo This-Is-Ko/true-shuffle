@@ -34,12 +34,10 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                     },
                     { headers: { "Content-Type": "application/json" } })
                 .then(result => {
-                    // console.log(result.data);
                     setPlaylistUri(result.data.playlistUri);
                     setIsError(false);
                 })
                 .catch(error => {
-                    // console.log(error)
                     setIsError(error);
                 });
         } else {

@@ -32,13 +32,11 @@ const DeletePage = ({ isAuth }) => {
                 },
                 { headers: { "Content-Type": "application/json" } })
             .then(result => {
-                console.log(result.data);
                 setIsSuccess(true);
                 setIsLoading(false);
                 setIsError(false);
             })
             .catch(error => {
-                console.log(error)
                 setIsLoading(false);
                 setIsError({message: "Unable to connect to Spotify, please try again later"});
             });
