@@ -18,13 +18,13 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
         if (!(useQuery().get('playlistId') == null || useQuery().get('playlistId') === "")) {
             // Call shuffle
             axios
-                .post(process.env.REACT_APP_BACKEND_PATH + `/api/playist/shuffle`,
+                .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/shuffle`,
                     {
-                        isUseLikedTracks: "false",
-                        playlistId: useQuery().get('playlistId'),
-                        playlistName: useQuery().get('playlistName'),
-                        isMakeNewPlaylist: "false",
-                        spotifyAccessInfo: {
+                        is_use_liked_tracks: "false",
+                        playlist_id: useQuery().get('playlistId'),
+                        playlist_name: useQuery().get('playlistName'),
+                        is_make_new_playlist: "false",
+                        spotify_access_info: {
                             access_token: localStorage.getItem("accessToken"),
                             refresh_token: localStorage.getItem("refreshToken"),
                             expires_at: localStorage.getItem("expiresAt"),
@@ -34,7 +34,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                     },
                     { headers: { "Content-Type": "application/json" } })
                 .then(result => {
-                    setPlaylistUri(result.data.playlistUri);
+                    setPlaylistUri(result.data.playlis_uri);
                     setIsError(false);
                 })
                 .catch(error => {
@@ -59,7 +59,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                 ) : (
                     <div className="loading-container">
                         <CircularProgress />
-                        <LoadingMessage/>
+                        <LoadingMessage />
                     </div>
                 )
             )}

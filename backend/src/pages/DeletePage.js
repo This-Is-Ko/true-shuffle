@@ -20,9 +20,9 @@ const DeletePage = ({ isAuth }) => {
         // Call delete shuffled playlists
         setIsLoading(true);
         axios
-            .post(process.env.REACT_APP_BACKEND_PATH + `/api/playist/delete`,
+            .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`,
                 {
-                    spotifyAccessInfo: {
+                    spotify_access_info: {
                         access_token: localStorage.getItem("accessToken"),
                         refresh_token: localStorage.getItem("refreshToken"),
                         expires_at: localStorage.getItem("expiresAt"),
@@ -38,7 +38,7 @@ const DeletePage = ({ isAuth }) => {
             })
             .catch(error => {
                 setIsLoading(false);
-                setIsError({message: "Unable to connect to Spotify, please try again later"});
+                setIsError({ message: "Unable to connect to Spotify, please try again later" });
             });
     }
 
@@ -60,9 +60,9 @@ const DeletePage = ({ isAuth }) => {
                             Clear shuffled playlists from
                         </Typography>
                         <img className={"spotifyNameLogoSubtitle"}
-                                src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
+                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                     </div>
-                    
+
                     <Box sx={{
                         textAlign: "center",
                         display: "flex",
@@ -86,8 +86,8 @@ const DeletePage = ({ isAuth }) => {
                         <Box
                             sx={{
                                 margin: "auto",
-                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%" , xl: "35%"  },
-                                textAlign:"left"
+                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%", xl: "35%" },
+                                textAlign: "left"
                             }}>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                                 Instructions:
@@ -107,7 +107,7 @@ const DeletePage = ({ isAuth }) => {
                         justifyContent: "center",
                     }}>
                         {isSuccess &&
-                            <Box sx={{ paddingTop: "10px"}}>
+                            <Box sx={{ paddingTop: "10px" }}>
                                 <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                                     <strong>Successfully deleted</strong>
                                 </Typography>
