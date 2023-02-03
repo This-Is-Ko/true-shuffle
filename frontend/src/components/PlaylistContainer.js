@@ -13,7 +13,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
     const getPlaylistsCall = () => {
         axios
             .post(process.env.REACT_APP_BACKEND_PATH + `/api/spotify/me/playlists`, {
-                spotifyAccessInfo: {
+                spotify_access_info: {
                     access_token: localStorage.getItem("accessToken"),
                     refresh_token: localStorage.getItem("refreshToken"),
                     expires_at: localStorage.getItem("expiresAt"),
@@ -22,11 +22,11 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                 },
             })
             .then((result) => {
-                setPlaylists(result.data.allPlaylists);
+                setPlaylists(result.data.all_playlists);
                 setError(false);
             })
             .catch((error) => {
-                setError({message: "Unable to connect to Spotify, please try again later"});
+                setError({ message: "Unable to connect to Spotify, please try again later" });
             });
     };
 
@@ -35,7 +35,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
     }, []);
 
     return (
-        <Box sx={{paddingBottom: "10px"}}>
+        <Box sx={{ paddingBottom: "10px" }}>
             {error ? (
                 <ErrorMessage error={error} />
             ) : playlists.length > 0 ? (
