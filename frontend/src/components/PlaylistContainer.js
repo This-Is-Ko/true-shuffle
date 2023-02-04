@@ -12,7 +12,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
 
     const getPlaylistsCall = () => {
         axios
-            .post(process.env.REACT_APP_BACKEND_PATH + `/api/spotify/me/playlists`, {
+            .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/me`, {
                 spotify_access_info: {
                     access_token: localStorage.getItem("accessToken"),
                     refresh_token: localStorage.getItem("refreshToken"),

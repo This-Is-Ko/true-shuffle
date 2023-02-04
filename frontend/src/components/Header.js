@@ -25,6 +25,10 @@ const pages = [
         "link": "/delete"
     },
     {
+        "title": "Share Music",
+        "link": "/share"
+    },
+    {
         "title": "FAQ",
         "link": "/faq"
     },

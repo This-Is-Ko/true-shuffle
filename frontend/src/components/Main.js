@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { getAccessTokenCall } from "../utils/SpotifyAuthService";
 import { useNavigate } from "react-router-dom";
-import { Typography, Button, Grid, Backdrop, CircularProgress, Snackbar, IconButton } from "@mui/material";
+import { Typography, Button, Backdrop, CircularProgress, Snackbar, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { Helmet } from "react-helmet";
 import Footer from "./Footer";
+import MainPageFeaturesContainer from "./mainPageComponents/MainPageFeaturesContainer";
+import { Box } from "@mui/system";
 
 const Main = ({ loginUri, isAuth, setIsAuth }) => {
     const [loadingAccessToken, setLoadingAccessToken] = React.useState(false);
@@ -46,7 +48,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
 
             <Snackbar
                 open={showErrorMessage}
-                anchorOrigin= {{
+                anchorOrigin={{
                     vertical: 'top',
                     horizontal: 'center'
                 }}
@@ -64,10 +66,10 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
             />
             <Snackbar
                 open={showSuccessMessage}
-                anchorOrigin= {{
-                        vertical: 'top',
-                        horizontal: 'center'
-                    }}
+                anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'center'
+                }}
                 autoHideDuration={10000}
                 onClose={handleMessageClose}
                 message="Successfully logged in"
@@ -86,7 +88,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     True Shuffle
                 </Typography>
                 <img className={"spotifyNameLogo"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
+                    src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                 <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                     Randomly shuffle your Spotify playlists
                 </Typography>
@@ -126,57 +128,9 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     </div>
                 </div>
             </div>
-            <div className={"featuresContainer"}>
-                <Typography variant='h3' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                    Features
-                </Typography>
-                <Grid
-                    sx={{ paddingTop: "20px", margin: "0 auto" }}
-                    container
-                    spacing={2}
-                    justifyContent="center"
-                    alignItems="flex-start"
-                >
-                    <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
-                        <img className={"featureIcon"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"headphones"} />
-                        <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Shuffle
-                        </Typography>
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                            Create shuffled playlists at the click of a button without affecting your original playlist order
-                        </Typography>
-                        <Button
-                            className={"normalButton"}
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2, color: 'white', bgcolor: "#1DB954"
-                            }}
-                            href={"/shuffle"}
-                        >Select</Button>
-                    </Grid>
-                    <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
-                        <img className={"featureIcon"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"headphones"} />
-                        <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Remove shuffled
-                        </Typography>
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                            Easy function to clean up created shuffled playlists while keeping all your original playlists
-                        </Typography>
-                        <Button
-                            className={"normalButton"}
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2, color: 'white', bgcolor: "#1DB954"
-                            }}
-                            href={"/#"}
-                        >Select</Button>
-                    </Grid>
-                </Grid>
-            </div>
+            <Box sx={{ width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" }, margin: "0 auto", paddingBottom: "32px", justifyContent: "center" }}>
+                <MainPageFeaturesContainer />
+            </Box>
             <Footer></Footer>
         </main>
     );

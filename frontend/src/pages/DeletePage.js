@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Typography, Button, Box } from "@mui/material";
+import { Typography, Button, Box, Stack, Paper } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
@@ -15,6 +15,11 @@ const DeletePage = ({ isAuth }) => {
     const [isSuccess, setIsSuccess] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
+    const [step, setStep] = React.useState(1);
+
+    useEffect(() => {
+        setAuth(localStorage.getItem("accessToken") != null);
+    }, [isAuth]);
 
     const deleteShuffledPlaylistsCall = () => {
         // Call delete shuffled playlists
@@ -35,6 +40,7 @@ const DeletePage = ({ isAuth }) => {
                 setIsSuccess(true);
                 setIsLoading(false);
                 setIsError(false);
+                setStep(2);
             })
             .catch(error => {
                 setIsLoading(false);
@@ -42,27 +48,110 @@ const DeletePage = ({ isAuth }) => {
             });
     }
 
+    const handleSubmit = async () => {
+        setStep(1);
+        setIsLoading(true);
+        deleteShuffledPlaylistsCall()
+    };
 
-    useEffect(() => {
-        setAuth(localStorage.getItem("accessToken") != null);
-    }, [isAuth]);
+    const handleRetry = async () => {
+        setStep(1);
+        setIsError(false)
+        setIsLoading(false);
+    };
+
+    if (auth === false) {
+        return (
+            <div className="loading-container">
+                <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                    Login to your spotify account to continue
+                </Typography>
+                <div className={"centerSpacingContainer"}>
+                    <Button
+                        variant="contained"
+                        disableElevation
+                        sx={{
+                            my: 2,
+                            color: "white",
+                            display: "block",
+                            bgcolor: "#1DB954",
+                            "&:hover": { backgroundColor: "#ac2ca5" },
+                        }}
+                        href={SPOTIFY_AUTH_URI}
+                    >
+                        Get started
+                    </Button>
+                </div>
+            </div>
+        )
+    }
+
+    const renderSwitch = (step) => {
+        switch (step) {
+            case 1:
+                return (
+                    <div>
+                        {isLoading ? (
+                            <CircularProgress />
+                        ) : (
+                            <Box sx={{ width: '100%' }}>
+                                <Stack spacing={1}>
+                                    <Box>
+                                        <Button
+                                            variant="contained"
+                                            disableElevation
+                                            sx={{
+                                                my: 2,
+                                                color: "white",
+                                                bgcolor: "#1DB954",
+                                            }}
+                                            onClick={handleSubmit}
+                                        >
+                                            Start
+                                        </Button>
+                                    </Box>
+                                </Stack>
+                            </Box>
+                        )}
+                    </div>
+                );
+            case 2:
+                return (
+                    <div>
+                        <Box sx={{ paddingTop: "10px" }}>
+                            <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                                <strong>Successfully deleted</strong>
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    display: "block",
+                                    bgcolor: "#1DB954"
+                                }}
+                                href="/shuffle"
+                            >
+                                Return to shuffle
+                            </Button>
+                        </Box>
+                    </div>
+                );
+            default:
+                return null;
+        }
+    }
 
     return (
         <main>
             <Helmet>
                 <title>Delete Playlists | True Shuffle</title>
             </Helmet>
-            <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
-            {auth === true ? (
+            <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
+                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
+                <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Clear all your True Shuffled playlists with one click</Typography>
                 <Box>
-                    <div className={"titleContainer"}>
-                        <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Clear shuffled playlists from
-                        </Typography>
-                        <img className={"spotifyNameLogoSubtitle"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
-                    </div>
-
                     <Box sx={{
                         textAlign: "center",
                         display: "flex",
@@ -100,83 +189,31 @@ const DeletePage = ({ isAuth }) => {
                             </Typography>
                         </Box>
                     }
-
-                    <Box sx={{
-                        textAlign: "center",
-                        display: "flex",
-                        justifyContent: "center",
-                    }}>
-                        {isSuccess &&
-                            <Box sx={{ paddingTop: "10px" }}>
-                                <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                                    <strong>Successfully deleted</strong>
-                                </Typography>
-                                <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        my: 2,
-                                        color: "white",
-                                        display: "block",
-                                        bgcolor: "#1DB954",
-                                        "&:hover": { backgroundColor: "#ac2ca5" },
-                                    }}
-                                    href="/shuffle"
-                                >
-                                    Return to shuffle
-                                </Button>
-                            </Box>
-                        }
-                        {isLoading &&
-                            <Box>
-                                <CircularProgress />
-                            </Box>
-                        }
-                        {!isLoading && !isSuccess && !isError &&
-                            <Box>
-                                <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        my: 2,
-                                        color: "white",
-                                        display: "block",
-                                        bgcolor: "#1DB954",
-                                    }}
-                                    onClick={() => deleteShuffledPlaylistsCall()}
-                                >
-                                    Delete shuffled playlists
-                                </Button>
-                            </Box>
-                        }
-                        {isError &&
-                            <ErrorMessage error={isError} />
-                        }
-                    </Box>
                 </Box>
-            ) : (
-                <div className="loading-container">
-                    <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                        Login to your spotify account to continue
-                    </Typography>
-                    <div className={"centerSpacingContainer"}>
+                <Box>
+                    {!isError && renderSwitch(step)}
+                </Box>
+                {isError &&
+                    <Box>
+                        {/* <ErrorMessage error={isError} /> */}
+                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+                            Something went wrong. Please try again later.
+                        </Typography>
                         <Button
                             variant="contained"
                             disableElevation
                             sx={{
                                 my: 2,
                                 color: "white",
-                                display: "block",
                                 bgcolor: "#1DB954",
-                                "&:hover": { backgroundColor: "#ac2ca5" },
                             }}
-                            href={SPOTIFY_AUTH_URI}
+                            onClick={handleRetry}
                         >
-                            Get started
+                            Retry
                         </Button>
-                    </div>
-                </div>
-            )}
+                    </Box>
+                }
+            </Paper>
         </main>
     );
 };
