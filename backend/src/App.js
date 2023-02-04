@@ -8,6 +8,7 @@ import Main from "./components/Main"
 import ShufflePlaylistContainer from "./components/ShufflePlaylistContainer";
 import ShufflePage from "./pages/ShufflePage";
 import DeletePage from "./pages/DeletePage";
+import ShareLikedTracksPage from "./pages/ShareLikedTracksPage";
 import AboutPage from "./pages/AboutPage";
 import FAQPage from "./pages/FAQPage";
 import Header from "./components/Header";
@@ -36,7 +37,7 @@ function App() {
     return (
         <div className="App">
             {/* Set a global message to display on all pages of the site */}
-            {showGlobalMessage === "true" && 
+            {showGlobalMessage === "true" &&
                 <div className='globalMessage'>
                     <Typography variant='caption' component="div" sx={{ paddingTop: "3px", color: "red" }}>{globalMessageContent}</Typography>
                 </div>
@@ -46,6 +47,7 @@ function App() {
                 <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth} />} />
                 <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth} />} />
                 <Route path="/delete" element={<DeletePage isAuth={isAuth} />} />
+                <Route path="/share" element={<ShareLikedTracksPage isAuth={isAuth} />} />
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutPage />} />
             </Routes>

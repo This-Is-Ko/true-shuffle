@@ -121,12 +121,6 @@ h1, h2, h3, p {
     padding-top: 5px;
 }
 
-.featuresContainer{
-    padding-bottom: 32px;
-    justify-content: center;
-    width: 70%;
-    margin: 0 auto;
-}
 
 .about-image {
     max-width: 450px;
