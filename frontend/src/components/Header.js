@@ -21,12 +21,16 @@ const pages = [
         "link": "/shuffle"
     },
     {
-        "title": "Delete",
-        "link": "/delete"
+        "title": "Anaylse My Music",
+        "link": "/analysis"
     },
     {
-        "title": "Share Music",
+        "title": "Share Library",
         "link": "/share"
+    },
+    {
+        "title": "Delete",
+        "link": "/delete"
     },
     {
         "title": "FAQ",
@@ -114,7 +118,7 @@ const Header = ({ loginUri, isAuth }) => {
                         >
                             {pages.map((page) => (
                                 <MenuItem
-                                    key={page}
+                                    key={page.title}
                                     component="a"
                                     href={page.link}
                                     onClick={handleCloseNavMenu}

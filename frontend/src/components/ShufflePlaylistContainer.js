@@ -52,7 +52,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     return (
         <div className="shuffle-container">
             {isError ? (
-                <ErrorMessage error={isError} />
+                <ErrorMessage error={isError} isGeneric={true} />
             ) : (
                 playlistUri !== "" ? (
                     <ShufflePlaylistResponse playlistUri={playlistUri} />

@@ -131,6 +131,10 @@ h1, h2, h3, p {
     color: white;
 }
 
+.imgBlurPreview {
+        max-width:100%;
+}
+
 
 @media (min-width: 1020px) {
     .homepageIconHolder {

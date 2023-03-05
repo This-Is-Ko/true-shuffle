@@ -5,12 +5,17 @@ export const features = [
         "uri": "/shuffle"
     },
     {
+        "name": "Analyse My Music",
+        "description": "See what your most liked artists and albums are in your Liked Songs on Spotify",
+        "uri": "/analysis"
+    },
+    {
         "name": "Remove shuffled",
         "description": "Easy function to clean up created shuffled playlists while keeping all your original playlists",
         "uri": "/delete"
     },
     {
-        "name": "Share Liked Songs",
+        "name": "Share Library",
         "description": "Create a playlist from your Liked Songs to easily share your music collection",
         "uri": "/share"
     }
