@@ -238,9 +238,13 @@ const AnalysisPage = ({ isAuth }) => {
                                 </Typography>
                                 {
                                     likedTracksTrackerData.length > 0 ?
-                                        (<Paper sx={{ height: "500px", backgroundColor: "#b9b9b9" }}>
-                                            <LineGraph data={transformTrackerData(likedTracksTrackerData, "Liked Tracks")} />
-                                        </Paper>)
+                                        (<Box><Typography variant='subtitle2' component="div" sx={{ color: "lightgrey" }}>
+                                            Our liked tracks history is updated once a week so if you don't see many data points, come back in a few weeks to see more data.
+                                        </Typography>
+                                            <Paper sx={{ height: "500px", backgroundColor: "#b9b9b9" }}>
+                                                <LineGraph data={transformTrackerData(likedTracksTrackerData, "Liked Tracks")} />
+                                            </Paper>
+                                        </Box>)
                                         :
                                         (<Typography variant='subtitle2' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                                             <strong>Not enough data to generate tracker data. Our liked tracks history is updated at the start of each week.</strong>
