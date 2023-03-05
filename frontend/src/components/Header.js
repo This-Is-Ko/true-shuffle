@@ -18,27 +18,33 @@ import Menu from '@mui/material/Menu';
 const pages = [
     {
         "title": "Shuffle",
-        "link": "/shuffle"
+        "link": "/shuffle",
+        "special": ""
     },
     {
         "title": "Anaylse My Music",
-        "link": "/analysis"
+        "link": "/analysis",
+        "special": "NEW "
     },
     {
         "title": "Share Library",
-        "link": "/share"
+        "link": "/share",
+        "special": ""
     },
     {
         "title": "Delete",
-        "link": "/delete"
+        "link": "/delete",
+        "special": ""
     },
     {
         "title": "FAQ",
-        "link": "/faq"
+        "link": "/faq",
+        "special": ""
     },
     {
         "title": "About",
-        "link": "/about"
+        "link": "/about",
+        "special": ""
     }
 ];
 
@@ -169,7 +175,7 @@ const Header = ({ loginUri, isAuth }) => {
                                 }}
                                 href={page.link}
                             >
-                                {page.title}
+                                <Typography display="inline" sx={{ color: "red", fontSize: "0.875rem" }}>{page.special}</Typography>{page.title}
                             </Button>
                         ))}
                     </Box>
