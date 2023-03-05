@@ -1,10 +1,18 @@
 import React from "react";
+import { Typography } from "@mui/material";
 
-const ErrorMessage = (props) => {
+const ErrorMessage = ({ error, isGeneric }) => {
 
   return (
     <div className="loading-container">
-      <h2>{props.error.message}</h2>
+      {
+        isGeneric ?
+          <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+            Something went wrong. Please try again later.
+          </Typography>
+          :
+          <h2>{error.message}</h2>
+      }
     </div>
   )
 }

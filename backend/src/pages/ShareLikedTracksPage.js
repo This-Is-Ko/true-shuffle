@@ -5,7 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
 import ErrorMessage from "../components/ErrorMessage";
 
-const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
+import RestrictedAccessPage from './RestrictedAccessPage'
 
 const ShareLikedTracksPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
@@ -70,29 +70,7 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     };
 
     if (auth === false) {
-        return (
-            <div className="loading-container">
-                <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                    Login to your spotify account to continue
-                </Typography>
-                <div className={"centerSpacingContainer"}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            my: 2,
-                            color: "white",
-                            display: "block",
-                            bgcolor: "#1DB954",
-                            "&:hover": { backgroundColor: "#ac2ca5" },
-                        }}
-                        href={SPOTIFY_AUTH_URI}
-                    >
-                        Get started
-                    </Button>
-                </div>
-            </div>
-        )
+        return <RestrictedAccessPage />
     }
 
     const renderSwitch = (step) => {
@@ -189,45 +167,49 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>
                 <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Easily share your Spotify library by creating a playlist containing all your liked songs</Typography>
                 <Box sx={{
-                    textAlign: "center",
-                    display: "flex",
-                    justifyContent: "center",
+                    width: "90%",
                 }}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            my: 2,
-                            color: "white",
-                            display: "block",
-                            bgcolor: "#1DB954",
-                        }}
-                        onClick={() => setShowDetailsTab(prev => !prev)}
-                    >
-                        How to
-                    </Button>
-                </Box>
-                {showDetailsTab &&
-                    <Box
-                        sx={{
-                            margin: "auto",
-                            width: { xs: "90%", sm: '90%', md: "50%", lg: "40%", xl: "35%" },
-                            textAlign: "left"
-                        }}>
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                            Instructions:
-                        </Typography>
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                            1. Click "Start"
-                        </Typography>
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                            2. Enter a playlist name or leave as default
-                        </Typography>
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                            3. A new playlist will be created with all the songs currently in your Liked Songs
-                        </Typography>
+                    <Box sx={{
+                        textAlign: "center",
+                        display: "flex",
+                        justifyContent: "center",
+                    }}>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            sx={{
+                                my: 2,
+                                color: "white",
+                                display: "block",
+                                bgcolor: "#1DB954",
+                            }}
+                            onClick={() => setShowDetailsTab(prev => !prev)}
+                        >
+                            How to
+                        </Button>
                     </Box>
-                }
+                    {showDetailsTab &&
+                        <Box
+                            sx={{
+                                margin: "auto",
+                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%", xl: "35%" },
+                                textAlign: "left"
+                            }}>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                                Instructions:
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+                                1. Click "Start"
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+                                2. Enter a playlist name or leave as default
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+                                3. A new playlist will be created with all the songs currently in your Liked Songs
+                            </Typography>
+                        </Box>
+                    }
+                </Box>
                 <Box>
                     {!isError && renderSwitch(step)}
                 </Box>

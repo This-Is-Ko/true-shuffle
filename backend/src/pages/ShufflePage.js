@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import PlaylistContainer from "../components/PlaylistContainer";
 import { Typography, Button, Box } from "@mui/material";
+import RestrictedAccessPage from './RestrictedAccessPage'
 
 const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
 
@@ -26,10 +27,10 @@ const ShufflePage = ({ isAuth }) => {
                 <Box>
                     <div className={"titleContainer"}>
                         <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Select a playlist from 
+                            Select a playlist from
                         </Typography>
                         <img className={"spotifyNameLogoSubtitle"}
-                                src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
+                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                     </div>
                     <Box sx={{
                         textAlign: "center",
@@ -54,8 +55,8 @@ const ShufflePage = ({ isAuth }) => {
                         <Box
                             sx={{
                                 margin: "auto",
-                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%" , xl: "35%"  },
-                                textAlign:"left",
+                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%", xl: "35%" },
+                                textAlign: "left",
                             }}>
                             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                                 Instructions:
@@ -76,29 +77,7 @@ const ShufflePage = ({ isAuth }) => {
                     }
                     <PlaylistContainer selectPlaylist={selectPlaylist} />
                 </Box>
-            ) : newPlaylistUri !== "" ? (<h1 className={"normalTitle"}> a playlist</h1>) : (
-                <div className="loading-container">
-                    <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                        Login to your spotify account to continue
-                    </Typography>
-                    <div className={"centerSpacingContainer"}>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                display: "block",
-                                bgcolor: "#1DB954",
-                                "&:hover": { backgroundColor: "#ac2ca5" },
-                            }}
-                            href={SPOTIFY_AUTH_URI}
-                        >
-                            Get started
-                        </Button>
-                    </div>
-                </div>
-            )}
+            ) : newPlaylistUri !== "" ? (<h1 className={"normalTitle"}> a playlist</h1>) : <RestrictedAccessPage />}
         </main>
     );
 };

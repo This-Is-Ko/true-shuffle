@@ -37,7 +37,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
     return (
         <Box sx={{ paddingBottom: "10px" }}>
             {error ? (
-                <ErrorMessage error={error} />
+                <ErrorMessage error={error} isGeneric={true} />
             ) : playlists.length > 0 ? (
                 <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} />
             ) : (

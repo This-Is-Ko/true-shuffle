@@ -4,8 +4,7 @@ import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
 import ErrorMessage from "../components/ErrorMessage";
-
-const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
+import RestrictedAccessPage from './RestrictedAccessPage'
 
 const DeletePage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
@@ -61,29 +60,7 @@ const DeletePage = ({ isAuth }) => {
     };
 
     if (auth === false) {
-        return (
-            <div className="loading-container">
-                <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                    Login to your spotify account to continue
-                </Typography>
-                <div className={"centerSpacingContainer"}>
-                    <Button
-                        variant="contained"
-                        disableElevation
-                        sx={{
-                            my: 2,
-                            color: "white",
-                            display: "block",
-                            bgcolor: "#1DB954",
-                            "&:hover": { backgroundColor: "#ac2ca5" },
-                        }}
-                        href={SPOTIFY_AUTH_URI}
-                    >
-                        Get started
-                    </Button>
-                </div>
-            </div>
-        )
+        return <RestrictedAccessPage />
     }
 
     const renderSwitch = (step) => {
@@ -195,7 +172,7 @@ const DeletePage = ({ isAuth }) => {
                 </Box>
                 {isError &&
                     <Box>
-                        {/* <ErrorMessage error={isError} /> */}
+                        {/* <ErrorMessage error={isError} isGeneric={true}/> */}
                         <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
                             Something went wrong. Please try again later.
                         </Typography>

@@ -40,7 +40,7 @@ const AboutPage = () => {
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 If you add new music on Spotify, just shuffle again and the new tracks will be added to your shuffled playlist.
             </Typography>
-            {trackCounter !== null && playlistCounter !== null && 
+            {trackCounter !== null && playlistCounter !== null &&
                 <div>
                     <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white" }}>
                         Statistics
@@ -52,7 +52,7 @@ const AboutPage = () => {
                 Privacy and Credit
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                This application doesn't store any of your data and all authentication is handled by Spotify.
+                This application only stores your Spotify access token and user ID in order to track Liked Songs. All authentication is handled by Spotify.
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 Images were created by
@@ -64,7 +64,7 @@ const AboutPage = () => {
                 Spotify brand logos have been provided by Spotify.
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", paddingBottom: "20px", color: "white" }}>
-                To contact, send a email <Link underline="none" href={"mailto:"+ process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
+                To contact, send a email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
             </Typography>
             <Footer></Footer>
         </Box>
