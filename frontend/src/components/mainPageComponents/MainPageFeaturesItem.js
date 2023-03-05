@@ -9,7 +9,7 @@ const MainPageFeaturesItem = (props) => {
             <img className={"featureIcon"}
                 src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"equalizer"} />
             <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                {props.feature.name}
+                <Typography variant='h4' display="inline" sx={{ color: "red" }}>{props.feature.special}</Typography>{props.feature.name}
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 {props.feature.description}
