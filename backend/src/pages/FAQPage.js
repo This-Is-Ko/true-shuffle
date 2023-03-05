@@ -22,13 +22,18 @@ const faqs = [
     },
     {
         "question": "What user data is stored by True Shuffle?",
-        "answer": "No identifying user data is stored and all authentication is handled by Spotify.",
+        "answer": "Only user data that is stored is the user ID, access token to retrieved Liked Songs and Liked Songs count to generate historical data. All authentication is handled by Spotify.",
         "id": "q4"
+    },
+    {
+        "question": "Can I opt-out of storing Liked Songs history?",
+        "answer": "This feature is currently planned. Meanwhile please contact if you would like to remove your data.",
+        "id": "q5"
     },
     {
         "question": "How can I give feedback about True Shuffle?",
         "answer": "Feel free to reach out using the email listed on the About page or click on the Contact link in the footer.",
-        "id": "q5"
+        "id": "q6"
     },
 ];
 
@@ -47,22 +52,23 @@ const FAQPage = () => {
 
             <Box sx={{ paddingBottom: "20px" }} >
                 {faqs.map((faqItem) => (
-                <Accordion disableGutters sx={{ 
-                    width: { xs: "90%", sm: '90%', md: "70%", lg: "60%" , xl: "50%"  },
-                     backgroundColor: "#292e2f", textAlign: "center", margin:"auto" }} elevation={0}>
-                    <AccordionSummary
-                        expandIcon={<ExpandMoreIcon className="accordionIcon"/>}
-                        aria-controls="panel1a-content"
-                        id={faqItem.id}
-                    >
-                        <Typography variant='h6' component="div" sx={{ color: "white", fontWeight: 'bold'}}>{faqItem.question}</Typography>
-                    </AccordionSummary>
-                    <AccordionDetails sx={{ textAlign: "left" }}>
-                        <Typography>
-                            {faqItem.answer}
-                        </Typography>
-                    </AccordionDetails>
-                </Accordion>
+                    <Accordion disableGutters sx={{
+                        width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" },
+                        backgroundColor: "#292e2f", textAlign: "center", margin: "auto"
+                    }} elevation={0}>
+                        <AccordionSummary
+                            expandIcon={<ExpandMoreIcon className="accordionIcon" />}
+                            aria-controls="panel1a-content"
+                            id={faqItem.id}
+                        >
+                            <Typography variant='h6' component="div" sx={{ color: "white", fontWeight: 'bold' }}>{faqItem.question}</Typography>
+                        </AccordionSummary>
+                        <AccordionDetails sx={{ textAlign: "left" }}>
+                            <Typography>
+                                {faqItem.answer}
+                            </Typography>
+                        </AccordionDetails>
+                    </Accordion>
                 ))}
             </Box>
             <Footer></Footer>
