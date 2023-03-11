@@ -77,6 +77,8 @@ const AnalysisPage = ({ isAuth }) => {
                         minWidth: "200px", maxWidth: "600px", paddingTop: "10px", color: "lightgrey"
                     }}>
                     Welcome to your personal Spotify library statistics page! Here, you can find a breakdown of the music you've saved, including your top artists, top albums, and more. We've analyzed your library to provide you with interesting insights about the music you enjoy.
+                    <br />
+                    The Spotify library count tracker is enabled when you first login. The tracker is updated weekly so check back frequently to see how your library grows.
                 </Typography>
             </Box>
             {
