@@ -24,24 +24,14 @@ const DeletePage = ({ isAuth }) => {
         // Call delete shuffled playlists
         setIsLoading(true);
         axios
-            .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`,
-                {
-                    spotify_access_info: {
-                        access_token: localStorage.getItem("accessToken"),
-                        refresh_token: localStorage.getItem("refreshToken"),
-                        expires_at: localStorage.getItem("expiresAt"),
-                        scope: localStorage.getItem("scope"),
-                        token_type: localStorage.getItem("tokenType"),
-                    }
-                },
-                { headers: { "Content-Type": "application/json" } })
-            .then(result => {
+            .delete(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`,
+                { withCredentials: true }
+            ).then(result => {
                 setIsSuccess(true);
                 setIsLoading(false);
                 setIsError(false);
                 setStep(2);
-            })
-            .catch(error => {
+            }).catch(error => {
                 setIsLoading(false);
                 setIsError({ message: "Unable to connect to Spotify, please try again later" });
             });

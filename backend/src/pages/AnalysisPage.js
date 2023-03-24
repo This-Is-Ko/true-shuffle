@@ -30,15 +30,7 @@ const AnalysisPage = ({ isAuth }) => {
 
     const getUserAggregatedData = () => {
         axios
-            .post(process.env.REACT_APP_BACKEND_PATH + `/api/user/aggregate`, {
-                spotify_access_info: {
-                    access_token: localStorage.getItem("accessToken"),
-                    refresh_token: localStorage.getItem("refreshToken"),
-                    expires_at: localStorage.getItem("expiresAt"),
-                    scope: localStorage.getItem("scope"),
-                    token_type: localStorage.getItem("tokenType"),
-                }
-            })
+            .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/aggregate`, { withCredentials: true })
             .then((result) => {
                 setAnalysisData(result.data.analysis)
                 setLikedTracksTrackerData(result.data.track_liked_tracks.data)

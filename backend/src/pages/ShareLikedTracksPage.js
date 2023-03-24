@@ -27,16 +27,8 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         setIsLoading(true);
         axios
             .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks`,
-                {
-                    spotify_access_info: {
-                        access_token: localStorage.getItem("accessToken"),
-                        refresh_token: localStorage.getItem("refreshToken"),
-                        expires_at: localStorage.getItem("expiresAt"),
-                        scope: localStorage.getItem("scope"),
-                        token_type: localStorage.getItem("tokenType"),
-                    }
-                },
-                { headers: { "Content-Type": "application/json" } })
+                { playlist_name: playlistName },
+                { headers: { "Content-Type": "application/json" }, withCredentials: true })
             .then(result => {
                 setIsSuccess(true);
                 setIsLoading(false);

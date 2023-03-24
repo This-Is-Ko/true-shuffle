@@ -23,16 +23,9 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                         is_use_liked_tracks: "false",
                         playlist_id: useQuery().get('playlistId'),
                         playlist_name: useQuery().get('playlistName'),
-                        is_make_new_playlist: "false",
-                        spotify_access_info: {
-                            access_token: localStorage.getItem("accessToken"),
-                            refresh_token: localStorage.getItem("refreshToken"),
-                            expires_at: localStorage.getItem("expiresAt"),
-                            scope: localStorage.getItem("scope"),
-                            token_type: localStorage.getItem("tokenType"),
-                        }
+                        is_make_new_playlist: "false"
                     },
-                    { headers: { "Content-Type": "application/json" } })
+                    { headers: { "Content-Type": "application/json" }, withCredentials: true })
                 .then(result => {
                     setPlaylistUri(result.data.playlist_uri);
                     setIsError(false);
