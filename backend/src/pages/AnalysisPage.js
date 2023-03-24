@@ -19,7 +19,7 @@ import OverallStatsContainer from "../components/analysisPageComponents/OverallS
 
 const AnalysisPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'))
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
 
     const [startAnalysis, setStartAnalysis] = React.useState(false);
@@ -45,7 +45,7 @@ const AnalysisPage = ({ isAuth }) => {
     };
 
     useEffect(() => {
-        // setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken')));
+        // setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
         if (startAnalysis) {
             getUserAggregatedData();
         }
