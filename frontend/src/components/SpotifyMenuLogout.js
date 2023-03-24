@@ -1,27 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Typography, MenuItem } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
-const SpotifyMenuLogout = ({ handleCloseNavMenu }) => {
+import { logoutUser } from "../utils/SpotifyAuthService";
 
-    const logout = () => {
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        localStorage.removeItem("expiresAt");
-        localStorage.removeItem("scope");
-        localStorage.removeItem("tokenType");
-    };
+const SpotifyMenuLogout = ({ handleCloseNavMenu, auth, setAuth }) => {
+    const navigate = useNavigate();
 
-    const handleMenuLogout = () => {
-        logout();
+    const handleMenuLogout = async () => {
+        await logoutUser(setAuth);
         handleCloseNavMenu();
+        navigate("/")
     }
+
+    useEffect(() => {
+    }, [auth]);
 
     return (
         <MenuItem
             component="a"
-            href="/"
             key={"logout"}
-            onClick={handleMenuLogout}
+            onClick={() => handleMenuLogout()}
             sx={{
                 color: 'white', display: 'block', bgcolor: "#161817"
             }}>

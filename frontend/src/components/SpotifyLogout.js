@@ -1,34 +1,31 @@
-import React from "react";
-import {Button} from "@mui/material";
+import React, { useEffect } from "react";
+import { Button } from "@mui/material";
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
+import { useNavigate } from "react-router-dom";
 
-class SpotifyLogout extends React.Component {
+import { logoutUser } from "../utils/SpotifyAuthService";
 
-  logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("expiresAt");
-    localStorage.removeItem("scope");
-    localStorage.removeItem("tokenType");
+const SpotifyLogout = ({ auth, setAuth }) => {
+  const navigate = useNavigate();
+
+  const logout = async () => {
+    await logoutUser(setAuth)
+    navigate("/")
   };
 
-  state = {
-    isLoading: false
-  };
+  useEffect(() => {
+  }, [auth]);
 
-  render() {
-    return (
-      <Button variant="contained"
-              href={"/"}
-              startIcon={<VpnKeyIcon/>}
-              onClick={() => this.logout()}
-              disableElevation
-              sx={{
-                bgcolor: "#1DB954"
-              }}
-      >Logout</Button>
-    )
-  }
+  return (
+    <Button variant="contained"
+      startIcon={<VpnKeyIcon />}
+      onClick={() => logout()}
+      disableElevation
+      sx={{
+        bgcolor: "#1DB954"
+      }}
+    >Logout</Button>
+  )
 
 }
 

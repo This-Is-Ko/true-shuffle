@@ -9,7 +9,7 @@ import RestrictedAccessPage from './RestrictedAccessPage'
 
 const ShareLikedTracksPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        localStorage.getItem("accessToken") != null
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'))
     );
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
     const [isSuccess, setIsSuccess] = React.useState(false);
@@ -19,7 +19,7 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     const [playlistName, setPlaylistName] = React.useState("");
 
     useEffect(() => {
-        setAuth(localStorage.getItem("accessToken") != null);
+        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken')));
     }, [isAuth]);
 
     const createLikedTracksPlaylistsCall = () => {
