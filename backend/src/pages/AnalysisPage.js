@@ -19,7 +19,7 @@ import OverallStatsContainer from "../components/analysisPageComponents/OverallS
 
 const AnalysisPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        localStorage.getItem("accessToken") != null
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'))
     );
 
     const [startAnalysis, setStartAnalysis] = React.useState(false);
@@ -45,10 +45,11 @@ const AnalysisPage = ({ isAuth }) => {
     };
 
     useEffect(() => {
+        // setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken')));
         if (startAnalysis) {
             getUserAggregatedData();
         }
-    }, [isAuth, startAnalysis]);
+    }, [startAnalysis]);
 
     if (auth === false) {
         return <RestrictedAccessPage />

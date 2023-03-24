@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
-const REFRESH_TOKEN_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/handle-refresh-token?refreshToken=";
+const LOGOUT_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/logout";
 
 export function getLoginUriApi(setLoginUri) {
   console.debug("Retrieving login uri")
@@ -19,8 +19,10 @@ export function getLoginUriApi(setLoginUri) {
     });
 }
 
-export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToken, setAccessTokenError, setShowSuccessMessage) => {
-  if (localStorage.getItem('accessToken') == null) {
+export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessToken, setAccessTokenError, setShowSuccessMessage) => {
+  const accessToken = document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'));
+
+  if (!accessToken) {
     if (code != null) {
       setLoadingAccessToken(true)
       axios.post(AUTH_CODE_URL,
@@ -28,18 +30,26 @@ export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToke
           code: code
         },
         { withCredentials: true }
-      )
-        .then(result => {
-          setAuth(true);
-          navigate("/");
-          setLoadingAccessToken(false)
-          setShowSuccessMessage(true)
-        })
-        .catch(error => {
-          setLoadingAccessToken(false)
-          setAccessTokenError(true)
-        }
-        );
+      ).then(result => {
+        setIsAuth(true);
+        navigate("/");
+        setLoadingAccessToken(false)
+        setShowSuccessMessage(true)
+      }).catch(error => {
+        setLoadingAccessToken(false)
+        setAccessTokenError(true)
+      });
     }
   }
+}
+
+export const logoutUser = (setAuth) => {
+  axios.post(LOGOUT_URL,
+    {},
+    { withCredentials: true }
+  ).then(result => {
+    setAuth(false)
+  }).catch(error => {
+    setAuth(false)
+  });
 }
