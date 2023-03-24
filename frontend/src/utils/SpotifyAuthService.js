@@ -26,14 +26,10 @@ export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToke
       axios.post(AUTH_CODE_URL,
         {
           code: code
-        }
+        },
+        { withCredentials: true }
       )
         .then(result => {
-          localStorage.setItem('accessToken', result.data.access_token);
-          localStorage.setItem('refreshToken', result.data.refresh_token);
-          localStorage.setItem('expiresAt', result.data.expires_at);
-          localStorage.setItem('scope', result.data.scope);
-          localStorage.setItem('tokenType', result.data.token_type);
           setAuth(true);
           navigate("/");
           setLoadingAccessToken(false)
@@ -45,22 +41,5 @@ export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToke
         }
         );
     }
-  }
-}
-
-export function getAccessTokenUsingRefreshCall() {
-  if (localStorage.getItem('refreshToken') != null) {
-    axios.get(REFRESH_TOKEN_URL + localStorage.getItem('refreshToken'))
-      .then(result => {
-        localStorage.setItem('accessToken', result.data.spotifyAccessToken);
-        console.log("Retry...")
-        // Refresh page after obtaining a new token
-        window.location.reload(false);
-        // callToRetry();
-      })
-      .catch(error => {
-        // console.log(error)
-      }
-      );
   }
 }
