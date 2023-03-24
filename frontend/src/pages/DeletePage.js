@@ -8,7 +8,7 @@ import RestrictedAccessPage from './RestrictedAccessPage'
 
 const DeletePage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'))
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
     const [isSuccess, setIsSuccess] = React.useState(false);
@@ -17,7 +17,7 @@ const DeletePage = ({ isAuth }) => {
     const [step, setStep] = React.useState(1);
 
     useEffect(() => {
-        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken')));
+        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth]);
 
     const deleteShuffledPlaylistsCall = () => {

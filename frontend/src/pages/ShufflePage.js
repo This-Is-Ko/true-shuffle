@@ -7,7 +7,7 @@ const SPOTIFY_AUTH_URI = process.env.REACT_APP_SPOTIFY_AUTH_URI;
 
 const ShufflePage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'))
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
     const [newPlaylistUri, setNewPlaylistUri] = React.useState("");
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
@@ -18,7 +18,7 @@ const ShufflePage = ({ isAuth }) => {
     };
 
     useEffect(() => {
-        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken')));
+        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth, newPlaylistUri]);
 
     return (

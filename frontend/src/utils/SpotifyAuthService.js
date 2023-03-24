@@ -20,7 +20,7 @@ export function getLoginUriApi(setLoginUri) {
 }
 
 export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessToken, setAccessTokenError, setShowSuccessMessage) => {
-  const accessToken = document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken'));
+  const accessToken = document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'));
 
   if (!accessToken) {
     if (code != null) {

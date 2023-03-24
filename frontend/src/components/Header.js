@@ -49,7 +49,7 @@ const pages = [
 ];
 
 const Header = ({ loginUri, isAuth }) => {
-    const [auth, setAuth] = React.useState(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-spotifyAccessToken')));
+    const [auth, setAuth] = React.useState(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
