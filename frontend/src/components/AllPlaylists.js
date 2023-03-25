@@ -3,7 +3,7 @@ import PlaylistContainer from "./PlaylistContainer";
 import Button from "@mui/material/Button";
 
 const AllPlaylists = ({ loginUri }) => {
-  const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
+  const [auth, setAuth] = React.useState(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
   const [localLoginUri, setLocalLoginUri] = React.useState("/#");
 
   useEffect(() => {

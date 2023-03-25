@@ -3,45 +3,32 @@ import { Typography, Button, Box, Stack, Paper } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
-import ErrorMessage from "../components/ErrorMessage";
 import RestrictedAccessPage from './RestrictedAccessPage'
 
 const DeletePage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        localStorage.getItem("accessToken") != null
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
-    const [isSuccess, setIsSuccess] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [step, setStep] = React.useState(1);
 
     useEffect(() => {
-        setAuth(localStorage.getItem("accessToken") != null);
+        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth]);
 
     const deleteShuffledPlaylistsCall = () => {
         // Call delete shuffled playlists
         setIsLoading(true);
         axios
-            .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`,
-                {
-                    spotify_access_info: {
-                        access_token: localStorage.getItem("accessToken"),
-                        refresh_token: localStorage.getItem("refreshToken"),
-                        expires_at: localStorage.getItem("expiresAt"),
-                        scope: localStorage.getItem("scope"),
-                        token_type: localStorage.getItem("tokenType"),
-                    }
-                },
-                { headers: { "Content-Type": "application/json" } })
-            .then(result => {
-                setIsSuccess(true);
+            .delete(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`,
+                { withCredentials: true }
+            ).then(result => {
                 setIsLoading(false);
                 setIsError(false);
                 setStep(2);
-            })
-            .catch(error => {
+            }).catch(error => {
                 setIsLoading(false);
                 setIsError({ message: "Unable to connect to Spotify, please try again later" });
             });
@@ -123,7 +110,7 @@ const DeletePage = ({ isAuth }) => {
     return (
         <main>
             <Helmet>
-                <title>Delete Playlists | True Shuffle</title>
+                <title>Delete Playlists | True Shuffle for Spotify</title>
             </Helmet>
             <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>

@@ -49,7 +49,7 @@ const pages = [
 ];
 
 const Header = ({ loginUri, isAuth }) => {
-    const [auth, setAuth] = React.useState(localStorage.getItem("accessToken") != null);
+    const [auth, setAuth] = React.useState(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     const [anchorElNav, setAnchorElNav] = React.useState(null);
 
     const handleOpenNavMenu = (event) => {
@@ -136,7 +136,7 @@ const Header = ({ loginUri, isAuth }) => {
                                 </MenuItem>
                             ))}
                             {auth ?
-                                <SpotifyMenuLogout handleCloseNavMenu={handleCloseNavMenu}></SpotifyMenuLogout>
+                                <SpotifyMenuLogout handleCloseNavMenu={handleCloseNavMenu} auth={auth} setAuth={setAuth}></SpotifyMenuLogout>
                                 :
                                 <SpotifyMenuLogin loginUri={loginUri}></SpotifyMenuLogin>
                             }
@@ -181,7 +181,7 @@ const Header = ({ loginUri, isAuth }) => {
                     </Box>
                     <Box sx={{ flexGrow: 0, display: { xs: 'none', md: 'flex' } }}>
                         {auth ?
-                            <SpotifyLogout />
+                            <SpotifyLogout auth={auth} setAuth={setAuth} />
                             :
                             <SpotifyLogin loginUri={loginUri} />
                         }

@@ -3,23 +3,22 @@ import { Typography, Button, Box, TextField, Stack, Paper } from "@mui/material"
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
-import ErrorMessage from "../components/ErrorMessage";
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 
 const ShareLikedTracksPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
-        localStorage.getItem("accessToken") != null
+        document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
-    const [isSuccess, setIsSuccess] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [step, setStep] = React.useState(1);
     const [playlistName, setPlaylistName] = React.useState("");
+    const [playlistUri, setPlaylistUri] = React.useState("");
 
     useEffect(() => {
-        setAuth(localStorage.getItem("accessToken") != null);
+        setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth]);
 
     const createLikedTracksPlaylistsCall = () => {
@@ -27,26 +26,26 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         setIsLoading(true);
         axios
             .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks`,
-                {
-                    spotify_access_info: {
-                        access_token: localStorage.getItem("accessToken"),
-                        refresh_token: localStorage.getItem("refreshToken"),
-                        expires_at: localStorage.getItem("expiresAt"),
-                        scope: localStorage.getItem("scope"),
-                        token_type: localStorage.getItem("tokenType"),
-                    }
-                },
-                { headers: { "Content-Type": "application/json" } })
+                { playlist_name: playlistName },
+                { headers: { "Content-Type": "application/json" }, withCredentials: true })
             .then(result => {
-                setIsSuccess(true);
                 setIsLoading(false);
                 setIsError(false);
                 setStep(3);
+                setPlaylistUri(result.data.playlist_uri);
+                console.log(result)
             })
             .catch(error => {
                 setIsLoading(false);
                 setIsError({ message: "Unable to connect to Spotify, please try again later" });
             });
+    }
+
+    const copyToClipboard = () => {
+        if (playlistUri !== "") {
+            navigator.clipboard.writeText(playlistUri);
+            alert("Link copied to clipboard");
+        }
     }
 
     const handlePlaylistNameChange = (e) => {
@@ -60,12 +59,12 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     const handleSubmit = async () => {
         setStep(2);
         setIsLoading(true);
-        createLikedTracksPlaylistsCall()
+        createLikedTracksPlaylistsCall();
     };
 
     const handleRetry = async () => {
         setStep(1);
-        setIsError(false)
+        setIsError(false);
         setIsLoading(false);
     };
 
@@ -151,6 +150,18 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                         <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                             <strong>Successfully created your new playlist</strong>
                         </Typography>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            sx={{
+                                my: 2,
+                                color: "white",
+                                bgcolor: "#1DB954",
+                            }}
+                            onClick={() => copyToClipboard()}
+                        >
+                            Copy To Clipboard
+                        </Button>
                     </div>
                 );
             default:
@@ -161,7 +172,7 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     return (
         <main>
             <Helmet>
-                <title>Share Liked Songs | True Shuffle</title>
+                <title>Share Liked Songs | True Shuffle for Spotify</title>
             </Helmet>
             <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>

@@ -44,6 +44,9 @@ class ShufflePlaylistResponse extends React.Component {
                         </Button>
                     </Grid>
                 </Grid>
+                <Typography variant='subtitle1' component="div" sx={{ paddingBottom: "5px", color: "white" }}>
+                    If you like to shuffle this playlist often, bookmark this page to directly shuffle it.
+                </Typography>
             </Box>
         )
     }
