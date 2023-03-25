@@ -113,7 +113,7 @@ const DeletePage = ({ isAuth }) => {
     return (
         <main>
             <Helmet>
-                <title>Delete Playlists | True Shuffle</title>
+                <title>Delete Playlists | True Shuffle for Spotify</title>
             </Helmet>
             <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>

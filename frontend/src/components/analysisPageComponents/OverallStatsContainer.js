@@ -1,6 +1,6 @@
 import React from "react";
 import { Grid } from "@mui/material";
-import OverallStatItem from "./OverallStatItem";
+import OverallStatItemCard from "./OverallStatItemCard";
 
 const OverallStatsContainer = ({ analysisData }) => {
     const makeTrackLengthString = (length_data) => {
@@ -24,11 +24,11 @@ const OverallStatsContainer = ({ analysisData }) => {
             justifyContent="center"
             alignItems="flex-start"
         >
-            <OverallStatItem title={"Total Songs"} stat={analysisData.num_tracks} />
-            <OverallStatItem title={"Total Artists"} stat={analysisData.num_artists} />
-            <OverallStatItem title={"Total Album"} stat={analysisData.num_albums} />
-            <OverallStatItem title={"Average Length"} stat={makeTrackLengthString(analysisData.average_track_length)} />
-            <OverallStatItem title={"Total Length"} stat={makeTrackLengthString(analysisData.total_length)} />
+            <OverallStatItemCard title={"Songs"} stat={analysisData.num_tracks} description={"Total number of songs in your Liked Songs library"} />
+            <OverallStatItemCard title={"Artists"} stat={analysisData.num_artists} description={"Total number of unique artists in your Liked Songs library"} />
+            <OverallStatItemCard title={"Albums"} stat={analysisData.num_albums} description={"Total number of unique albums in your Liked Songs library"} />
+            <OverallStatItemCard title={"Average Length"} stat={makeTrackLengthString(analysisData.average_track_length)} description={"Average track length of all your songs"} />
+            <OverallStatItemCard title={"Total Length"} stat={makeTrackLengthString(analysisData.total_length)} description={"How long it takes to listen to all your Liked Songs (d:h:m:s)"} />
         </Grid>
     )
 }
