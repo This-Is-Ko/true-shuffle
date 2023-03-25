@@ -15,7 +15,7 @@ const AboutPage = () => {
     return (
         <Box sx={{ width: "90%", margin: "auto" }}>
             <Helmet>
-                <title>About | True Shuffle</title>
+                <title>About | True Shuffle for Spotify</title>
             </Helmet>
             <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                 About
@@ -53,6 +53,9 @@ const AboutPage = () => {
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 This application only stores your Spotify access token and user ID in order to track Liked Songs. All authentication is handled by Spotify.
+            </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                Cookies are used to keep you logged in and able to interact with the site.
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 Images were created by

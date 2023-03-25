@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
-const REFRESH_TOKEN_URL = process.env.REACT_APP_BACKEND_PATH + "/auth/spotify/handle-refresh-token?refreshToken=";
+const LOGOUT_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/logout";
 
 export function getLoginUriApi(setLoginUri) {
   console.debug("Retrieving login uri")
@@ -19,48 +19,37 @@ export function getLoginUriApi(setLoginUri) {
     });
 }
 
-export const getAccessTokenCall = (code, setAuth, navigate, setLoadingAccessToken, setAccessTokenError, setShowSuccessMessage) => {
-  if (localStorage.getItem('accessToken') == null) {
+export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessToken, setAccessTokenError, setShowSuccessMessage) => {
+  const accessToken = document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'));
+
+  if (!accessToken) {
     if (code != null) {
       setLoadingAccessToken(true)
       axios.post(AUTH_CODE_URL,
         {
           code: code
-        }
-      )
-        .then(result => {
-          localStorage.setItem('accessToken', result.data.access_token);
-          localStorage.setItem('refreshToken', result.data.refresh_token);
-          localStorage.setItem('expiresAt', result.data.expires_at);
-          localStorage.setItem('scope', result.data.scope);
-          localStorage.setItem('tokenType', result.data.token_type);
-          setAuth(true);
-          navigate("/");
-          setLoadingAccessToken(false)
-          setShowSuccessMessage(true)
-        })
-        .catch(error => {
-          setLoadingAccessToken(false)
-          setAccessTokenError(true)
-        }
-        );
+        },
+        { withCredentials: true }
+      ).then(result => {
+        setIsAuth(true);
+        navigate("/");
+        setLoadingAccessToken(false)
+        setShowSuccessMessage(true)
+      }).catch(error => {
+        setLoadingAccessToken(false)
+        setAccessTokenError(true)
+      });
     }
   }
 }
 
-export function getAccessTokenUsingRefreshCall() {
-  if (localStorage.getItem('refreshToken') != null) {
-    axios.get(REFRESH_TOKEN_URL + localStorage.getItem('refreshToken'))
-      .then(result => {
-        localStorage.setItem('accessToken', result.data.spotifyAccessToken);
-        console.log("Retry...")
-        // Refresh page after obtaining a new token
-        window.location.reload(false);
-        // callToRetry();
-      })
-      .catch(error => {
-        // console.log(error)
-      }
-      );
-  }
+export const logoutUser = (setAuth) => {
+  axios.post(LOGOUT_URL,
+    {},
+    { withCredentials: true }
+  ).then(result => {
+    setAuth(false)
+  }).catch(error => {
+    setAuth(false)
+  });
 }
