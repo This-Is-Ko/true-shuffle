@@ -12,7 +12,7 @@ const faqs = [
     },
     {
         "question": "Can I use True Shuffle with any Spotify playlist?",
-        "answer": "Yes, you can use True Shuffle with any Spotify playlist that you have access to.",
+        "answer": "Yes, you can use True Shuffle with any Spotify playlist that you have access to. However ensure you have Spotify Premium otherwise Spotify's shuffle cannot be disabled.",
         "id": "q2"
     },
     {
@@ -22,12 +22,12 @@ const faqs = [
     },
     {
         "question": "What user data is stored by True Shuffle?",
-        "answer": "Only user data that is stored is the user ID, access token to retrieved Liked Songs and Liked Songs count to generate historical data. All authentication is handled by Spotify.",
+        "answer": "The only user data that is stored is the user ID, access token to retrieved Liked Songs, counters for shuffles and Liked Songs to generate historical data. All authentication is handled by Spotify.",
         "id": "q4"
     },
     {
         "question": "Can I opt-out of storing Liked Songs history?",
-        "answer": "This feature is currently planned. Meanwhile please contact if you would like to remove your data.",
+        "answer": "This feature is currently planned. Meanwhile please contact if you would like to opt-out or remove your data.",
         "id": "q5"
     },
     {

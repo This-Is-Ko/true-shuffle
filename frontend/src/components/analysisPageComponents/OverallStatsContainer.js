@@ -4,9 +4,9 @@ import OverallStatItemCard from "./OverallStatItemCard";
 
 const OverallStatsContainer = ({ analysisData }) => {
     const makeTrackLengthString = (length_data) => {
-        if (length_data.days != 0) {
+        if (length_data.days !== 0) {
             return (length_data.days + ":" + length_data.hours + ":" + length_data.minutes + ":" + length_data.seconds)
-        } else if (length_data.hours != 0) {
+        } else if (length_data.hours !== 0) {
             return (length_data.hours + ":" + length_data.minutes + ":" + length_data.seconds)
         } else {
             return (length_data.minutes + ":" + length_data.seconds)

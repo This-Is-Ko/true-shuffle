@@ -3,7 +3,6 @@ import { Typography, Button, Box, Stack, Paper } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
-import ErrorMessage from "../components/ErrorMessage";
 import RestrictedAccessPage from './RestrictedAccessPage'
 
 const DeletePage = ({ isAuth }) => {
@@ -11,7 +10,6 @@ const DeletePage = ({ isAuth }) => {
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
-    const [isSuccess, setIsSuccess] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [step, setStep] = React.useState(1);
@@ -27,7 +25,6 @@ const DeletePage = ({ isAuth }) => {
             .delete(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`,
                 { withCredentials: true }
             ).then(result => {
-                setIsSuccess(true);
                 setIsLoading(false);
                 setIsError(false);
                 setStep(2);
