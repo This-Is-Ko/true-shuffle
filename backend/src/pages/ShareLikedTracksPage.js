@@ -3,7 +3,6 @@ import { Typography, Button, Box, TextField, Stack, Paper } from "@mui/material"
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
-import ErrorMessage from "../components/ErrorMessage";
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 
@@ -12,11 +11,11 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
     const [showDetailsTab, setShowDetailsTab] = React.useState(false);
-    const [isSuccess, setIsSuccess] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [step, setStep] = React.useState(1);
     const [playlistName, setPlaylistName] = React.useState("");
+    const [playlistUri, setPlaylistUri] = React.useState("");
 
     useEffect(() => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
@@ -30,15 +29,23 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                 { playlist_name: playlistName },
                 { headers: { "Content-Type": "application/json" }, withCredentials: true })
             .then(result => {
-                setIsSuccess(true);
                 setIsLoading(false);
                 setIsError(false);
                 setStep(3);
+                setPlaylistUri(result.data.playlist_uri);
+                console.log(result)
             })
             .catch(error => {
                 setIsLoading(false);
                 setIsError({ message: "Unable to connect to Spotify, please try again later" });
             });
+    }
+
+    const copyToClipboard = () => {
+        if (playlistUri !== "") {
+            navigator.clipboard.writeText(playlistUri);
+            alert("Link copied to clipboard");
+        }
     }
 
     const handlePlaylistNameChange = (e) => {
@@ -52,12 +59,12 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     const handleSubmit = async () => {
         setStep(2);
         setIsLoading(true);
-        createLikedTracksPlaylistsCall()
+        createLikedTracksPlaylistsCall();
     };
 
     const handleRetry = async () => {
         setStep(1);
-        setIsError(false)
+        setIsError(false);
         setIsLoading(false);
     };
 
@@ -143,6 +150,18 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                         <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                             <strong>Successfully created your new playlist</strong>
                         </Typography>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            sx={{
+                                my: 2,
+                                color: "white",
+                                bgcolor: "#1DB954",
+                            }}
+                            onClick={() => copyToClipboard()}
+                        >
+                            Copy To Clipboard
+                        </Button>
                     </div>
                 );
             default:

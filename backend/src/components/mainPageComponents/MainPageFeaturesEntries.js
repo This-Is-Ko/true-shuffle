@@ -12,15 +12,15 @@ export const features = [
         "special": "NEW "
     },
     {
-        "name": "Remove shuffled",
-        "description": "Easy function to clean up created shuffled playlists while keeping all your original playlists",
-        "uri": "/delete",
-        "special": ""
-    },
-    {
         "name": "Share Library",
         "description": "Create a playlist from your Liked Songs to easily share your music collection",
         "uri": "/share",
+        "special": ""
+    },
+    {
+        "name": "Remove shuffled",
+        "description": "Easy function to clean up created shuffled playlists while keeping all your original playlists",
+        "uri": "/delete",
         "special": ""
     }
 ];

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Typography } from "@mui/material";
 
 import PlaylistList from "./PlaylistList";
 import ErrorMessage from "./ErrorMessage";
@@ -54,8 +54,8 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                         :
                         <Box></Box>
                     }
-
-                    < PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} />
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
+                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} />
                 </Box>
             ) : (
                 <div className="loading-container">

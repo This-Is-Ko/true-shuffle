@@ -55,6 +55,9 @@ const AboutPage = () => {
                 This application only stores your Spotify access token and user ID in order to track Liked Songs. All authentication is handled by Spotify.
             </Typography>
             <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                Cookies are used to keep you logged in and able to interact with the site.
+            </Typography>
+            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
                 Images were created by
                 <Link underline="none" href={"https://www.flaticon.com/authors/paulalee"}> paulalee </Link>
                 and icons by

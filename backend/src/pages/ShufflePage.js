@@ -23,7 +23,7 @@ const ShufflePage = ({ isAuth }) => {
         <main>
             {auth === true ? (
                 <Box>
-                    <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                         <Typography align="center" variant='body1' component="div"
                             sx={{
                                 width: { sm: '90%', md: "50%" },
@@ -32,7 +32,7 @@ const ShufflePage = ({ isAuth }) => {
                             Welcome to True Shuffle! Here you can select a playlist and a new playlist will be created in a truly random order. Unlike Spotifiy's algorithm there is no preference towards certain tracks so the order will be unique each time.
                             <br />
                             <br />
-                            To see how to use True Shuffle, click the "How To" button below.
+                            Note: Ensure you have disabled Spotify's built-in shuffle
                         </Typography>
                     </Box>
                     <Box sx={{
