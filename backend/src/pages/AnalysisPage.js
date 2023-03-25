@@ -58,7 +58,7 @@ const AnalysisPage = ({ isAuth }) => {
     return (
         <Box sx={{ width: "90%", margin: "auto" }}>
             <Helmet>
-                <title>Analyse My Music | True Shuffle</title>
+                <title>Analyse My Music | True Shuffle for Spotify</title>
             </Helmet>
             <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                 Analyse My Music

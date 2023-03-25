@@ -44,7 +44,7 @@ const FAQPage = () => {
     return (
         <Box>
             <Helmet>
-                <title>FAQ | True Shuffle</title>
+                <title>FAQ | True Shuffle for Spotify</title>
             </Helmet>
             <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                 FAQ

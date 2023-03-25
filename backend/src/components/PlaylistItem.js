@@ -27,7 +27,7 @@ const PlaylistItem = (props) => {
                 />
                 <CardContent sx={{ flex: '1 0 auto' }}>
                     <Typography component="div" variant="h5" color="common.white" sx={{
-                        "fontSize": "1rem", "overflow": "hidden", "textOverflow": "ellipsis", display: "inline-block", "maxWidth": "230px", "whiteSpace": "nowrap"
+                        "fontSize": "1rem", "overflow": "hidden", "textOverflow": "ellipsis", display: "inline-block", "maxWidth": "230px", "whiteSpace": "nowrap", fontFamily: "'Questrial', sans-serif;"
                     }}>
                         {props.playlist.name}
                     </Typography>
