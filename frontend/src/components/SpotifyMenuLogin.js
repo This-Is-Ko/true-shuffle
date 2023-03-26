@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, { useEffect } from "react";
 import { Typography, MenuItem } from '@mui/material';
 
 const SpotifyMenuLogin = ({ loginUri }) => {
@@ -6,9 +6,9 @@ const SpotifyMenuLogin = ({ loginUri }) => {
     const [localLoginUri, setLocalLoginUri] = React.useState("/#");
 
     useEffect(() => {
-      setLocalLoginUri(loginUri)
+        setLocalLoginUri(loginUri)
     }, [loginUri]);
-  
+
     return (
         <MenuItem
             component="a"
@@ -17,7 +17,7 @@ const SpotifyMenuLogin = ({ loginUri }) => {
             sx={{
                 color: 'white', display: 'block', bgcolor: "#161817"
             }}>
-            <Typography textAlign="center">Login</Typography>
+            <Typography textAlign="center">Spotify Login</Typography>
 
         </MenuItem>
     )
