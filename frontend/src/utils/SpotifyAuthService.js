@@ -32,9 +32,9 @@ export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessTo
         { withCredentials: true }
       ).then(result => {
         setIsAuth(true);
-        navigate("/");
         setLoadingAccessToken(false)
         setShowSuccessMessage(true)
+        navigate("/");
       }).catch(error => {
         setLoadingAccessToken(false)
         setAccessTokenError(true)
