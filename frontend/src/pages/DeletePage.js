@@ -4,15 +4,20 @@ import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
 import RestrictedAccessPage from './RestrictedAccessPage'
+import { HowToDeletePlaylistsEntry } from '../components/howToComponents/HowToEntries';
+import HowToModal from "../components/howToComponents/HowToModal";
 
 const DeletePage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
-    const [showDetailsTab, setShowDetailsTab] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [step, setStep] = React.useState(1);
+    const [isHowToModalOpen, setIsHowToModalOpen] = React.useState(false);
+
+    const handleHowToModalOpen = () => setIsHowToModalOpen(true);
+    const handleHowToModalClose = () => setIsHowToModalOpen(false);
 
     useEffect(() => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
@@ -130,29 +135,12 @@ const DeletePage = ({ isAuth }) => {
                                 display: "block",
                                 bgcolor: "#1DB954",
                             }}
-                            onClick={() => setShowDetailsTab(prev => !prev)}
+                            onClick={handleHowToModalOpen}
                         >
                             How to
                         </Button>
                     </Box>
-                    {showDetailsTab &&
-                        <Box
-                            sx={{
-                                margin: "auto",
-                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%", xl: "35%" },
-                                textAlign: "left"
-                            }}>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                                Instructions:
-                            </Typography>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                1. Just click the below button to remove all shuffled playlists from your Spotify account. This will not affect any of your existing playlists and only delete playlists named "[Shuffled] ..."
-                            </Typography>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                Note: You don't need to remove an existing shuffled playlist to re-shuffle it
-                            </Typography>
-                        </Box>
-                    }
+                    <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToDeletePlaylistsEntry}></HowToModal>
                 </Box>
                 <Box>
                     {!isError && renderSwitch(step)}
