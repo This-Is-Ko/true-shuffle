@@ -22,8 +22,12 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                 }
                 setError(false);
             })
-            .catch((error) => {
-                setError({ message: "Unable to connect to Spotify, please try again later" });
+            .catch((responseError) => {
+                if (responseError.response.status === 401) {
+                    setError({ message: "Unable to authenticate your account, please logout and try again" });
+                } else {
+                    setError({ message: "Unable to connect to Spotify, please try again later" });
+                }
             });
     };
 
@@ -33,8 +37,8 @@ const PlaylistContainer = ({ selectPlaylist }) => {
 
     return (
         <Box sx={{ paddingBottom: "10px" }}>
-            {error ? (
-                <ErrorMessage error={error} isGeneric={true} />
+            {error !== false ? (
+                <ErrorMessage error={error} isGeneric={false} />
             ) : playlists.length > 0 ? (
                 <Box>
                     {userShuffleCounter !== false ?
