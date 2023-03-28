@@ -3,6 +3,8 @@ import { Typography, Button, Box, TextField, Stack, Paper } from "@mui/material"
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
+import HowToModal from '../components/howToComponents/HowToModal';
+import { HowToShareLikedTracksEntry } from '../components/howToComponents/HowToEntries';
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 
@@ -10,12 +12,15 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
-    const [showDetailsTab, setShowDetailsTab] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
     const [step, setStep] = React.useState(1);
     const [playlistName, setPlaylistName] = React.useState("");
     const [playlistUri, setPlaylistUri] = React.useState("");
+    const [isHowToModalOpen, setIsHowToModalOpen] = React.useState(false);
+
+    const handleHowToModalOpen = () => setIsHowToModalOpen(true);
+    const handleHowToModalClose = () => setIsHowToModalOpen(false);
 
     useEffect(() => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
@@ -194,32 +199,12 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                                 display: "block",
                                 bgcolor: "#1DB954",
                             }}
-                            onClick={() => setShowDetailsTab(prev => !prev)}
+                            onClick={handleHowToModalOpen}
                         >
                             How to
                         </Button>
                     </Box>
-                    {showDetailsTab &&
-                        <Box
-                            sx={{
-                                margin: "auto",
-                                width: { xs: "90%", sm: '90%', md: "50%", lg: "40%", xl: "35%" },
-                                textAlign: "left"
-                            }}>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white" }}>
-                                Instructions:
-                            </Typography>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                1. Click "Start"
-                            </Typography>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                2. Enter a playlist name or leave as default
-                            </Typography>
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                3. A new playlist will be created with all the songs currently in your Liked Songs
-                            </Typography>
-                        </Box>
-                    }
+                    <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShareLikedTracksEntry}></HowToModal>
                 </Box>
                 <Box>
                     {!isError && renderSwitch(step)}
