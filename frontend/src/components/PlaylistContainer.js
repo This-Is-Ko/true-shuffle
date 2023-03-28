@@ -62,9 +62,10 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                     <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} />
                 </Box>
             ) : (
-                <div className="loading-container">
-                    <CircularProgress />
-                </div>
+                <Box>
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
+                    <PlaylistList loading={true} />
+                </Box>
             )}
         </Box>
     );
