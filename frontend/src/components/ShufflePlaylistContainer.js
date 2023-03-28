@@ -8,7 +8,7 @@ import LoadingMessage from "./LoadingMessage";
 // class ShufflePlaylistContainer extends React.Component {
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     const [playlistUri, setPlaylistUri] = React.useState("");
-    const [isError, setIsError] = React.useState(false);
+    const [error, setError] = React.useState(false);
 
     const useQuery = () => {
         return new URLSearchParams(window.location.search);
@@ -28,13 +28,17 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                     { headers: { "Content-Type": "application/json" }, withCredentials: true })
                 .then(result => {
                     setPlaylistUri(result.data.playlist_uri);
-                    setIsError(false);
+                    setError(false);
                 })
-                .catch(error => {
-                    setIsError(error);
+                .catch((responseError) => {
+                    if (responseError.response.status === 401) {
+                        setError({ message: "Unable to authenticate your account, please logout and try again" });
+                    } else {
+                        setError({ message: "Unable to connect to Spotify, please try again later" });
+                    }
                 });
         } else {
-            setIsError({ message: "No playlist selected" });
+            setError({ message: "No playlist selected" });
         }
     };
 
@@ -44,8 +48,8 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
 
     return (
         <div className="shuffle-container">
-            {isError ? (
-                <ErrorMessage error={isError} isGeneric={true} />
+            {error !== false ? (
+                <ErrorMessage error={error} isGeneric={false} />
             ) : (
                 playlistUri !== "" ? (
                     <ShufflePlaylistResponse playlistUri={playlistUri} />
