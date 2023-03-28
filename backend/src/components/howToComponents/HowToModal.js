@@ -18,6 +18,7 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                     width: { xs: "70%", sm: '70%', md: "50%", lg: "40%", xl: "35%" },
                     maxWidth: 500,
                     bgcolor: '#292e2f',
+                    borderRadius: "5px",
                     boxShadow: 24,
                     p: 4,
                 }}>
@@ -33,7 +34,7 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                                     text = index + 1 + ". " + text
                                 }
                                 return (
-                                    <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "lightgrey" }}>
+                                    <Typography key={index} variant='body1' component="div" sx={{ paddingTop: "5px", color: "lightgrey" }}>
                                         {text}
                                     </Typography>
                                 )
