@@ -5,6 +5,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import Grid from '@mui/material/Grid';
 import MediaQuery from 'react-responsive'
+import ApexCharts from 'apexcharts'
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 import Footer from "../components/Footer";
@@ -16,6 +17,7 @@ import AudioFeaturesRadar from "../components/dataVisualisers/AudioFeaturesRadar
 import { transformMostCommonArtists, transformMostCommonAlbums, transformTrackerData, transformAudioFeatureData } from "../utils/StatisticsService";
 import ErrorMessage from "../components/ErrorMessage";
 import OverallStatsContainer from "../components/analysisPageComponents/OverallStatsContainer";
+import LineGraphApex from "../components/dataVisualisers/LineGraphApex";
 
 const AnalysisPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
@@ -105,7 +107,8 @@ const AnalysisPage = ({ isAuth }) => {
                             />
                         </Box>
                     ) : isUserAggregateLoading ? (
-                        <div className="loading-container">
+                        <div>
+                            <br/>
                             <Typography variant='body1' component="div" sx={{ color: "white", paddingBottom: "10px" }}>
                                 Analysing your library. If you have many Liked Songs, this process may take longer...
                             </Typography>
@@ -241,7 +244,7 @@ const AnalysisPage = ({ isAuth }) => {
                                                 Our liked tracks history is updated once a week so if you don't see many data points, come back in a few weeks to see more data.
                                             </Typography>
                                                 <Paper sx={{ height: "500px", backgroundColor: "#b9b9b9" }}>
-                                                    <LineGraph data={transformTrackerData(likedTracksTrackerData, "Liked Tracks")} />
+                                                    <LineGraphApex data={transformTrackerData(likedTracksTrackerData, "Liked Tracks")} />
                                                 </Paper>
                                             </Box>)
                                             :
