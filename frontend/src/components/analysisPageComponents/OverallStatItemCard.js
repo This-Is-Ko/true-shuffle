@@ -17,9 +17,20 @@ const OverallStatItemCard = ({ title, stat, description }) => {
                     <Typography sx={{ fontFamily: "'Questrial', sans-serif;" }} variant="subtitle1" color="text.secondary" gutterBottom>
                         <strong>{title}</strong>
                     </Typography>
-                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h2" component="div">
-                        <strong>{stat}</strong>
-                    </Typography>
+                    {
+                        stat.length > 9 ? 
+                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h4" component="div">
+                            <strong>{stat}</strong>
+                        </Typography>
+                        : stat.length > 8 ?
+                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h3" component="div">
+                            <strong>{stat}</strong>
+                        </Typography>
+                        : 
+                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h2" component="div">
+                            <strong>{stat}</strong>
+                        </Typography>
+                    }
                     <Typography variant="body2" color="black">
                         {description}
                     </Typography>

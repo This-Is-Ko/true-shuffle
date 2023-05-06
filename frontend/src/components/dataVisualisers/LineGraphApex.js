@@ -7,17 +7,23 @@ const LineGraphApex = ({ data }) => {
 
     var chartData = {
         options: {
+          colors: ["#1DB954"],
           chart: {
             id: "area-datetime"
           },
           xaxis: {
             type: 'datetime',
             categories: xValues
+          },
+          yaxis: {
+            title: {
+              text: "Count"
+            }
           }
         },
         series: [
           {
-            name: "series-1",
+            name: "Liked Songs",
             data: yValues
           }
         ]
