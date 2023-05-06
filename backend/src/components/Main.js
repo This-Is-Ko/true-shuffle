@@ -1,17 +1,21 @@
 import React, { useEffect } from "react";
 import { getAccessTokenCall } from "../utils/SpotifyAuthService";
 import { useNavigate } from "react-router-dom";
-import { Typography, Button, Backdrop, CircularProgress, Snackbar, IconButton } from "@mui/material";
+import { Typography, Button, Backdrop, CircularProgress, Snackbar, IconButton, Grid } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
+import { Box } from "@mui/system";
 import { Helmet } from "react-helmet";
 import Footer from "./Footer";
 import MainPageFeaturesContainer from "./mainPageComponents/MainPageFeaturesContainer";
-import { Box } from "@mui/system";
+import { getStatisticsApi } from "../utils/StatisticsService";
 
 const Main = ({ loginUri, isAuth, setIsAuth }) => {
     const [loadingAccessToken, setLoadingAccessToken] = React.useState(false);
     const [showErrorMessage, setShowErrorMessage] = React.useState(false);
     const [showSuccessMessage, setShowSuccessMessage] = React.useState(false);
+    const [trackCounter, setTrackCounter] = React.useState(null);
+    const [playlistCounter, setPlaylistCounter] = React.useState(null);
+    const [analysisCounter, setAnalysisCounter] = React.useState(null);
 
     const navigate = useNavigate();
 
@@ -30,6 +34,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
 
     useEffect(() => {
         getAccessTokenCall(useQuery().get('code'), setIsAuth, navigate, setLoadingAccessToken, setShowErrorMessage, setShowSuccessMessage);
+        getStatisticsApi(setTrackCounter, setPlaylistCounter, setAnalysisCounter);
     }, [isAuth]);
 
     return (
@@ -92,6 +97,29 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                 <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                     Randomly shuffle your Spotify playlists
                 </Typography>
+                {trackCounter !== null && playlistCounter !== null && analysisCounter !== null &&
+                    <div>
+                        <Grid
+                            sx={{ paddingTop: "20px" }}
+                            container
+                            spacing={2}
+                            justifyContent="center"
+                            alignItems="flex-start"
+                        >
+                            <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
+                                <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled tracks: <strong>{trackCounter}</strong></Typography>
+                            </Grid>
+                            <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
+                                <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled playlists: <strong>{playlistCounter}</strong></Typography>
+                            </Grid>
+                            <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
+                                <Typography variant='h6' component="div" sx={{ color: "white" }}>Libraries analysed: <strong>{analysisCounter}</strong></Typography>
+                            </Grid>
+                        </Grid>
+                        {/* <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Shuffled tracks: <strong>{trackCounter}</strong> | Shuffled playlists: <strong>{playlistCounter}</strong> | Libraries analysed: <strong>{analysisCounter}</strong></Typography> */}
+                    </div>
+                }
+
                 <div className={"centerSpacingContainer"}>
                     <Button
                         className={"largeButton"}
