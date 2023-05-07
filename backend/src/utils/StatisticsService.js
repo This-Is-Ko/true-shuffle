@@ -89,10 +89,10 @@ export function transformAudioFeatureData(audioFeatures) {
 
 export function  makeTrackLengthString(length_data) {
     if (length_data.days !== 0) {
-        return (length_data.days + ":" + length_data.hours + ":" + length_data.minutes + ":" + length_data.seconds)
+        return (length_data.days + ":" + length_data.hours.toString().padStart(2, "0") + ":" + length_data.minutes.toString().padStart(2, "0") + ":" + length_data.seconds.toString().padStart(2, "0"))
     } else if (length_data.hours !== 0) {
-        return (length_data.hours + ":" + length_data.minutes + ":" + length_data.seconds)
+        return (length_data.hours.toString().padStart(2, "0") + ":" + length_data.minutes.toString().padStart(2, "0") + ":" + length_data.seconds.toString().padStart(2, "0"))
     } else {
-        return (length_data.minutes + ":" + length_data.seconds)
+        return (length_data.minutes.toString().padStart(2, "0") + ":" + length_data.seconds.toString().padStart(2, "0"))
     }
 }
