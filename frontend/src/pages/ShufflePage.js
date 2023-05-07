@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Typography, Button, Box, Modal } from "@mui/material";
+import { Typography, Button, Box } from "@mui/material";
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 import PlaylistContainer from "../components/PlaylistContainer";

@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import CircularProgress from "@mui/material/CircularProgress";
 import { Box, Grid, Typography } from "@mui/material";
 
 import PlaylistList from "./PlaylistList";

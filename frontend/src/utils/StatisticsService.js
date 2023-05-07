@@ -53,36 +53,46 @@ export function transformAudioFeatureData(audioFeatures) {
     const transformedData = [
         {
             "feature": "Acousticness",
-            "Average": audioFeatures["average_acousticness"]
+            "Average": audioFeatures[0]["average_score"]
         },
         {
             "feature": "Danceability",
-            "Average": audioFeatures["average_danceability"]
+            "Average": audioFeatures[1]["average_score"]
         },
         {
             "feature": "Energy",
-            "Average": audioFeatures["average_energy"]
+            "Average": audioFeatures[2]["average_score"]
         },
         {
             "feature": "Instrumentalness",
-            "Average": audioFeatures["average_instrumentalness"]
+            "Average": audioFeatures[3]["average_score"]
         },
         {
             "feature": "Liveness",
-            "Average": audioFeatures["average_liveness"]
+            "Average": audioFeatures[4]["average_score"]
         },
         // {
         //     "feature": "Loudness",
-        //     "Average": audioFeatures["average_loudness"]
+        //     "Average": audioFeatures[5]
         // },
         {
             "feature": "Speechiness",
-            "Average": audioFeatures["average_speechiness"]
+            "Average": audioFeatures[6]["average_score"]
         },
         // {
         //     "feature": "Tempo",
-        //     "Average": audioFeatures["average_tempo"]
+        //     "Average": audioFeatures[7]]
         // },
     ]
     return transformedData
+}
+
+export function  makeTrackLengthString(length_data) {
+    if (length_data.days !== 0) {
+        return (length_data.days + ":" + length_data.hours + ":" + length_data.minutes + ":" + length_data.seconds)
+    } else if (length_data.hours !== 0) {
+        return (length_data.hours + ":" + length_data.minutes + ":" + length_data.seconds)
+    } else {
+        return (length_data.minutes + ":" + length_data.seconds)
+    }
 }
