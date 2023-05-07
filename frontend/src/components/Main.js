@@ -95,30 +95,33 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                 <img className={"spotifyNameLogo"}
                     src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                 <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                    Randomly shuffle your Spotify playlists
+                    Randomly shuffle your Spotify playlists and analyse your library
                 </Typography>
-                {trackCounter !== null && playlistCounter !== null && analysisCounter !== null &&
-                    <div>
-                        <Grid
-                            sx={{ paddingTop: "20px" }}
-                            container
-                            spacing={2}
-                            justifyContent="center"
-                            alignItems="flex-start"
-                        >
-                            <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-                                <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled tracks: <strong>{trackCounter}</strong></Typography>
-                            </Grid>
-                            <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-                                <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled playlists: <strong>{playlistCounter}</strong></Typography>
-                            </Grid>
-                            <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-                                <Typography variant='h6' component="div" sx={{ color: "white" }}>Libraries analysed: <strong>{analysisCounter}</strong></Typography>
-                            </Grid>
+                <div>
+                    <Grid
+                        sx={{ paddingTop: "20px" }}
+                        container
+                        spacing={2}
+                        justifyContent="center"
+                        alignItems="flex-start"
+                    >
+                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
+                            {
+                                trackCounter !== null && <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled tracks: <strong>{trackCounter}</strong></Typography>
+                            }
                         </Grid>
-                        {/* <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Shuffled tracks: <strong>{trackCounter}</strong> | Shuffled playlists: <strong>{playlistCounter}</strong> | Libraries analysed: <strong>{analysisCounter}</strong></Typography> */}
-                    </div>
-                }
+                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
+                            {
+                                playlistCounter !== null && <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled playlists: <strong>{playlistCounter}</strong></Typography>
+                            }
+                        </Grid>
+                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
+                            {
+                                analysisCounter !== null && <Typography variant='h6' component="div" sx={{ color: "white" }}>Libraries analysed: <strong>{analysisCounter}</strong></Typography>
+                            }
+                        </Grid>
+                    </Grid>
+                </div>
 
                 <div className={"centerSpacingContainer"}>
                     <Button
