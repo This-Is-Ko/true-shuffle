@@ -5,19 +5,20 @@ import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import Grid from '@mui/material/Grid';
 import MediaQuery from 'react-responsive'
-import ApexCharts from 'apexcharts'
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 import Footer from "../components/Footer";
 
 import Pie from "../components/dataVisualisers/Pie"
-import LineGraph from "../components/dataVisualisers/LineGraph"
 import MostCommonTable from "../components/dataVisualisers/MostCommonList"
 import AudioFeaturesRadar from "../components/dataVisualisers/AudioFeaturesRadar"
 import { transformMostCommonArtists, transformMostCommonAlbums, transformTrackerData, transformAudioFeatureData } from "../utils/StatisticsService";
 import ErrorMessage from "../components/ErrorMessage";
 import OverallStatsContainer from "../components/analysisPageComponents/OverallStatsContainer";
 import LineGraphApex from "../components/dataVisualisers/LineGraphApex";
+import FeatureScoreContainer from "../components/analysisPageComponents/FeatureScoreContainer";
+import FeatureScoreDetailedContainer from "../components/analysisPageComponents/FeatureScoreDetailedContainer";
+import TrackLengthContainer from "../components/analysisPageComponents/TrackLengthContainer";
 
 const AnalysisPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
@@ -29,6 +30,8 @@ const AnalysisPage = ({ isAuth }) => {
     const [likedTracksTrackerData, setLikedTracksTrackerData] = React.useState([]);
     const [isUserAggregateLoading, setIsUserAggregateLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
+
+    const [featureShowMoreDetails, setFeatureShowMoreDetails] = React.useState(false);
 
     const getUserAggregatedData = () => {
         axios
@@ -175,7 +178,6 @@ const AnalysisPage = ({ isAuth }) => {
                                                 <MediaQuery minWidth={600}>
                                                     <Pie data={transformMostCommonAlbums(analysisData.most_common_albums, 0, 10)} sideMargin={80} topMargin={40} labelDiagonalLength={24} labelStraightLength={16} />
                                                 </MediaQuery>
-
                                             </Box>
                                         </Box>
                                     </Grid>
@@ -212,6 +214,14 @@ const AnalysisPage = ({ isAuth }) => {
                                     <Grid item sx={{ width: "90%" }}>
                                         <Box>
                                             <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                                Song Length
+                                            </Typography>
+                                            <TrackLengthContainer shortestTrack={analysisData.shortest_track} longestTrack={analysisData.longest_track}></TrackLengthContainer>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item sx={{ width: "90%" }}>
+                                        <Box>
+                                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                                                 Audio Features
                                             </Typography>
                                             <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingTop: "5px" }}>
@@ -226,6 +236,15 @@ const AnalysisPage = ({ isAuth }) => {
                                                 <MediaQuery minWidth={600}>
                                                     <AudioFeaturesRadar data={transformAudioFeatureData(analysisData.audio_features)} sideMargin={80} topMargin={50} gridLabelOffset={36} />
                                                 </MediaQuery>
+                                            </Box>
+                                            <Box>
+                                                {
+                                                    featureShowMoreDetails && 
+                                                    <FeatureScoreDetailedContainer audioFeatures={analysisData.audio_features}></FeatureScoreDetailedContainer>
+                                                }
+                                            </Box>
+                                            <Box>
+                                                <FeatureScoreContainer audioFeatures={analysisData.audio_features}></FeatureScoreContainer>
                                             </Box>
                                         </Box>
                                     </Grid>
