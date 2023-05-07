@@ -95,7 +95,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                 <img className={"spotifyNameLogo"}
                     src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                 <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                    Randomly shuffle your Spotify playlists
+                    Randomly shuffle your Spotify playlists and analyse your library
                 </Typography>
                 <div>
                     <Grid
