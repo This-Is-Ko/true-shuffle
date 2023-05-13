@@ -3,8 +3,8 @@ import { Grid } from "@mui/material";
 import { makeTrackLengthString } from "../../utils/StatisticsService";
 import TrackStatCard from "./TrackStatCard"
 
-const TrackLengthContainer = ({ shortestTrack, longestTrack }) => {
-    if (shortestTrack === null && longestTrack == null) {
+const TrackLengthContainer = ({ shortestTracks, longestTracks }) => {
+    if (shortestTracks === null && longestTracks == null) {
         return null
     }
 
@@ -15,12 +15,12 @@ const TrackLengthContainer = ({ shortestTrack, longestTrack }) => {
                 maxWidth: "850px"
             }}
             container
-            spacing={2}
+            spacing={3}
             justifyContent="center"
             alignItems="flex-start"
         >
-            <TrackStatCard title="Shortest Track Length" stat={makeTrackLengthString(shortestTrack["length"])} description="Shortest track in your Liked Songs library" track={shortestTrack}></TrackStatCard>
-            <TrackStatCard title="Longest Track Length" stat={makeTrackLengthString(longestTrack["length"])} description="Longest track in your Liked Songs library" track={longestTrack}></TrackStatCard>
+            <TrackStatCard title="Shortest Track Length" stat={makeTrackLengthString(shortestTracks[0]["length"])} description="Shortest track in your Liked Songs library" track={shortestTracks[0]}></TrackStatCard>
+            <TrackStatCard title="Longest Track Length" stat={makeTrackLengthString(longestTracks[0]["length"])} description="Longest track in your Liked Songs library" track={longestTracks[0]}></TrackStatCard>
         </Grid>
     )
 }

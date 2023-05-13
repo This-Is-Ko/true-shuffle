@@ -1,10 +1,7 @@
 import React from 'react';
 import ReactApexChart from "react-apexcharts";
 
-const LineGraphApex = ({ data }) => {
-    const xValues = data[0]["data"].map((point) => point["x"]);
-    const yValues = data[0]["data"].map((point) => point["y"]);
-
+const LineGraphApex = ({ xValues, yValues, yName }) => {
     var chartData = {
         options: {
           colors: ["#1DB954"],
@@ -23,7 +20,7 @@ const LineGraphApex = ({ data }) => {
         },
         series: [
           {
-            name: "Liked Songs",
+            name: yName,
             data: yValues
           }
         ]
