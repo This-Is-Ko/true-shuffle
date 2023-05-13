@@ -49,6 +49,14 @@ export function transformTrackerData(likedTracksTracker, id) {
     return [{ "id": id, "data": transformedData }]
 }
 
+export function transformReleaseYearData(releaseYearData) {
+    const transformedData = []
+    for (const [key, value] of Object.entries(releaseYearData)) {
+        transformedData.push({ "year": key, "value": value })
+    }
+    return transformedData
+}
+
 export function transformAudioFeatureData(audioFeatures) {
     const transformedData = [
         {

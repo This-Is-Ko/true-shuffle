@@ -8,17 +8,18 @@ import MediaQuery from 'react-responsive'
 
 import RestrictedAccessPage from './RestrictedAccessPage'
 import Footer from "../components/Footer";
-
 import Pie from "../components/dataVisualisers/Pie"
-import MostCommonTable from "../components/dataVisualisers/MostCommonList"
+import MostCommonTable from "../components/dataVisualisers/MostCommonTable"
 import AudioFeaturesRadar from "../components/dataVisualisers/AudioFeaturesRadar"
-import { transformMostCommonArtists, transformMostCommonAlbums, transformTrackerData, transformAudioFeatureData } from "../utils/StatisticsService";
+import { transformMostCommonArtists, transformMostCommonAlbums, transformAudioFeatureData } from "../utils/StatisticsService";
 import ErrorMessage from "../components/ErrorMessage";
 import OverallStatsContainer from "../components/analysisPageComponents/OverallStatsContainer";
-import LineGraphApex from "../components/dataVisualisers/LineGraphApex";
 import FeatureScoreContainer from "../components/analysisPageComponents/FeatureScoreContainer";
 import FeatureScoreDetailedContainer from "../components/analysisPageComponents/FeatureScoreDetailedContainer";
 import TrackLengthContainer from "../components/analysisPageComponents/TrackLengthContainer";
+import TrackLengthTable from "../components/dataVisualisers/TrackLengthTable";
+import LikedTracksHistoryGraph from "../components/dataVisualisers/LikedTracksHistoryGraph";
+import ReleaseYearGraph from "../components/dataVisualisers/ReleaseYearGraph";
 
 const AnalysisPage = ({ isAuth }) => {
     const [auth, setAuth] = React.useState(
@@ -189,7 +190,7 @@ const AnalysisPage = ({ isAuth }) => {
                                                 Top Artists
                                             </Typography>
                                             <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                                Click on an artist to go to artist's Spotify page
+                                                Click on an artist to go to their's Spotify page
                                             </Typography>
                                             <Box sx={{ display: "flex", justifyContent: "center" }}>
                                                 <MostCommonTable data={analysisData.most_common_artists} type="Artist" />
@@ -204,7 +205,7 @@ const AnalysisPage = ({ isAuth }) => {
                                                 Top Albums
                                             </Typography>
                                             <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                                Click on an album to go to album's Spotify page
+                                                Click on an album to go to it's Spotify page
                                             </Typography>
                                             <Box sx={{ display: "flex", justifyContent: "center" }}>
                                                 <MostCommonTable data={analysisData.most_common_albums} type="Album" />
@@ -214,11 +215,58 @@ const AnalysisPage = ({ isAuth }) => {
                                     <Grid item sx={{ width: "90%" }}>
                                         <Box>
                                             <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                                Song Length
+                                                Track Length
                                             </Typography>
-                                            <TrackLengthContainer shortestTrack={analysisData.shortest_track} longestTrack={analysisData.longest_track}></TrackLengthContainer>
+                                            <TrackLengthContainer shortestTracks={analysisData.shortest_tracks} longestTracks={analysisData.longest_tracks}></TrackLengthContainer>
                                         </Box>
                                     </Grid>
+                                    <Grid item sx={{
+                                        width: { xs: "100%", sm: '100%', md: "50%", lg: "50%", xl: "50%" },
+                                    }}>
+                                        <Box>
+                                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                                Shortest Tracks
+                                            </Typography>
+                                            <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
+                                                Click on a track to go to it's Spotify page
+                                            </Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <TrackLengthTable data={analysisData.shortest_tracks} />
+                                            </Box>
+                                        </Box>
+                                    </Grid>
+                                    <Grid item sx={{
+                                        width: { xs: "100%", sm: '100%', md: "50%", lg: "50%", xl: "50%" },
+                                    }}>
+                                        <Box>
+                                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                                Longest Tracks
+                                            </Typography>
+                                            <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
+                                                Click on a track to go to it's Spotify page
+                                            </Typography>
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <TrackLengthTable data={analysisData.longest_tracks} />
+                                            </Box>
+                                        </Box>
+                                    </Grid>
+                                    {/* {analysisData.release_year_counts && 
+                                        <Grid item sx={{
+                                            width: { xs: "90%", sm: '90%', md: "80%", lg: "80%", xl: "75%" },
+                                        }}>
+                                            <Box>
+                                                <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                                                    Release Years
+                                                </Typography>
+                                                <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
+                                                    Distribution of track release years
+                                                </Typography>
+                                                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                    <ReleaseYearGraph data={analysisData.release_year_counts} />
+                                                </Box>
+                                            </Box>
+                                        </Grid>
+                                    }    */}
                                     <Grid item sx={{ width: "90%" }}>
                                         <Box>
                                             <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
@@ -263,7 +311,7 @@ const AnalysisPage = ({ isAuth }) => {
                                                 Our liked tracks history is updated once a week so if you don't see many data points, come back in a few weeks to see more data.
                                             </Typography>
                                                 <Paper sx={{ height: "500px", backgroundColor: "#b9b9b9" }}>
-                                                    <LineGraphApex data={transformTrackerData(likedTracksTrackerData, "Liked Tracks")} />
+                                                    <LikedTracksHistoryGraph data={likedTracksTrackerData} />
                                                 </Paper>
                                             </Box>)
                                             :
