@@ -13,5 +13,5 @@ export const HowToDeletePlaylistsEntry = [
 export const HowToShareLikedTracksEntry = [
     "Click \"Start\"",
     "Enter a playlist name or leave as default",
-    "A new playlist will be created with all the songs currently in your Liked Songs"
+    "A new playlist will be created with all the tracks currently in your Liked Songs"
 ]

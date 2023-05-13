@@ -52,7 +52,7 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                             alignItems="flex-start"
                         >
                             <OverallStatItemCard title={"Playlists"} stat={userShuffleCounter.playlist_count} description={"Total number of playlists you've shuffled using True Shuffle"} />
-                            <OverallStatItemCard title={"Songs"} stat={userShuffleCounter.track_count} description={"Total number of songs you've shuffled using True Shuffle"} />
+                            <OverallStatItemCard title={"Tracks"} stat={userShuffleCounter.track_count} description={"Total number of tracks you've shuffled using True Shuffle"} />
                         </Grid>
                         :
                         <Box></Box>
