@@ -10,7 +10,7 @@ class ShufflePlaylistResponse extends React.Component {
                 alignItems="center"
             >
                 <Typography variant='h4' component="div" sx={{ paddingBottom: "10px", color: "white" }}>
-                    Finished shuffling your playlist
+                    Playlist shuffled!
                 </Typography>
                 <img className="about-image"
                     src={process.env.PUBLIC_URL + '/assets/images/headset.png'} alt={"listening to music"} />
