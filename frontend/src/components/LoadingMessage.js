@@ -1,23 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Typography } from '@mui/material';
 
-const loadingMessages = ["Looking for your playlist", "Grabbing your music", "Randomising your tracks", "Creating a shuffled playlist", "You've got a lot of tracks!"];
+const DEFAULT_MESSAGE = "Loading...";
 
-function LoadingMessage() {
-    const [loadingMessageIndex, setLoadingMessageIndex] = useState(0);
+function LoadingMessage({ message }) {
+    const [loadingMessage, setLoadingMessage] = useState(DEFAULT_MESSAGE);
 
     useEffect(() => {
-        let timeout;
-        if (loadingMessageIndex < loadingMessages.length - 1) {
-            timeout = setTimeout(() => setLoadingMessageIndex(loadingMessageIndex + 1), 5000);
+        if (message && message.trim() !== '') {
+            setLoadingMessage(message);
         }
-        return () => {
-            clearTimeout(timeout);
-          };
-        }, [loadingMessageIndex]);
+        }, [message]);
 
     return (
-        <Typography variant="subtitle1" sx={{paddingTop:"10px", color:"white"}}>{loadingMessages[loadingMessageIndex]}</Typography>
+        <Typography variant="subtitle1" sx={{paddingTop:"10px", color:"white"}}>{loadingMessage}</Typography>
     )
 }
 

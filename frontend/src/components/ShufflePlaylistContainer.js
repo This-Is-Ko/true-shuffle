@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import ErrorMessage from "./ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
@@ -7,14 +7,18 @@ import LoadingMessage from "./LoadingMessage";
 
 // class ShufflePlaylistContainer extends React.Component {
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
-    const [playlistUri, setPlaylistUri] = React.useState("");
-    const [error, setError] = React.useState(false);
+    const [playlistUri, setPlaylistUri] = useState("");
+    const [shuffleTaskId, setShuffleTaskId] = useState("");
+    const [shuffleState, setShuffleState] = useState("");
+    const [shuffleStateMessage, setShuffleStateMessage] = useState("");
+    const [error, setError] = useState(false);
+    const [attemptCount, setAttemptCount] = useState(0);
 
     const useQuery = () => {
         return new URLSearchParams(window.location.search);
     }
 
-    const getShuffleCall = () => {
+    const postShuffleCall = () => {
         if (!(useQuery().get('playlistId') == null || useQuery().get('playlistId') === "")) {
             // Call shuffle
             axios
@@ -27,7 +31,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                     },
                     { headers: { "Content-Type": "application/json" }, withCredentials: true })
                 .then(result => {
-                    setPlaylistUri(result.data.playlist_uri);
+                    setShuffleTaskId(result.data.shuffle_task_id);
                     setError(false);
                 })
                 .catch((responseError) => {
@@ -42,9 +46,48 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
         }
     };
 
+    const getShuffleState = () => {
+        if (shuffleTaskId !== null && shuffleTaskId !== "") {
+            axios
+                .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/shuffle/state/` + shuffleTaskId, {withCredentials: true})
+                .then(result => {
+                    setShuffleState(result.data.state);
+                    if (result.data.state === "SUCCESS") {
+                        clearInterval(intervalRef.current);
+                        setPlaylistUri(result.data.result.playlist_uri)
+                    } else if (result.data.state === "PROGRESS") {
+                        setShuffleStateMessage(result.data.progress.state);
+                    } else if (result.data.state === "FAILURE") {
+                        clearInterval(intervalRef.current);
+                        setError({ message: "Error while checking shuffle state" });
+                    } else if (result.data.state === "PENDING") {
+                        setAttemptCount(attemptCount + 1);
+                        if (attemptCount >= 20) {
+                            clearInterval(intervalRef.current);
+                            setError({ message: "Unable to get shuffle state. Please try again later" });
+                        }
+                    }
+                }).catch(responseError => {
+                    clearInterval(intervalRef.current);
+                    setError({ message: "Error while checking shuffle state" });
+                });
+        }
+    }
+
     useEffect(() => {
-        getShuffleCall();
+        postShuffleCall();
     }, []);
+
+    const intervalRef = useRef(null);
+    const shuffleStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
+
+    useEffect(() => {
+        intervalRef.current = setInterval(() => {
+            getShuffleState();
+        }, shuffleStatePollingRate);
+
+        return () => clearInterval(intervalRef.current);
+    }, [shuffleTaskId, attemptCount]);
 
     return (
         <div className="shuffle-container">
@@ -56,7 +99,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                 ) : (
                     <div className="loading-container">
                         <CircularProgress />
-                        <LoadingMessage />
+                        <LoadingMessage message={shuffleState === 'PROGRESS' ? shuffleStateMessage : "Shuffling..."}/>
                     </div>
                 )
             )}
