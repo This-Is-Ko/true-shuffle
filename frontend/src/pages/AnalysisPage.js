@@ -45,7 +45,7 @@ const AnalysisPage = ({ isAuth }) => {
             })
             .catch((responseError) => {
                 setStartAnalysis(false)
-                if (responseError.response.status === 401) {
+                if (responseError && responseError.response && responseError.response.status === 401) {
                     setError({ message: "Unable to authenticate your account, please logout and try again" });
                 } else {
                     setError({ message: "Unable to connect to Spotify, please try again later" });
