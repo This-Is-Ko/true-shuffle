@@ -71,6 +71,12 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                     clearInterval(intervalRef.current);
                     setError({ message: "Error while checking shuffle state" });
                 });
+        } else {
+            setAttemptCount(attemptCount + 1);
+            if (attemptCount >= 20) {
+                clearInterval(intervalRef.current);
+                setError({ message: "Unable to get shuffle state. Please try again later" });
+            }
         }
     }
 
