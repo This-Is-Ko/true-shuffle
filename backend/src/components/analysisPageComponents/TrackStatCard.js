@@ -6,7 +6,6 @@ const TrackStatCard = ({ title, stat, description, track }) => {
     function getArtists(artists) {
         let numArtists = 0
         let artistNames = ""
-        console.log(artists)
         for (const artist of artists){
             numArtists +=1;
             if (numArtists == 1){
