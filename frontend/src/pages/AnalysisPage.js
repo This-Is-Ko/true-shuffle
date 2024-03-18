@@ -49,7 +49,6 @@ const AnalysisPage = ({ isAuth }) => {
             })
             .catch((responseError) => {
                 setIsLoading(false);
-                setError(error.message);
                 if (responseError && responseError.response && responseError.response.status === 401) {
                     setError({ message: "Unable to authenticate your account, please logout and try again" });
                 } else {
