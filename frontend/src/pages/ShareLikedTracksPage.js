@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Typography, Button, Box, TextField, Stack, Paper } from "@mui/material";
+import React, { useEffect, useState, useRef } from "react";
+import { Typography, Button, Box, TextField, Stack, Paper, Grid } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
@@ -7,17 +7,23 @@ import HowToModal from '../components/howToComponents/HowToModal';
 import { HowToShareLikedTracksEntry } from '../components/howToComponents/HowToEntries';
 
 import RestrictedAccessPage from './RestrictedAccessPage'
+import LoadingMessage from "../components/LoadingMessage";
 
 const ShareLikedTracksPage = ({ isAuth }) => {
-    const [auth, setAuth] = React.useState(
+    const [auth, setAuth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
-    const [isLoading, setIsLoading] = React.useState(false);
-    const [isError, setIsError] = React.useState(false);
-    const [step, setStep] = React.useState(1);
-    const [playlistName, setPlaylistName] = React.useState("");
-    const [playlistUri, setPlaylistUri] = React.useState("");
-    const [isHowToModalOpen, setIsHowToModalOpen] = React.useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(false);
+    const [step, setStep] = useState(1);
+    const [playlistName, setPlaylistName] = useState("");
+    const [playlistUri, setPlaylistUri] = useState("");
+    const [isHowToModalOpen, setIsHowToModalOpen] = useState(false);
+    
+    const [createLikedPlaylistTaskId, setCreateLikedPlaylistTaskId] = useState("");
+    const [createLikedPlaylistState, setCreateLikedPlaylistState] = useState("");
+    const [attemptCount, setAttemptCount] = useState(0);
+    const [createLikedPlaylistStateMessage, setCreateLikedPlaylistStateMessage] = useState("");
 
     const handleHowToModalOpen = () => setIsHowToModalOpen(true);
     const handleHowToModalClose = () => setIsHowToModalOpen(false);
@@ -26,7 +32,7 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth]);
 
-    const createLikedTracksPlaylistsCall = () => {
+    const postCreateLikedTracksPlaylistsCall = () => {
         // Call create liked tracks playlist
         setIsLoading(true);
         axios
@@ -34,17 +40,85 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                 { playlist_name: playlistName },
                 { headers: { "Content-Type": "application/json" }, withCredentials: true })
             .then(result => {
-                setIsLoading(false);
-                setIsError(false);
-                setStep(3);
-                setPlaylistUri(result.data.playlist_uri);
-                console.log(result)
+                setCreateLikedPlaylistTaskId(result.data.create_liked_playlist_id);
+                setError(false);
             })
-            .catch(error => {
+            .catch((responseError) => {
                 setIsLoading(false);
-                setIsError({ message: "Unable to connect to Spotify, please try again later" });
+                setError(error.message);
+                if (responseError && responseError.response && responseError.response.status === 401) {
+                    setError({ message: "Unable to authenticate your account, please logout and try again" });
+                } else {
+                    setError({ message: "Unable to connect to Spotify, please try again later" });
+                }
             });
     }
+    
+
+    const getCreateLikedTracksPlaylistsStateCall = () => {
+        if (isLoading === true && createLikedPlaylistTaskId !== null && createLikedPlaylistTaskId !== "") {
+            axios
+                .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks/` + createLikedPlaylistTaskId, { withCredentials: true })
+                .then(result => {
+                    setCreateLikedPlaylistState(result.data.state);
+                    if (result.data.state === "SUCCESS") {
+                        setIsLoading(false);
+                        clearInterval(intervalRef.current);
+                        if (result.data.result.status === "success") {
+                            setPlaylistUri(result.data.result.playlist_uri);
+                            setError(false);
+                            setStep(3);
+                        } else {
+                            setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                        }
+                    } else if (result.data.state === "PROGRESS") {
+                        setCreateLikedPlaylistStateMessage(result.data.progress.state);
+                    } else if (result.data.state === "FAILURE") {
+                        setIsLoading(false);
+                        clearInterval(intervalRef.current);
+                        setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                    } else if (result.data.state === "PENDING") {
+                        setAttemptCount(attemptCount + 1);
+                        if (attemptCount >= 20) {
+                            clearInterval(intervalRef.current);
+                            setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                        }
+                    }
+                    
+                })
+                .catch((responseError) => {
+                    setIsLoading(false);
+                    if (responseError && responseError.response && responseError.response.status === 401) {
+                        setError({ message: "Unable to authenticate your account, please logout and try again" });
+                    } else {
+                        setError({ message: "Unable to connect to Spotify, please try again later" });
+                    }
+                });
+        } else {
+            setAttemptCount(attemptCount + 1);
+            if (attemptCount >= 20) {
+                setIsLoading(false);
+                clearInterval(intervalRef.current);
+                setError({ message: "Error while analysing your music. Please try again later" });
+            }
+        }
+    };
+
+    const intervalRef = useRef(null);
+    const createLikedPlaylistStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
+
+    useEffect(() => {
+        intervalRef.current = setInterval(() => {
+            getCreateLikedTracksPlaylistsStateCall();
+        }, createLikedPlaylistStatePollingRate);
+
+        return () => clearInterval(intervalRef.current);
+    }, [createLikedPlaylistTaskId, attemptCount]);
+
+    if (auth === false) {
+        return <RestrictedAccessPage />
+    }
+
 
     const copyToClipboard = () => {
         if (playlistUri !== "") {
@@ -64,12 +138,12 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     const handleSubmit = async () => {
         setStep(2);
         setIsLoading(true);
-        createLikedTracksPlaylistsCall();
+        postCreateLikedTracksPlaylistsCall();
     };
 
     const handleRetry = async () => {
         setStep(1);
-        setIsError(false);
+        setError(false);
         setIsLoading(false);
     };
 
@@ -100,8 +174,11 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                 return (
                     <div>
                         {isLoading ? (
-                            <CircularProgress />
-                        ) : (
+                            <div>
+                                <CircularProgress />
+                                <LoadingMessage message={createLikedPlaylistState === 'PROGRESS' ? createLikedPlaylistStateMessage : "Creating playlist from your liked tracks..."}/>
+                            </div>
+                            ) : (
                             <Box sx={{ width: '100%' }}>
                                 <Stack spacing={1}>
                                     <Box>
@@ -151,23 +228,46 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                 );
             case 3:
                 return (
-                    <div>
-                        <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>
+                    <Box
+                        justifyContent="center"
+                        alignItems="center"
+                    >
+                        <Grid
+                        sx={{ paddingTop: "20px", width: "100%", margin: "auto" }}
+                        container
+                        spacing={2}
+                        justifyContent="center">
+                            <Grid item>
+                            <Button
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2, color: 'white', bgcolor: "#1DB954",
+                                    width: "30rem", maxWidth: "300px"
+                                }}
+                                href={playlistUri} target="_blank">
+                                Open shuffled playlist
+                            </Button>
+                        </Grid>
+                            <Grid item>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        my: 2,
+                                        color: "white",
+                                        bgcolor: "#1DB954",
+                                    }}
+                                    onClick={() => copyToClipboard()}
+                                >
+                                    Copy To Clipboard
+                                </Button>
+                            </Grid>
+                        </Grid>
+                        <Typography variant='subtitle1' component="div" sx={{ paddingBottom: "5px", color: "white" }}>
                             <strong>Successfully created your new playlist</strong>
                         </Typography>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                bgcolor: "#1DB954",
-                            }}
-                            onClick={() => copyToClipboard()}
-                        >
-                            Copy To Clipboard
-                        </Button>
-                    </div>
+                    </Box>
                 );
             default:
                 return null;
@@ -207,9 +307,9 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                     <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShareLikedTracksEntry}></HowToModal>
                 </Box>
                 <Box>
-                    {!isError && renderSwitch(step)}
+                    {!error && renderSwitch(step)}
                 </Box>
-                {isError &&
+                {error &&
                     <Box>
                         {/* <ErrorMessage error={isError} /> */}
                         <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>

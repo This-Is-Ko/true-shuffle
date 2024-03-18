@@ -27,7 +27,7 @@ const AnalysisPage = ({ isAuth }) => {
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
 
-    const [loading, setLoading] = useState(null);
+    const [isLoading, setIsLoading] = useState(null);
     const [analysisData, setAnalysisData] = useState(null);
     const [likedTracksTrackerData, setLikedTracksTrackerData] = useState([]);
     const [aggregateTaskId, setAggregateTaskId] = useState("");
@@ -39,7 +39,7 @@ const AnalysisPage = ({ isAuth }) => {
     const [featureShowMoreDetails, setFeatureShowMoreDetails] = useState(false);
 
     const handleStartAnalysis = () => {
-        setLoading(true);
+        setIsLoading(true);
         setError(null);
         axios
             .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/aggregate`, { withCredentials: true })
@@ -48,7 +48,7 @@ const AnalysisPage = ({ isAuth }) => {
                 setError(false);
             })
             .catch((responseError) => {
-                setLoading(false);
+                setIsLoading(false);
                 setError(error.message);
                 if (responseError && responseError.response && responseError.response.status === 401) {
                     setError({ message: "Unable to authenticate your account, please logout and try again" });
@@ -59,13 +59,13 @@ const AnalysisPage = ({ isAuth }) => {
     };
 
     const getAggregateDataStateCall = () => {
-        if (aggregateTaskId !== null && aggregateTaskId !== "") {
+        if (isLoading === true && aggregateTaskId !== null && aggregateTaskId !== "") {
             axios
                 .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/aggregate/state/` + aggregateTaskId, { withCredentials: true })
                 .then(result => {
                     setAggregateState(result.data.state);
                     if (result.data.state === "SUCCESS") {
-                        setLoading(false);
+                        setIsLoading(false);
                         clearInterval(intervalRef.current);
                         if (result.data.result.status === "success") {
                             setAnalysisData(result.data.result.analysis)
@@ -77,7 +77,7 @@ const AnalysisPage = ({ isAuth }) => {
                     } else if (result.data.state === "PROGRESS") {
                         setAggregateStateMessage(result.data.progress.state);
                     } else if (result.data.state === "FAILURE") {
-                        setLoading(false);
+                        setIsLoading(false);
                         clearInterval(intervalRef.current);
                         setError({ message: "Error while analysing your music. Please try again later" });
                     } else if (result.data.state === "PENDING") {
@@ -90,7 +90,7 @@ const AnalysisPage = ({ isAuth }) => {
                     
                 })
                 .catch((responseError) => {
-                    setLoading(false);
+                    setIsLoading(false);
                     if (responseError && responseError.response && responseError.response.status === 401) {
                         setError({ message: "Unable to authenticate your account, please logout and try again" });
                     } else {
@@ -100,7 +100,7 @@ const AnalysisPage = ({ isAuth }) => {
         } else {
             setAttemptCount(attemptCount + 1);
             if (attemptCount >= 20) {
-                setLoading(false);
+                setIsLoading(false);
                 clearInterval(intervalRef.current);
                 setError({ message: "Error while analysing your music. Please try again later" });
             }
@@ -108,12 +108,12 @@ const AnalysisPage = ({ isAuth }) => {
     };
 
     const intervalRef = useRef(null);
-    const shuffleStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
+    const aggregateStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
 
     useEffect(() => {
         intervalRef.current = setInterval(() => {
             getAggregateDataStateCall();
-        }, shuffleStatePollingRate);
+        }, aggregateStatePollingRate);
 
         return () => clearInterval(intervalRef.current);
     }, [aggregateTaskId, attemptCount]);
@@ -142,7 +142,7 @@ const AnalysisPage = ({ isAuth }) => {
                 </Typography>
             </Box>
             {error !== null && error.message !== null && <ErrorMessage error={error} isGeneric={false} />}
-            {loading === null && analysisData === null && 
+            {isLoading === null && analysisData === null && 
                 <Box>
                     <Box sx={{ display: "flex", justifyContent: "center" }}>
                         <Button
@@ -166,21 +166,21 @@ const AnalysisPage = ({ isAuth }) => {
                     />
                 </Box>
             }
-            {loading && 
+            {isLoading && 
                 <div>
                     <br/>
                     <CircularProgress />
                     <LoadingMessage message={aggregateState === 'PROGRESS' ? aggregateStateMessage : "Analysing your library. If you have many Liked Songs, this process may take longer..."}/>
                 </div>
             }
-            {!loading && analysisData !== null && analysisData.num_tracks === 0 && 
+            {!isLoading && analysisData !== null && analysisData.num_tracks === 0 && 
                 <Box>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white", textAlign: "center" }}>
                         Your library is empty. Add some music to your Liked Songs to analyse.
                     </Typography>
                 </Box>
             }
-            {!loading && analysisData !== null && 
+            {!isLoading && analysisData !== null && 
                 <Box>
                     <Box>
                         <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
