@@ -18,7 +18,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
         return new URLSearchParams(window.location.search);
     }
 
-    const postShuffleCall = () => {
+    const postQueueShufflePlaylistCall = () => {
         if (!(useQuery().get('playlistId') == null || useQuery().get('playlistId') === "")) {
             // Call shuffle
             axios
@@ -81,7 +81,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     }
 
     useEffect(() => {
-        postShuffleCall();
+        postQueueShufflePlaylistCall();
     }, []);
 
     const intervalRef = useRef(null);
