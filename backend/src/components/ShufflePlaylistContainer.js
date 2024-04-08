@@ -62,6 +62,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                         const currentRate = shuffleStatePollingRate;
                         // Increase by 0.5 second, max 10 seconds
                         const newPollingRate = Math.min(currentRate + 500, 10000);
+                        clearInterval(intervalRef.current);
                         setShuffleStatePollingRate(newPollingRate);
                     } else if (result.data.state === "FAILURE") {
                         clearInterval(intervalRef.current);
