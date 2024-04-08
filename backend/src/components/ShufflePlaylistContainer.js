@@ -13,6 +13,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     const [shuffleStateMessage, setShuffleStateMessage] = useState("");
     const [error, setError] = useState(false);
     const [attemptCount, setAttemptCount] = useState(0);
+    const [shuffleStatePollingRate, setShuffleStatePollingRate] = useState(process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? Number(process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS) : 2000);
 
     const useQuery = () => {
         return new URLSearchParams(window.location.search);
@@ -57,6 +58,11 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                         setPlaylistUri(result.data.result.playlist_uri)
                     } else if (result.data.state === "PROGRESS") {
                         setShuffleStateMessage(result.data.progress.state);
+                        // Apply backoff strategy for polling rate
+                        const currentRate = shuffleStatePollingRate;
+                        // Increase by 0.5 second, max 10 seconds
+                        const newPollingRate = Math.min(currentRate + 500, 10000);
+                        setShuffleStatePollingRate(newPollingRate);
                     } else if (result.data.state === "FAILURE") {
                         clearInterval(intervalRef.current);
                         setError({ message: "Error while checking shuffle state" });
@@ -85,7 +91,6 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     }, []);
 
     const intervalRef = useRef(null);
-    const shuffleStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
 
     useEffect(() => {
         intervalRef.current = setInterval(() => {
@@ -93,7 +98,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
         }, shuffleStatePollingRate);
 
         return () => clearInterval(intervalRef.current);
-    }, [shuffleTaskId, attemptCount]);
+    }, [shuffleTaskId, attemptCount, shuffleStatePollingRate]);
 
     return (
         <div className="shuffle-container">
