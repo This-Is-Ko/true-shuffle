@@ -12,8 +12,16 @@ class ShufflePlaylistResponse extends React.Component {
                 <Typography variant='h4' component="div" sx={{ paddingBottom: "10px", color: "white" }}>
                     Playlist shuffled!
                 </Typography>
-                <img className="about-image"
-                    src={process.env.PUBLIC_URL + '/assets/images/headset.png'} alt={"listening to music"} />
+                <Box
+                    component="img"
+                    sx={{
+                        "width": "auto",
+                        "maxWidth": "250px"
+                    }}
+                    alt={this.props.selectedPlaylist.name}
+                    src={this.props.selectedPlaylist.images.url}
+                />
+                <Typography variant="h4" sx={{paddingTop:"10px", color:"white"}}>{this.props.selectedPlaylist.name}</Typography>
                 <Grid
                     sx={{ paddingTop: "20px", width: "100%", margin: "auto" }}
                     container
