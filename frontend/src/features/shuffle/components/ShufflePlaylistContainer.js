@@ -4,6 +4,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
 import LoadingMessage from "../../../components/LoadingMessage";
+import { Typography, Box } from "@mui/material";
 
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
     const [playlistUri, setPlaylistUri] = useState("");
@@ -106,9 +107,19 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
                 <ErrorMessage error={error} isGeneric={false} />
             ) : (
                 playlistUri !== "" ? (
-                    <ShufflePlaylistResponse playlistUri={playlistUri} />
+                    <ShufflePlaylistResponse selectedPlaylist={selectedPlaylist} playlistUri={playlistUri} />
                 ) : (
                     <div className="loading-container">
+                        <Box
+                            component="img"
+                            sx={{
+                                "width": "auto",
+                                "maxWidth": "250px"
+                            }}
+                            alt={selectedPlaylist.name}
+                            src={selectedPlaylist.images.url}
+                        />
+                        <Typography variant="h4" sx={{paddingTop:"10px", color:"white"}}>{selectedPlaylist.name}</Typography>
                         <CircularProgress />
                         <LoadingMessage message={shuffleState === 'PROGRESS' ? shuffleStateMessage : "Shuffling..."}/>
                     </div>

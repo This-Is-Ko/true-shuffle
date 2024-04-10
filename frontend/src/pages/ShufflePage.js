@@ -30,7 +30,7 @@ const ShufflePage = ({ isAuth }) => {
 
     useEffect(() => {
         if (selectedPlaylist !== null) {
-            setPageState(PAGE_STATES.SHUFFLING_PLAYLIST);
+            setPageState(PAGE_STATES.SHUFFLE_PLAYLIST);
         }
     }, [selectedPlaylist]);
 
@@ -38,10 +38,8 @@ const ShufflePage = ({ isAuth }) => {
         switch (pageState) {
             case PAGE_STATES.DISPLAY_ALL_PLAYLISTS:
                 return <AllPlaylistsContainer selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
-            case PAGE_STATES.SHUFFLING_PLAYLIST:
+            case PAGE_STATES.SHUFFLE_PLAYLIST:
                 return <ShufflePlaylistContainer selectedPlaylist={selectedPlaylist} />;
-            // case PAGE_STATES.DISPLAY_SHUFFLE_RESPONSE:
-            //     return <ShufflePlaylistResponse playlistId={selectedPlaylistId} />;
             default:
                 return null;
         }
