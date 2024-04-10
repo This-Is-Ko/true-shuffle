@@ -10,6 +10,10 @@ import { Typography, Button, Skeleton } from "@mui/material";
 const PlaylistItem = (props) => {
     const loading = props.loading
 
+    const updateSelectedPlaylist = () => {
+        props.setSelectedPlaylist(props.playlist)
+    }
+
     return (
         <Grid item>
             {loading === true ?
@@ -56,8 +60,7 @@ const PlaylistItem = (props) => {
                             {props.playlist.owner.display_name}
                         </Typography>
                         <Button variant="contained"
-                            // onClick={() => { props.selectPlaylist(props.playlist.id, props.playlist.name) }}
-                            href={"/shuffle/playlist?playlistId=" + props.playlist.id + "&playlistName=" + props.playlist.name}
+                            onClick={() => { updateSelectedPlaylist(); }}
                             sx={{ color: 'white', bgcolor: "#1DB954" }}
                             startIcon={<ShuffleIcon />}>Shuffle</Button>
                     </CardContent>

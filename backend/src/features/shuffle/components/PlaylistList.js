@@ -3,7 +3,7 @@ import Grid from "@mui/material/Grid";
 
 import PlaylistItem from "./PlaylistItem";
 
-const PlaylistList = ({ playlists, selectPlaylist, loading }) => {
+const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading }) => {
     return (
         loading === true ?
             <Grid
@@ -37,6 +37,7 @@ const PlaylistList = ({ playlists, selectPlaylist, loading }) => {
                         key={playlist.id}
                         playlist={playlist}
                         selectPlaylist={selectPlaylist}
+                        setSelectedPlaylist={setSelectedPlaylist}
                     />
                 ))}
             </Grid>
