@@ -1,11 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import ErrorMessage from "./ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
 import LoadingMessage from "./LoadingMessage";
 
-// class ShufflePlaylistContainer extends React.Component {
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     const [playlistUri, setPlaylistUri] = useState("");
     const [shuffleTaskId, setShuffleTaskId] = useState("");
@@ -13,21 +12,21 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     const [shuffleStateMessage, setShuffleStateMessage] = useState("");
     const [error, setError] = useState(false);
     const [attemptCount, setAttemptCount] = useState(0);
-    const [shuffleStatePollingRate, setShuffleStatePollingRate] = useState(process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? Number(process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS) : 2000);
+    const [shuffleStatePollingWaitTime, setShuffleStatePollingWaitTime] = useState(1000);
 
-    const useQuery = () => {
+    const getQueryParams = () => {
         return new URLSearchParams(window.location.search);
     }
 
     const postQueueShufflePlaylistCall = () => {
-        if (!(useQuery().get('playlistId') == null || useQuery().get('playlistId') === "")) {
+        if (!(getQueryParams().get('playlistId') == null || getQueryParams().get('playlistId') === "")) {
             // Call shuffle
             axios
                 .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/shuffle`,
                     {
                         is_use_liked_tracks: "false",
-                        playlist_id: useQuery().get('playlistId'),
-                        playlist_name: useQuery().get('playlistName'),
+                        playlist_id: getQueryParams().get('playlistId'),
+                        playlist_name: getQueryParams().get('playlistName'),
                         is_make_new_playlist: "false"
                     },
                     { headers: { "Content-Type": "application/json" }, withCredentials: true })
@@ -54,36 +53,42 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                 .then(result => {
                     setShuffleState(result.data.state);
                     if (result.data.state === "SUCCESS") {
-                        clearInterval(intervalRef.current);
                         setPlaylistUri(result.data.result.playlist_uri)
                     } else if (result.data.state === "PROGRESS") {
                         setShuffleStateMessage(result.data.progress.state);
-                        // Apply backoff strategy for polling rate
-                        const currentRate = shuffleStatePollingRate;
-                        // Increase by 0.5 second, max 10 seconds
-                        const newPollingRate = Math.min(currentRate + 500, 10000);
-                        clearInterval(intervalRef.current);
-                        setShuffleStatePollingRate(newPollingRate);
+                        setAttemptCount(attemptCount + 1);
+                        if (attemptCount >= 30) {
+                            setError({ message: "Unable to get shuffle state. Please try again later" });
+                        } else {
+                            setShuffleStatePollingWaitTime(calcNewWaitTime(shuffleStatePollingWaitTime));
+                        }
                     } else if (result.data.state === "FAILURE") {
-                        clearInterval(intervalRef.current);
                         setError({ message: "Error while checking shuffle state" });
                     } else if (result.data.state === "PENDING") {
                         setAttemptCount(attemptCount + 1);
                         if (attemptCount >= 20) {
-                            clearInterval(intervalRef.current);
                             setError({ message: "Unable to get shuffle state. Please try again later" });
+                        } else {
+                            setShuffleStatePollingWaitTime(calcNewWaitTime(shuffleStatePollingWaitTime));
                         }
                     }
                 }).catch(responseError => {
-                    clearInterval(intervalRef.current);
                     setError({ message: "Error while checking shuffle state" });
                 });
         } else {
             setAttemptCount(attemptCount + 1);
             if (attemptCount >= 20) {
-                clearInterval(intervalRef.current);
                 setError({ message: "Unable to get shuffle state. Please try again later" });
+            } else {
+                setShuffleStatePollingWaitTime(calcNewWaitTime(shuffleStatePollingWaitTime));
             }
+        }
+    }
+    
+    // Apply backoff strategy for polling rate
+    const calcNewWaitTime = (currentWaitTime) => {
+        if (currentWaitTime != null){
+            return Math.min(currentWaitTime + 500, 10000);
         }
     }
 
@@ -91,15 +96,13 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
         postQueueShufflePlaylistCall();
     }, []);
 
-    const intervalRef = useRef(null);
-
     useEffect(() => {
-        intervalRef.current = setInterval(() => {
+        const timer = setTimeout(() => {
             getShuffleState();
-        }, shuffleStatePollingRate);
+        }, shuffleStatePollingWaitTime);
 
-        return () => clearInterval(intervalRef.current);
-    }, [shuffleTaskId, attemptCount, shuffleStatePollingRate]);
+        return () => clearTimeout(timer);
+    }, [shuffleTaskId, shuffleStatePollingWaitTime]);
 
     return (
         <div className="shuffle-container">
