@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Button, Box, TextField, Stack, Paper, Grid } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -23,6 +23,7 @@ const ShareLikedTracksPage = ({ isAuth }) => {
     const [createLikedPlaylistTaskId, setCreateLikedPlaylistTaskId] = useState("");
     const [createLikedPlaylistState, setCreateLikedPlaylistState] = useState("");
     const [attemptCount, setAttemptCount] = useState(0);
+    const [pollingWaitTime, setPollingWaitTime] = useState(2000);
     const [createLikedPlaylistStateMessage, setCreateLikedPlaylistStateMessage] = useState("");
 
     const handleHowToModalOpen = () => setIsHowToModalOpen(true);
@@ -63,7 +64,6 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                     setCreateLikedPlaylistState(result.data.state);
                     if (result.data.state === "SUCCESS") {
                         setIsLoading(false);
-                        clearInterval(intervalRef.current);
                         if (result.data.result.status === "success") {
                             setPlaylistUri(result.data.result.playlist_uri);
                             setError(false);
@@ -73,18 +73,22 @@ const ShareLikedTracksPage = ({ isAuth }) => {
                         }
                     } else if (result.data.state === "PROGRESS") {
                         setCreateLikedPlaylistStateMessage(result.data.progress.state);
+                        if (attemptCount >= 30) {
+                            setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                        } else {
+                            setPollingWaitTime(calcNewWaitTime(pollingWaitTime))
+                        }
                     } else if (result.data.state === "FAILURE") {
                         setIsLoading(false);
-                        clearInterval(intervalRef.current);
                         setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
                     } else if (result.data.state === "PENDING") {
                         setAttemptCount(attemptCount + 1);
                         if (attemptCount >= 20) {
-                            clearInterval(intervalRef.current);
                             setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                        } else {
+                            setPollingWaitTime(calcNewWaitTime(pollingWaitTime))
                         }
                     }
-                    
                 })
                 .catch((responseError) => {
                     setIsLoading(false);
@@ -98,22 +102,27 @@ const ShareLikedTracksPage = ({ isAuth }) => {
             setAttemptCount(attemptCount + 1);
             if (attemptCount >= 20) {
                 setIsLoading(false);
-                clearInterval(intervalRef.current);
-                setError({ message: "Error while analysing your music. Please try again later" });
+                setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+            } else {
+                setPollingWaitTime(calcNewWaitTime(pollingWaitTime));
             }
         }
     };
 
-    const intervalRef = useRef(null);
-    const createLikedPlaylistStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
+    // Apply backoff strategy for polling rate
+    const calcNewWaitTime = (currentWaitTime) => {
+        if (currentWaitTime != null){
+            return Math.min(currentWaitTime + 500, 10000);
+        }
+    }
 
     useEffect(() => {
-        intervalRef.current = setInterval(() => {
+        const timer = setTimeout(() => {
             getCreateLikedTracksPlaylistsStateCall();
-        }, createLikedPlaylistStatePollingRate);
+        }, pollingWaitTime);
 
-        return () => clearInterval(intervalRef.current);
-    }, [createLikedPlaylistTaskId, attemptCount]);
+        return () => clearTimeout(timer);
+    }, [createLikedPlaylistTaskId, pollingWaitTime]);
 
     if (auth === false) {
         return <RestrictedAccessPage />

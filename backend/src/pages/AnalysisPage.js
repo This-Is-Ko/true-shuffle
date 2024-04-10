@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Box, Paper, Button } from "@mui/material";
 import { Helmet } from "react-helmet";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -35,7 +35,7 @@ const AnalysisPage = ({ isAuth }) => {
     const [attemptCount, setAttemptCount] = useState(0);
     const [aggregateStateMessage, setAggregateStateMessage] = useState("");
     const [error, setError] = useState(null);
-
+    const [aggregateStatePollingWaitTime, setAggregateStatePollingWaitTime] = useState(1000);
     const [featureShowMoreDetails, setFeatureShowMoreDetails] = useState(false);
 
     const handleStartAnalysis = () => {
@@ -65,7 +65,6 @@ const AnalysisPage = ({ isAuth }) => {
                     setAggregateState(result.data.state);
                     if (result.data.state === "SUCCESS") {
                         setIsLoading(false);
-                        clearInterval(intervalRef.current);
                         if (result.data.result.status === "success") {
                             setAnalysisData(result.data.result.analysis)
                             setLikedTracksTrackerData(result.data.result.track_liked_tracks.data)
@@ -75,15 +74,20 @@ const AnalysisPage = ({ isAuth }) => {
                         }
                     } else if (result.data.state === "PROGRESS") {
                         setAggregateStateMessage(result.data.progress.state);
+                        if (attemptCount >= 30) {
+                            setError({ message: "Error while analysing your music. Please try again later" });
+                        } else {
+                            setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
+                        }
                     } else if (result.data.state === "FAILURE") {
                         setIsLoading(false);
-                        clearInterval(intervalRef.current);
                         setError({ message: "Error while analysing your music. Please try again later" });
                     } else if (result.data.state === "PENDING") {
                         setAttemptCount(attemptCount + 1);
                         if (attemptCount >= 20) {
-                            clearInterval(intervalRef.current);
                             setError({ message: "Error while analysing your music. Please try again later" });
+                        } else {
+                            setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
                         }
                     }
                     
@@ -100,22 +104,27 @@ const AnalysisPage = ({ isAuth }) => {
             setAttemptCount(attemptCount + 1);
             if (attemptCount >= 20) {
                 setIsLoading(false);
-                clearInterval(intervalRef.current);
                 setError({ message: "Error while analysing your music. Please try again later" });
+            } else {
+                setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
             }
         }
     };
 
-    const intervalRef = useRef(null);
-    const aggregateStatePollingRate = process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS !== null ? process.env.REACT_APP_SHUFFLE_STATE_POLLING_RATE_MILLISECONDS : 2000;
-
+    // Apply backoff strategy for polling rate
+    const calcNewWaitTime = (currentWaitTime) => {
+        if (currentWaitTime != null){
+            return Math.min(currentWaitTime + 500, 10000);
+        }
+    }
+    
     useEffect(() => {
-        intervalRef.current = setInterval(() => {
+        const timer = setTimeout(() => {
             getAggregateDataStateCall();
-        }, aggregateStatePollingRate);
+        }, aggregateStatePollingWaitTime);
 
-        return () => clearInterval(intervalRef.current);
-    }, [aggregateTaskId, attemptCount]);
+        return () => clearTimeout(timer);
+    }, [aggregateTaskId, aggregateStatePollingWaitTime]);
 
     if (auth === false) {
         return <RestrictedAccessPage />

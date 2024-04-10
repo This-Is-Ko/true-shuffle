@@ -19,7 +19,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
 
     const navigate = useNavigate();
 
-    function useQuery() {
+    function getQueryParams() {
         return new URLSearchParams(window.location.search);
     }
 
@@ -33,7 +33,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
     };
 
     useEffect(() => {
-        getAccessTokenCall(useQuery().get('code'), setIsAuth, navigate, setLoadingAccessToken, setShowErrorMessage, setShowSuccessMessage);
+        getAccessTokenCall(getQueryParams().get('code'), setIsAuth, navigate, setLoadingAccessToken, setShowErrorMessage, setShowSuccessMessage);
         getStatisticsApi(setTrackCounter, setPlaylistCounter, setAnalysisCounter);
     }, [isAuth]);
 
