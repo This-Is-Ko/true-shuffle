@@ -1,17 +1,21 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Typography, Button, Box } from "@mui/material";
 
 import RestrictedAccessPage from './RestrictedAccessPage'
-import PlaylistContainer from "../components/PlaylistContainer";
+import AllPlaylistsContainer from "../features/shuffle/components/PlaylistContainer";
 import HowToModal from '../components/howToComponents/HowToModal';
 import { HowToShuffleEntry } from '../components/howToComponents/HowToEntries';
+import PAGE_STATES from "../features/shuffle/state/PageStates";
+import ShufflePlaylistContainer from "../features/shuffle/components/ShufflePlaylistContainer";
 
 const ShufflePage = ({ isAuth }) => {
-    const [auth, setAuth] = React.useState(
+    const [auth, setAuth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
-    const [newPlaylistUri, setNewPlaylistUri] = React.useState("");
-    const [isHowToModalOpen, setIsHowToModalOpen] = React.useState(false);
+    const [newPlaylistUri, setNewPlaylistUri] = useState("");
+    const [isHowToModalOpen, setIsHowToModalOpen] = useState(false);
+    const [selectedPlaylist, setSelectedPlaylist] = useState(null);
+    const [pageState, setPageState] = useState(PAGE_STATES.DISPLAY_ALL_PLAYLISTS);
 
     const handleHowToModalOpen = () => setIsHowToModalOpen(true);
     const handleHowToModalClose = () => setIsHowToModalOpen(false);
@@ -24,9 +28,35 @@ const ShufflePage = ({ isAuth }) => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth, newPlaylistUri]);
 
-    return (
-        <main>
-            {auth === true ? (
+    useEffect(() => {
+        if (selectedPlaylist !== null) {
+            setPageState(PAGE_STATES.SHUFFLING_PLAYLIST);
+        }
+    }, [selectedPlaylist]);
+
+    const renderPageContent = () => {
+        switch (pageState) {
+            case PAGE_STATES.DISPLAY_ALL_PLAYLISTS:
+                return <AllPlaylistsContainer selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
+            case PAGE_STATES.SHUFFLING_PLAYLIST:
+                return <ShufflePlaylistContainer selectedPlaylist={selectedPlaylist} />;
+            // case PAGE_STATES.DISPLAY_SHUFFLE_RESPONSE:
+            //     return <ShufflePlaylistResponse playlistId={selectedPlaylistId} />;
+            default:
+                return null;
+        }
+      };
+    
+    // Unauthenticated user should be directed to login
+    if (auth === false) {
+        return (
+            <main>
+                <RestrictedAccessPage />
+            </main>
+        )
+    } else {
+        return (
+            <main>
                 <Box>
                     <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
                         <Typography align="center" variant='body1' component="div"
@@ -60,12 +90,13 @@ const ShufflePage = ({ isAuth }) => {
                         </Button>
                     </Box>
                     <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShuffleEntry}></HowToModal>
-                    <PlaylistContainer selectPlaylist={selectPlaylist} />
+                    <Box>
+                        {renderPageContent()}
+                    </Box>
                 </Box>
-            ) : newPlaylistUri !== "" ? (<h1 className={"normalTitle"}> a playlist</h1>) : <RestrictedAccessPage />
-            }
-        </main >
-    );
+            </main >
+        )
+    }
 };
 
 export default ShufflePage;

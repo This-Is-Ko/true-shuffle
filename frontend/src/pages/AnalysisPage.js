@@ -90,7 +90,6 @@ const AnalysisPage = ({ isAuth }) => {
                             setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
                         }
                     }
-                    
                 })
                 .catch((responseError) => {
                     setIsLoading(false);
