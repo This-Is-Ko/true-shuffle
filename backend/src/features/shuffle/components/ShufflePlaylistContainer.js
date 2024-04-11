@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
-import ErrorMessage from "./ErrorMessage";
+import ErrorMessage from "../../../components/ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
-import LoadingMessage from "./LoadingMessage";
+import ShuffleResponse from "./ShuffleResponse";
+import LoadingMessage from "../../../components/LoadingMessage";
+import { Grid, Box } from "@mui/material";
+import PlaylistItem from "./PlaylistItem";
+import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
+import ShuffleLoading from "./ShuffleLoading";
 
-const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
+const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
     const [playlistUri, setPlaylistUri] = useState("");
     const [shuffleTaskId, setShuffleTaskId] = useState("");
     const [shuffleState, setShuffleState] = useState("");
@@ -14,19 +18,15 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
     const [attemptCount, setAttemptCount] = useState(0);
     const [shuffleStatePollingWaitTime, setShuffleStatePollingWaitTime] = useState(1000);
 
-    const getQueryParams = () => {
-        return new URLSearchParams(window.location.search);
-    }
-
     const postQueueShufflePlaylistCall = () => {
-        if (!(getQueryParams().get('playlistId') == null || getQueryParams().get('playlistId') === "")) {
+        if (selectedPlaylist !== null && selectedPlaylist.id !== null && selectedPlaylist.id !== "" && selectedPlaylist.name !== null ) {
             // Call shuffle
             axios
                 .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/shuffle`,
                     {
                         is_use_liked_tracks: "false",
-                        playlist_id: getQueryParams().get('playlistId'),
-                        playlist_name: getQueryParams().get('playlistName'),
+                        playlist_id: selectedPlaylist.id,
+                        playlist_name: selectedPlaylist.name,
                         is_make_new_playlist: "false"
                     },
                     { headers: { "Content-Type": "application/json" }, withCredentials: true })
@@ -110,12 +110,9 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth }) => {
                 <ErrorMessage error={error} isGeneric={false} />
             ) : (
                 playlistUri !== "" ? (
-                    <ShufflePlaylistResponse playlistUri={playlistUri} />
+                    <ShuffleResponse playlist={selectedPlaylist} playlistUri={playlistUri} />
                 ) : (
-                    <div className="loading-container">
-                        <CircularProgress />
-                        <LoadingMessage message={shuffleState === 'PROGRESS' ? shuffleStateMessage : "Shuffling..."}/>
-                    </div>
+                    <ShuffleLoading playlist={selectedPlaylist} message={shuffleState === 'PROGRESS' ? shuffleStateMessage : "Shuffling..."}/>
                 )
             )}
         </div>
