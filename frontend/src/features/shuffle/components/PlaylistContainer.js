@@ -3,10 +3,10 @@ import axios from "axios";
 import { Box, Grid, Typography } from "@mui/material";
 
 import PlaylistList from "./PlaylistList";
-import ErrorMessage from "./ErrorMessage";
-import OverallStatItemCard from "./analysisPageComponents/OverallStatItemCard";
+import ErrorMessage from "../../../components/ErrorMessage";
+import UserShuffleCounterContainer from "./UserShuffleCounterContainer";
 
-const PlaylistContainer = ({ selectPlaylist }) => {
+const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
     const [playlists, setPlaylists] = React.useState([]);
     const [userShuffleCounter, setUserShuffleCounter] = React.useState(false);
     const [error, setError] = React.useState(false);
@@ -40,25 +40,11 @@ const PlaylistContainer = ({ selectPlaylist }) => {
                 <ErrorMessage error={error} isGeneric={false} />
             ) : playlists.length > 0 ? (
                 <Box>
-                    {userShuffleCounter !== false ?
-                        <Grid
-                            sx={{
-                                margin: { sm: "auto", md: "0 auto", },
-                                maxWidth: "600px"
-                            }}
-                            container
-                            spacing={3}
-                            justifyContent="center"
-                            alignItems="flex-start"
-                        >
-                            <OverallStatItemCard title={"Playlists"} stat={userShuffleCounter.playlist_count} description={"Total number of playlists you've shuffled using True Shuffle"} />
-                            <OverallStatItemCard title={"Tracks"} stat={userShuffleCounter.track_count} description={"Total number of tracks you've shuffled using True Shuffle"} />
-                        </Grid>
-                        :
-                        <Box></Box>
+                    {userShuffleCounter !== false && 
+                        <UserShuffleCounterContainer userShuffleCounter={userShuffleCounter} />
                     }
                     <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
-                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} />
+                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
                 </Box>
             ) : (
                 <Box>
@@ -70,4 +56,4 @@ const PlaylistContainer = ({ selectPlaylist }) => {
     );
 };
 
-export default PlaylistContainer;
+export default AllPlaylistsContainer;

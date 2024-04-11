@@ -5,7 +5,6 @@ import { Typography } from "@mui/material";
 import { Helmet } from "react-helmet";
 
 import Main from "./components/Main"
-import ShufflePlaylistContainer from "./components/ShufflePlaylistContainer";
 import ShufflePage from "./pages/ShufflePage";
 import DeletePage from "./pages/DeletePage";
 import ShareLikedTracksPage from "./pages/ShareLikedTracksPage";
@@ -29,7 +28,6 @@ function App() {
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
                 <Routes>
                     <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} />} />
-                    <Route path="/playlist" element={<ShufflePlaylistContainer isAuth={isAuth} setIsAuth={setIsAuth} />} />
                 </Routes>
             </div>
         )
