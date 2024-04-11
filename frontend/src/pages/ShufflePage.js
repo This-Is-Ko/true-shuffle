@@ -60,7 +60,12 @@ const ShufflePage = ({ isAuth }) => {
                         <Typography align="center" variant='body1' component="div"
                             sx={{
                                 width: { sm: '90%', md: "50%" },
-                                minWidth: "200px", maxWidth: "600px", paddingTop: "10px", color: "lightgrey"
+                                minWidth: "200px", 
+                                maxWidth: "600px", 
+                                paddingTop: "10px", 
+                                paddingLeft: "20px", 
+                                paddingRight: "20px", 
+                                color: "lightgrey"
                             }}>
                             Welcome to True Shuffle! Here you can select a playlist and a new playlist will be created in a truly random order. Unlike Spotifiy's algorithm there is no preference towards certain tracks so the order will be unique each time.
                             <br />

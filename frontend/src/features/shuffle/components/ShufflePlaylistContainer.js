@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ErrorMessage from "../../../components/ErrorMessage";
-import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
 import ShuffleResponse from "./ShuffleResponse";
-import LoadingMessage from "../../../components/LoadingMessage";
-import { Grid, Box } from "@mui/material";
-import PlaylistItem from "./PlaylistItem";
-import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 import ShuffleLoading from "./ShuffleLoading";
 
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
