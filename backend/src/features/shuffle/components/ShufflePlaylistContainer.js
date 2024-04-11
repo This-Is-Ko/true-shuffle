@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import ErrorMessage from "../../../components/ErrorMessage";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
-import ShufflePlaylistResponse from "./ShufflePlaylistResponse";
+import ShuffleResponse from "./ShuffleResponse";
 import LoadingMessage from "../../../components/LoadingMessage";
-import { Typography, Box } from "@mui/material";
+import { Grid, Box } from "@mui/material";
+import PlaylistItem from "./PlaylistItem";
+import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
+import ShuffleLoading from "./ShuffleLoading";
 
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
     const [playlistUri, setPlaylistUri] = useState("");
@@ -107,22 +110,9 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
                 <ErrorMessage error={error} isGeneric={false} />
             ) : (
                 playlistUri !== "" ? (
-                    <ShufflePlaylistResponse selectedPlaylist={selectedPlaylist} playlistUri={playlistUri} />
+                    <ShuffleResponse playlist={selectedPlaylist} playlistUri={playlistUri} />
                 ) : (
-                    <div className="loading-container">
-                        <Box
-                            component="img"
-                            sx={{
-                                "width": "auto",
-                                "maxWidth": "250px"
-                            }}
-                            alt={selectedPlaylist.name}
-                            src={selectedPlaylist.images.url}
-                        />
-                        <Typography variant="h4" sx={{paddingTop:"10px", color:"white"}}>{selectedPlaylist.name}</Typography>
-                        <CircularProgress />
-                        <LoadingMessage message={shuffleState === 'PROGRESS' ? shuffleStateMessage : "Shuffling..."}/>
-                    </div>
+                    <ShuffleLoading playlist={selectedPlaylist} message={shuffleState === 'PROGRESS' ? shuffleStateMessage : "Shuffling..."}/>
                 )
             )}
         </div>
