@@ -2,6 +2,7 @@ import React from "react";
 import Grid from "@mui/material/Grid";
 
 import PlaylistItem from "./PlaylistItem";
+import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 
 const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading }) => {
     return (
@@ -18,7 +19,7 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading 
                     return <PlaylistItem
                         class="playlistItem"
                         key={index}
-                        loading={loading}
+                        displayState={PLAYLIST_ITEM_DISPLAY_STATES.LOADING}
                     />
                 })}
             </Grid>
@@ -38,6 +39,7 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading 
                         playlist={playlist}
                         selectPlaylist={selectPlaylist}
                         setSelectedPlaylist={setSelectedPlaylist}
+                        displayState={PLAYLIST_ITEM_DISPLAY_STATES.SELECTION}
                     />
                 ))}
             </Grid>
