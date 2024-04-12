@@ -6,34 +6,39 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const faqs = [
     {
-        "question": "How do I use True Shuffle for Spotify?",
-        "answer": "To use True Shuffle, simply log in to the website with your Spotify account, select the playlist you want to shuffle, and press the \"Shuffle\" button. The website will then shuffle your playlist in a truly random order.",
+        "question": "What is True Shuffle?",
+        "answer": "I created this website with the goal to have a way of properly shuffling Spotify playlists. There are also features to share your Liked Songs and Anaylse your library.",
         "id": "q1"
+    },
+    {
+        "question": "How do I use True Shuffle for Spotify?",
+        "answer": "Simply log in to the website with your Spotify account, select the playlist you want to shuffle, and press the \"Shuffle\" button. The website will then shuffle your playlist in a truly random order. (Make sure Spotify's shuffle is turned off)",
+        "id": "q2"
     },
     {
         "question": "Can I use True Shuffle with any Spotify playlist?",
         "answer": "Yes, you can use True Shuffle with any Spotify playlist that you have access to. However ensure you have Spotify Premium otherwise Spotify's shuffle cannot be disabled.",
-        "id": "q2"
+        "id": "q3"
     },
     {
         "question": "Is True Shuffle an official Spotify product?",
         "answer": "No, True Shuffle is an independent website and is not affiliated with Spotify.",
-        "id": "q3"
+        "id": "q4"
     },
     {
         "question": "What user data is stored by True Shuffle?",
         "answer": "The only user data that is stored is the user ID, access token to retrieved Liked Songs, counters for shuffles and Liked Songs to generate historical data. All authentication is handled by Spotify.",
-        "id": "q4"
+        "id": "q5"
     },
     {
         "question": "Can I opt-out of storing Liked Songs history?",
         "answer": "This feature is currently planned. Meanwhile please contact if you would like to opt-out or remove your data.",
-        "id": "q5"
+        "id": "q6"
     },
     {
-        "question": "How can I give feedback about True Shuffle?",
-        "answer": "Feel free to reach out using the email listed on the About page or click on the Contact link in the footer.",
-        "id": "q6"
+        "question": "How can I give feedback?",
+        "answer": "I'd love to hear from you if you have any feedback or suggestions. You contact me with the email listed on the About page or click on the Contact link in the footer.",
+        "id": "q7"
     },
 ];
 
