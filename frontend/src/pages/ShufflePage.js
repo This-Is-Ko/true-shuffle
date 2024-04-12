@@ -70,6 +70,9 @@ const ShufflePage = ({ isAuth }) => {
                             Welcome to True Shuffle! Here you can select a playlist and a new playlist will be created in a truly random order. Unlike Spotifiy's algorithm there is no preference towards certain tracks so the order will be unique each time.
                             <br />
                             <br />
+                            The original playlist will remain unaltered and a new shuffled playlist will be created.
+                            <br />
+                            <br />
                             Note: Ensure you have disabled Spotify's built-in shuffle
                         </Typography>
                     </Box>
