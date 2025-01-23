@@ -27,7 +27,7 @@ function App() {
                 </Helmet>
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
                 <Routes>
-                    <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} />} />
+                    <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />
                 </Routes>
             </div>
         )
@@ -44,10 +44,10 @@ function App() {
             <Header loginUri={loginUri} isAuth={isAuth} />
             <Routes>
                 <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth} />} />
-                <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth} />} />
-                <Route path="/delete" element={<DeletePage isAuth={isAuth} />} />
-                <Route path="/share" element={<ShareLikedTracksPage isAuth={isAuth} />} />
-                <Route path="/analysis" element={<AnalysisPage isAuth={isAuth} />} />
+                <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />
+                <Route path="/delete" element={<DeletePage isAuth={isAuth} loginUri={loginUri}/>} />
+                <Route path="/share" element={<ShareLikedTracksPage isAuth={isAuth} loginUri={loginUri}/>} />
+                <Route path="/analysis" element={<AnalysisPage isAuth={isAuth} loginUri={loginUri}/>} />
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutPage />} />
             </Routes>

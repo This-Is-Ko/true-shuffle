@@ -6,10 +6,11 @@ import { Helmet } from "react-helmet";
 import HowToModal from '../components/howToComponents/HowToModal';
 import { HowToShareLikedTracksEntry } from '../components/howToComponents/HowToEntries';
 
-import RestrictedAccessPage from './RestrictedAccessPage'
 import LoadingMessage from "../components/LoadingMessage";
 
-const ShareLikedTracksPage = ({ isAuth }) => {
+import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
+
+const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
     const [auth, setAuth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
@@ -124,11 +125,6 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         return () => clearTimeout(timer);
     }, [createLikedPlaylistTaskId, pollingWaitTime]);
 
-    if (auth === false) {
-        return <RestrictedAccessPage />
-    }
-
-
     const copyToClipboard = () => {
         if (playlistUri !== "") {
             navigator.clipboard.writeText(playlistUri);
@@ -155,10 +151,6 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         setError(false);
         setIsLoading(false);
     };
-
-    if (auth === false) {
-        return <RestrictedAccessPage />
-    }
 
     const renderSwitch = (step) => {
         switch (step) {
@@ -283,64 +275,69 @@ const ShareLikedTracksPage = ({ isAuth }) => {
         }
     }
 
-    return (
-        <main>
-            <Helmet>
-                <title>Share Liked Songs | True Shuffle for Spotify</title>
-            </Helmet>
-            <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
-                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>
-                <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Easily share your Spotify library by creating a playlist containing all your liked songs</Typography>
-                <Box sx={{
-                    width: "90%",
-                }}>
+    // Validate page access and redirect to Spotify login if required
+    if (auth === false) {
+        return checkPageAccessAndRedirect(auth, loginUri, "/share")
+    } else {
+        return (
+            <main>
+                <Helmet>
+                    <title>Share Liked Songs | True Shuffle for Spotify</title>
+                </Helmet>
+                <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
+                    <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>
+                    <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Easily share your Spotify library by creating a playlist containing all your liked songs</Typography>
                     <Box sx={{
-                        textAlign: "center",
-                        display: "flex",
-                        justifyContent: "center",
+                        width: "90%",
                     }}>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                display: "block",
-                                bgcolor: "#1DB954",
-                            }}
-                            onClick={handleHowToModalOpen}
-                        >
-                            How to
-                        </Button>
+                        <Box sx={{
+                            textAlign: "center",
+                            display: "flex",
+                            justifyContent: "center",
+                        }}>
+                            <Button
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    display: "block",
+                                    bgcolor: "#1DB954",
+                                }}
+                                onClick={handleHowToModalOpen}
+                            >
+                                How to
+                            </Button>
+                        </Box>
+                        <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShareLikedTracksEntry}></HowToModal>
                     </Box>
-                    <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShareLikedTracksEntry}></HowToModal>
-                </Box>
-                <Box>
-                    {!error && renderSwitch(step)}
-                </Box>
-                {error &&
                     <Box>
-                        {/* <ErrorMessage error={isError} /> */}
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                            Something went wrong. Please try again later.
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                bgcolor: "#1DB954",
-                            }}
-                            onClick={handleRetry}
-                        >
-                            Retry
-                        </Button>
+                        {!error && renderSwitch(step)}
                     </Box>
-                }
-            </Paper>
-        </main>
-    )
+                    {error &&
+                        <Box>
+                            {/* <ErrorMessage error={isError} /> */}
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+                                Something went wrong. Please try again later.
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    bgcolor: "#1DB954",
+                                }}
+                                onClick={handleRetry}
+                            >
+                                Retry
+                            </Button>
+                        </Box>
+                    }
+                </Paper>
+            </main>
+        )
+    }
 };
 
 export default ShareLikedTracksPage;

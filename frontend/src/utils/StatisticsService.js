@@ -104,3 +104,10 @@ export function  makeTrackLengthString(length_data) {
         return (length_data.minutes.toString().padStart(2, "0") + ":" + length_data.seconds.toString().padStart(2, "0"))
     }
 }
+
+export function formatNumberWithCommas(number) {
+  if (number !== null && number > 0) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+  return null
+}
