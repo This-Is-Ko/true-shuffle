@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Box } from "@mui/material";
+import { Button, Box } from "@mui/material";
 
-import RestrictedAccessPage from './RestrictedAccessPage'
+import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
 import AllPlaylistsContainer from "../features/shuffle/components/PlaylistContainer";
 import HowToModal from '../components/howToComponents/HowToModal';
 import { HowToShuffleEntry } from '../components/howToComponents/HowToEntries';
 import PAGE_STATES from "../features/shuffle/state/PageStates";
 import ShufflePlaylistContainer from "../features/shuffle/components/ShufflePlaylistContainer";
 
-const ShufflePage = ({ isAuth }) => {
+const ShufflePage = ({ isAuth, loginUri }) => {
     const [auth, setAuth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
@@ -43,39 +43,15 @@ const ShufflePage = ({ isAuth }) => {
             default:
                 return null;
         }
-      };
-    
-    // Unauthenticated user should be directed to login
+    };
+
+    // Validate page access and redirect to Spotify login if required
     if (auth === false) {
-        return (
-            <main>
-                <RestrictedAccessPage />
-            </main>
-        )
+        return checkPageAccessAndRedirect(auth, loginUri, "/shuffle")
     } else {
         return (
             <main>
                 <Box>
-                    <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                        <Typography align="center" variant='body1' component="div"
-                            sx={{
-                                width: { sm: '90%', md: "50%" },
-                                minWidth: "200px", 
-                                maxWidth: "600px", 
-                                paddingTop: "10px", 
-                                paddingLeft: "20px", 
-                                paddingRight: "20px", 
-                                color: "lightgrey"
-                            }}>
-                            Welcome to True Shuffle! Here you can select a playlist and a new playlist will be created in a truly random order. Unlike Spotifiy's algorithm there is no preference towards certain tracks so the order will be unique each time.
-                            <br />
-                            <br />
-                            The original playlist will remain unaltered and a new shuffled playlist will be created.
-                            <br />
-                            <br />
-                            Note: Ensure you have disabled Spotify's built-in shuffle
-                        </Typography>
-                    </Box>
                     <Box sx={{
                         textAlign: "center",
                         display: "flex",

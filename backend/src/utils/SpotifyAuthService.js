@@ -1,5 +1,8 @@
 import axios from "axios";
 
+import RestrictedAccessPage from '../pages/RestrictedAccessPage'
+import RedirectBackdrop from '../features/common/RedirectBackdrop'
+
 const AUTH_CODE_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/code";
 const LOGOUT_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/logout";
 
@@ -31,15 +34,45 @@ export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessTo
         },
         { withCredentials: true }
       ).then(result => {
+        console.log(result)
         setIsAuth(true);
         setLoadingAccessToken(false)
         setShowSuccessMessage(true)
-        navigate("/");
+        
+        // Use selected page to redirect otherwise go to main
+        const redirectTo = localStorage.getItem("postSpotifyAuthRedirect")
+        localStorage.removeItem("postSpotifyAuthRedirect");
+        if (redirectTo !== null && redirectTo !== "") {
+          navigate(redirectTo);
+        } else {
+          navigate("/");
+        }
       }).catch(error => {
+        localStorage.removeItem("postSpotifyAuthRedirect");
         setLoadingAccessToken(false)
         setAccessTokenError(true)
       });
     }
+  }
+}
+
+export const checkPageAccessAndRedirect = (auth, loginUri, targetPage) => {
+  if (auth === false) {
+    if (loginUri !== null && targetPage !== null) {
+        // Set up redirect page after Spotify auth succeeds
+        localStorage.setItem("postSpotifyAuthRedirect", targetPage);        
+        return (
+            <main>
+                <RedirectBackdrop loginUri={loginUri}/>
+            </main>
+        )
+    }
+    // Fallback if loginUri or targetPage isn't set
+    return (
+        <main>
+            <RestrictedAccessPage />
+        </main>
+    )
   }
 }
 

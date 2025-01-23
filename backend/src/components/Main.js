@@ -5,9 +5,11 @@ import { Typography, Button, Backdrop, CircularProgress, Snackbar, IconButton, G
 import CloseIcon from '@mui/icons-material/Close';
 import { Box } from "@mui/system";
 import { Helmet } from "react-helmet";
+
 import Footer from "./Footer";
 import MainPageFeaturesContainer from "./mainPageComponents/MainPageFeaturesContainer";
 import { getStatisticsApi } from "../utils/StatisticsService";
+import StatItem from "./mainPageComponents/StatItem";
 
 const Main = ({ loginUri, isAuth, setIsAuth }) => {
     const [loadingAccessToken, setLoadingAccessToken] = React.useState(false);
@@ -36,6 +38,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
         getAccessTokenCall(getQueryParams().get('code'), setIsAuth, navigate, setLoadingAccessToken, setShowErrorMessage, setShowSuccessMessage);
         getStatisticsApi(setTrackCounter, setPlaylistCounter, setAnalysisCounter);
     }, [isAuth]);
+
 
     return (
         <main>
@@ -92,38 +95,15 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                 <Typography variant='h1' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                     True Shuffle
                 </Typography>
+                
                 <img className={"spotifyNameLogo"}
                     src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
-                <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                    Randomly shuffle your Spotify playlists and analyse your library
-                </Typography>
-                <div>
-                    <Grid
-                        sx={{ paddingTop: "20px" }}
-                        container
-                        spacing={2}
-                        justifyContent="center"
-                        alignItems="flex-start"
-                    >
-                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-                            {
-                                trackCounter !== null && <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled tracks: <strong>{trackCounter}</strong></Typography>
-                            }
-                        </Grid>
-                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-                            {
-                                playlistCounter !== null && <Typography variant='h6' component="div" sx={{ color: "white" }}>Shuffled playlists: <strong>{playlistCounter}</strong></Typography>
-                            }
-                        </Grid>
-                        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-                            {
-                                analysisCounter !== null && <Typography variant='h6' component="div" sx={{ color: "white" }}>Libraries analysed: <strong>{analysisCounter}</strong></Typography>
-                            }
-                        </Grid>
-                    </Grid>
-                </div>
 
-                <div className={"centerSpacingContainer"}>
+                <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                    Properly shuffle your Spotify playlists and analyse your library
+                </Typography>
+
+                <Box className={"centerSpacingContainer"}>
                     <Button
                         className={"largeButton"}
                         variant="contained"
@@ -133,35 +113,34 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                         }}
                         href="/shuffle"
                     >Get started</Button>
-                </div>
-
-                <div className={"homepageIconHolder"}>
-                    <div className={"iconSet"}>
-                        <img className={"homepageIcon"}
-                            src={process.env.PUBLIC_URL + '/assets/icons/video-player.png'} alt={"login"} />
-                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Login to Spotify
-                        </Typography>
-                    </div>
-                    <div className={"iconSet"}>
-                        <img className={"homepageIcon"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/shuffle.png'} alt={"shuffle"} />
-                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Select a playlist
-                        </Typography>
-                    </div>
-                    <div className={"iconSet"}>
-                        <img className={"homepageIcon"}
-                            src={process.env.PUBLIC_URL + 'assets/icons/headphones.png'} alt={"headphones"} />
-                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                            Start listening
-                        </Typography>
-                    </div>
-                </div>
+                </Box>
             </div>
+            
+            <div className={"mainPageStatsContainer"}>
+                <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                    Current Stats
+                </Typography>
+                <Grid
+                    sx={{ paddingTop: "20px", paddingBottom: "20px" }}
+                    container
+                    // spacing={1}
+                    columnSpacing={9}
+                    justifyContent="center"
+                    alignItems="center"
+                >
+                    <StatItem stat={trackCounter} description="Shuffled tracks"></StatItem>
+                    <StatItem stat={playlistCounter} description="Shuffled playlists"></StatItem>
+                    <StatItem stat={analysisCounter} description="Libraries analysed"></StatItem>
+                </Grid>
+                <Typography variant='caption' component="div" sx={{ color: "white" }}>
+                    Refreshed every 15 minutes
+                </Typography>
+            </div>
+
             <Box sx={{ width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" }, margin: "0 auto", paddingBottom: "32px", justifyContent: "center" }}>
                 <MainPageFeaturesContainer />
             </Box>
+
             <Footer></Footer>
         </main>
     );

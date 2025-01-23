@@ -3,11 +3,13 @@ import { Typography, Button, Box, Stack, Paper } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
-import RestrictedAccessPage from './RestrictedAccessPage'
+
 import { HowToDeletePlaylistsEntry } from '../components/howToComponents/HowToEntries';
 import HowToModal from "../components/howToComponents/HowToModal";
 
-const DeletePage = ({ isAuth }) => {
+import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
+
+const DeletePage = ({ isAuth, loginUri }) => {
     const [auth, setAuth] = React.useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
@@ -50,10 +52,6 @@ const DeletePage = ({ isAuth }) => {
         setIsError(false)
         setIsLoading(false);
     };
-
-    if (auth === false) {
-        return <RestrictedAccessPage />
-    }
 
     const renderSwitch = (step) => {
         switch (step) {
@@ -112,62 +110,67 @@ const DeletePage = ({ isAuth }) => {
         }
     }
 
-    return (
-        <main>
-            <Helmet>
-                <title>Delete Playlists | True Shuffle for Spotify</title>
-            </Helmet>
-            <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
-                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
-                <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Clear all your True Shuffled playlists with one click</Typography>
-                <Box>
-                    <Box sx={{
-                        textAlign: "center",
-                        display: "flex",
-                        justifyContent: "center",
-                    }}>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                display: "block",
-                                bgcolor: "#1DB954",
-                            }}
-                            onClick={handleHowToModalOpen}
-                        >
-                            How to
-                        </Button>
-                    </Box>
-                    <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToDeletePlaylistsEntry}></HowToModal>
-                </Box>
-                <Box>
-                    {!isError && renderSwitch(step)}
-                </Box>
-                {isError &&
+    // Validate page access and redirect to Spotify login if required
+    if (auth === false) {
+        return checkPageAccessAndRedirect(auth, loginUri, "/delete")
+    } else {
+        return (
+            <main>
+                <Helmet>
+                    <title>Delete Playlists | True Shuffle for Spotify</title>
+                </Helmet>
+                <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
+                    <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
+                    <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Clear all your True Shuffled playlists with one click</Typography>
                     <Box>
-                        {/* <ErrorMessage error={isError} isGeneric={true}/> */}
-                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                            Something went wrong. Please try again later.
-                        </Typography>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                my: 2,
-                                color: "white",
-                                bgcolor: "#1DB954",
-                            }}
-                            onClick={handleRetry}
-                        >
-                            Retry
-                        </Button>
+                        <Box sx={{
+                            textAlign: "center",
+                            display: "flex",
+                            justifyContent: "center",
+                        }}>
+                            <Button
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    display: "block",
+                                    bgcolor: "#1DB954",
+                                }}
+                                onClick={handleHowToModalOpen}
+                            >
+                                How to
+                            </Button>
+                        </Box>
+                        <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToDeletePlaylistsEntry}></HowToModal>
                     </Box>
-                }
-            </Paper>
-        </main>
-    );
+                    <Box>
+                        {!isError && renderSwitch(step)}
+                    </Box>
+                    {isError &&
+                        <Box>
+                            {/* <ErrorMessage error={isError} isGeneric={true}/> */}
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
+                                Something went wrong. Please try again later.
+                            </Typography>
+                            <Button
+                                variant="contained"
+                                disableElevation
+                                sx={{
+                                    my: 2,
+                                    color: "white",
+                                    bgcolor: "#1DB954",
+                                }}
+                                onClick={handleRetry}
+                            >
+                                Retry
+                            </Button>
+                        </Box>
+                    }
+                </Paper>
+            </main>
+        );
+    }
 };
 
 export default DeletePage;
