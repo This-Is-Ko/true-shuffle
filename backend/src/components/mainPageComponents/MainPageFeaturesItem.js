@@ -7,7 +7,7 @@ const MainPageFeaturesItem = (props) => {
     return (
         <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
             <img className={"featureIcon"}
-                src={process.env.PUBLIC_URL + 'assets/icons/equalizer.png'} alt={"equalizer"} />
+                src={process.env.PUBLIC_URL + 'assets/icons/' + props.feature.icon} alt={"equalizer"} />
             <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                 <Typography variant='h4' display="inline" sx={{ color: "red" }}>{props.feature.special}</Typography>{props.feature.name}
             </Typography>
