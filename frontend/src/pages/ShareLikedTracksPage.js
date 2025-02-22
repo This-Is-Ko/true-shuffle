@@ -24,11 +24,13 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
     const [createLikedPlaylistTaskId, setCreateLikedPlaylistTaskId] = useState("");
     const [createLikedPlaylistState, setCreateLikedPlaylistState] = useState("");
     const [attemptCount, setAttemptCount] = useState(0);
-    const [pollingWaitTime, setPollingWaitTime] = useState(2000);
     const [createLikedPlaylistStateMessage, setCreateLikedPlaylistStateMessage] = useState("");
+    const [polling, setPolling] = useState(true);
 
     const handleHowToModalOpen = () => setIsHowToModalOpen(true);
     const handleHowToModalClose = () => setIsHowToModalOpen(false);
+
+    const POLLING_INTERVAL = 2500;
 
     useEffect(() => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
@@ -68,26 +70,26 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
                         if (result.data.result.status === "success") {
                             setPlaylistUri(result.data.result.playlist_uri);
                             setError(false);
+                            setPolling(false);
                             setStep(3);
                         } else {
                             setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
                         }
                     } else if (result.data.state === "PROGRESS") {
                         setCreateLikedPlaylistStateMessage(result.data.progress.state);
-                        if (attemptCount >= 30) {
+                        if (attemptCount >= 40) {
                             setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-                        } else {
-                            setPollingWaitTime(calcNewWaitTime(pollingWaitTime))
+                            setPolling(false);
                         }
                     } else if (result.data.state === "FAILURE") {
                         setIsLoading(false);
                         setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                        setPolling(false);
                     } else if (result.data.state === "PENDING") {
                         setAttemptCount(attemptCount + 1);
                         if (attemptCount >= 20) {
                             setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-                        } else {
-                            setPollingWaitTime(calcNewWaitTime(pollingWaitTime))
+                            setPolling(false);
                         }
                     }
                 })
@@ -104,26 +106,23 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
             if (attemptCount >= 20) {
                 setIsLoading(false);
                 setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-            } else {
-                setPollingWaitTime(calcNewWaitTime(pollingWaitTime));
             }
         }
     };
 
-    // Apply backoff strategy for polling rate
-    const calcNewWaitTime = (currentWaitTime) => {
-        if (currentWaitTime != null){
-            return Math.min(currentWaitTime + 500, 10000);
-        }
-    }
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            getCreateLikedTracksPlaylistsStateCall();
-        }, pollingWaitTime);
+      // Only start polling if it's active (polling state is true)
+      if (!polling || !createLikedPlaylistTaskId) return;
 
-        return () => clearTimeout(timer);
-    }, [createLikedPlaylistTaskId, pollingWaitTime]);
+      const interval = setInterval(() => {
+          getCreateLikedTracksPlaylistsStateCall();
+        }, POLLING_INTERVAL);
+
+      // Clean up interval on component unmount or when polling stops
+      return () => clearInterval(interval);
+  }, [createLikedPlaylistTaskId, polling]);
+  
 
     const copyToClipboard = () => {
         if (playlistUri !== "") {
@@ -161,7 +160,6 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
                             variant="contained"
                             disableElevation
                             sx={{
-                                my: 2,
                                 color: "white",
                                 bgcolor: "#1DB954",
                             }}
@@ -213,7 +211,7 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
                                             variant="contained"
                                             disableElevation
                                             sx={{
-                                                my: 2,
+                                                my: 1,
                                                 color: "white",
                                                 bgcolor: "#1DB954",
                                             }}
@@ -234,30 +232,43 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
                         alignItems="center"
                     >
                         <Grid
-                        sx={{ paddingTop: "20px", width: "100%", margin: "auto" }}
+                        sx={{ width: "100%", margin: "auto" }}
                         container
-                        spacing={2}
+                        spacing={1}
                         justifyContent="center">
-                            <Grid item>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    my: 2, color: 'white', bgcolor: "#1DB954",
-                                    width: "30rem", maxWidth: "300px"
-                                }}
-                                href={playlistUri} target="_blank">
-                                Open shuffled playlist
-                            </Button>
-                        </Grid>
-                            <Grid item>
+                            <Grid item
+                              xs={12} sm={6}
+                              sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  margin: "0 auto",
+                              }}
+                            >
                                 <Button
                                     variant="contained"
                                     disableElevation
                                     sx={{
-                                        my: 2,
-                                        color: "white",
-                                        bgcolor: "#1DB954",
+                                        my: 2, color: 'white', bgcolor: "#1DB954",
+                                        width: "30rem", maxWidth: "300px"
+                                    }}
+                                    href={playlistUri} target="_blank">
+                                    Open shuffled playlist
+                                </Button>
+                            </Grid>
+                            <Grid item
+                              xs={12} sm={6}
+                              sx={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  margin: "0 auto",
+                              }}
+                            >
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    sx={{
+                                        my: 2, color: 'white', bgcolor: "#1DB954",
+                                        width: "30rem", maxWidth: "300px"
                                     }}
                                     onClick={() => copyToClipboard()}
                                 >
@@ -286,7 +297,19 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
                 </Helmet>
                 <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                     <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>
-                    <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Easily share your Spotify library by creating a playlist containing all your liked songs</Typography>
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{
+                        paddingTop: "10px",
+                        color: "white",
+                        textAlign: "center",
+                        maxWidth: "90%",
+                        margin: "0 auto"
+                      }}
+                    >
+                      Easily share your Spotify library by creating a playlist containing all your liked songs
+                    </Typography>
                     <Box sx={{
                         width: "90%",
                     }}>

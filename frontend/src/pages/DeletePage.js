@@ -68,7 +68,6 @@ const DeletePage = ({ isAuth, loginUri }) => {
                                             variant="contained"
                                             disableElevation
                                             sx={{
-                                                my: 2,
                                                 color: "white",
                                                 bgcolor: "#1DB954",
                                             }}
@@ -121,7 +120,19 @@ const DeletePage = ({ isAuth, loginUri }) => {
                 </Helmet>
                 <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                     <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
-                    <Typography variant='h6' component="div" sx={{ paddingTop: "10px", color: "white" }}>Clear all your True Shuffled playlists with one click</Typography>
+                    <Typography
+                        variant="h6"
+                        component="div"
+                        sx={{
+                          paddingTop: "10px",
+                          color: "white",
+                          textAlign: "center",
+                          maxWidth: "90%",
+                          margin: "0 auto"
+                        }}
+                      >
+                        Clear all your True Shuffled playlists with one click
+                    </Typography>
                     <Box>
                         <Box sx={{
                             textAlign: "center",

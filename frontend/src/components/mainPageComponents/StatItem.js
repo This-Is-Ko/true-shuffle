@@ -8,7 +8,17 @@ const StatItem = ({ stat, description }) => {
 
     return (
         <Grid item xs="auto" sx={{ width: "auto", maxWidth: "400px", textAlign: "center" }}>
-            <Typography variant='h3' component="div" sx={{ color: "white" }}>
+            <Typography
+                variant='h3'
+                component="div"
+                sx={{
+                    color: "white",
+                    fontSize: {
+                        xs: "2rem",
+                        sm: "3rem",
+                    }
+                }}
+            >
                 <strong>{formatNumber(stat)}</strong>
             </Typography>
             <Divider
