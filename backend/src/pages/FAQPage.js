@@ -16,31 +16,37 @@ const faqs = [
         "id": "q2"
     },
     {
-        "question": "Can I use True Shuffle with any Spotify playlist?",
-        "answer": "Yes, you can use True Shuffle with any Spotify playlist that you have access to. However ensure you have Spotify Premium otherwise Spotify's shuffle cannot be disabled.",
+        "question": "Can I shuffle my Liked Songs?",
+        "answer": "Yes, you can shuffle your Liked Songs on the website. Simply select 'Liked Songs' as your playlist and press the shuffle button.",
         "id": "q3"
+    },
+    {
+        "question": "Can I shuffle any Spotify playlist?",
+        "answer": "Yes, you can use True Shuffle with any Spotify playlist that you have access to. However ensure you have Spotify Premium otherwise Spotify's shuffle cannot be disabled.",
+        "id": "q4"
     },
     {
         "question": "Is True Shuffle an official Spotify product?",
         "answer": "No, True Shuffle is an independent website and is not affiliated with Spotify.",
-        "id": "q4"
+        "id": "q5"
     },
     {
-        "question": "What user data is stored by True Shuffle?",
+        "question": "What user data is stored?",
         "answer": "The only user data that is stored is the user ID, access token to retrieved Liked Songs, counters for shuffles and Liked Songs to generate historical data. All authentication is handled by Spotify.",
-        "id": "q5"
+        "id": "q6"
     },
     {
         "question": "Can I opt-out of storing Liked Songs history?",
         "answer": "This feature is currently planned. Meanwhile please contact if you would like to opt-out or remove your data.",
-        "id": "q6"
+        "id": "q7"
     },
     {
         "question": "How can I give feedback?",
         "answer": "I'd love to hear from you if you have any feedback or suggestions. You contact me with the email listed on the About page or click on the Contact link in the footer.",
-        "id": "q7"
+        "id": "q8"
     },
 ];
+
 
 const FAQPage = () => {
     useEffect(() => {
