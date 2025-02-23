@@ -3,7 +3,14 @@ import { Typography, Grid, Card, CardContent } from "@mui/material";
 
 const OverallStatItemCard = ({ title, stat, description }) => {
     return (
-        <Grid item>
+        <Grid item
+            xs={12} sm={6}
+            sx={{
+                display: "flex",
+                justifyContent: "center",
+                margin: "0 auto",
+            }}
+        >
             <Card sx={{
                 textAlign: "left",
                 backgroundColor: "#1DB954",
