@@ -361,7 +361,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                                 </Grid>
                             </Grid>
 
-                            <Box>
+                            {/* <Box>
                                 <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                                     Liked Songs Tracker
                                 </Typography>
@@ -382,7 +382,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                                             <strong>Not enough data to generate tracker data. Our liked tracks history is updated at the start of each week.</strong>
                                         </Typography>)
                                 }
-                            </Box>
+                            </Box> */}
                         </Box>
                         <Footer></Footer>
                     </Box>

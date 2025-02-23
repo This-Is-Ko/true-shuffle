@@ -98,8 +98,17 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                 
                 <img className={"spotifyNameLogo"}
                     src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
-
-                <Typography variant='h6' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                <Typography
+                  variant="h6"
+                  component="div"
+                  sx={{
+                    paddingTop: "10px",
+                    color: "white",
+                    textAlign: "center",
+                    maxWidth: "90%",
+                    margin: "0 auto"
+                  }}
+                >
                     Properly shuffle your Spotify playlists and analyse your library
                 </Typography>
 

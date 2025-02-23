@@ -1,15 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Box, Grid, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import PlaylistList from "./PlaylistList";
 import ErrorMessage from "../../../components/ErrorMessage";
 import UserShuffleCounterContainer from "./UserShuffleCounterContainer";
+import RecentShufflesTable from "./RecentShufflesTable";
 
 const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
-    const [playlists, setPlaylists] = React.useState([]);
-    const [userShuffleCounter, setUserShuffleCounter] = React.useState(false);
-    const [error, setError] = React.useState(false);
+    const [playlists, setPlaylists] = useState([]);
+    const [userShuffleCounter, setUserShuffleCounter] = useState(false);
+    const [recentShuffles, setRecentShuffles] = useState([]);
+    const [error, setError] = useState(false);
 
     const getPlaylistsCall = () => {
         axios
@@ -30,8 +32,22 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
             });
     };
 
+    const getRecentShuffles = () => {
+      axios
+          .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/shuffle/recent`, { withCredentials: true })
+          .then((result) => {
+              if (result.data != null && result.data.recent_shuffles != null) {
+                  setRecentShuffles(result.data.recent_shuffles);
+              }
+          })
+          .catch(() => {
+              console.error("Failed to fetch recent shuffles");
+          });
+  };
+
     useEffect(() => {
         getPlaylistsCall();
+        getRecentShuffles();
     }, []);
 
     return (
@@ -42,6 +58,9 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
                 <Box>
                     {userShuffleCounter !== false && 
                         <UserShuffleCounterContainer userShuffleCounter={userShuffleCounter} />
+                    }
+                    {recentShuffles.length > 0 &&
+                         <RecentShufflesTable recentShuffles={recentShuffles} />
                     }
                     <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
                     <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
