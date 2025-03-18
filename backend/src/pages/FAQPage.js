@@ -12,7 +12,7 @@ const faqs = [
     },
     {
         "question": "How do I use True Shuffle for Spotify?",
-        "answer": "Simply log in to the website with your Spotify account and select the playlist you want to shuffle. The website will then shuffle your playlist in a truly random order. (Make sure Spotify's shuffle is turned off)",
+        "answer": "Simply log in to the website with your Spotify account and select the playlist you want to shuffle.\nThe website will then shuffle your playlist in a truly random order. (Make sure Spotify's shuffle is turned off)\nEach time a new playlist is created so your original playlist is not affected.\nTo prevent duplicate shuffled playlists, previous shuffled playlists are replaced with the latest.",
         "id": "q2"
     },
     {
@@ -41,6 +41,10 @@ const faqs = [
         "id": "q7"
     },
 ];
+
+const renderAnswer = (answer) => {
+  return answer.split('\n').map((line, index) => <p key={index}>{line}</p>);
+};
 
 
 const FAQPage = () => {
@@ -72,7 +76,7 @@ const FAQPage = () => {
                         </AccordionSummary>
                         <AccordionDetails sx={{ textAlign: "left" }}>
                             <Typography>
-                                {faqItem.answer}
+                                {renderAnswer(faqItem.answer)}
                             </Typography>
                         </AccordionDetails>
                     </Accordion>
