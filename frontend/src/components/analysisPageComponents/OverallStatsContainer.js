@@ -1,5 +1,5 @@
 import React from "react";
-import { Grid } from "@mui/material";
+import Grid from '@mui/material/Grid2';
 import OverallStatItemCard from "./OverallStatItemCard";
 import { makeTrackLengthString } from "../../utils/StatisticsService";
 

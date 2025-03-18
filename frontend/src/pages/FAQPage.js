@@ -12,12 +12,12 @@ const faqs = [
     },
     {
         "question": "How do I use True Shuffle for Spotify?",
-        "answer": "Simply log in to the website with your Spotify account, select the playlist you want to shuffle, and press the \"Shuffle\" button. The website will then shuffle your playlist in a truly random order. (Make sure Spotify's shuffle is turned off)",
+        "answer": "Simply log in to the website with your Spotify account and select the playlist you want to shuffle.\nThe website will then shuffle your playlist in a truly random order. (Make sure Spotify's shuffle is turned off)\nEach time a new playlist is created so your original playlist is not affected.\nTo prevent duplicate shuffled playlists, previous shuffled playlists are replaced with the latest.",
         "id": "q2"
     },
     {
         "question": "Can I shuffle my Liked Songs?",
-        "answer": "Yes, you can shuffle your Liked Songs on the website. Simply select 'Liked Songs' as your playlist and press the shuffle button.",
+        "answer": "Yes, you can shuffle your Liked Songs on the website. Simply select 'Liked Songs' on the shuffle page.",
         "id": "q3"
     },
     {
@@ -36,16 +36,15 @@ const faqs = [
         "id": "q6"
     },
     {
-        "question": "Can I opt-out of storing Liked Songs history?",
-        "answer": "This feature is currently planned. Meanwhile please contact if you would like to opt-out or remove your data.",
-        "id": "q7"
-    },
-    {
         "question": "How can I give feedback?",
         "answer": "I'd love to hear from you if you have any feedback or suggestions. You contact me with the email listed on the About page or click on the Contact link in the footer.",
-        "id": "q8"
+        "id": "q7"
     },
 ];
+
+const renderAnswer = (answer) => {
+  return answer.split('\n').map((line, index) => <p key={index}>{line}</p>);
+};
 
 
 const FAQPage = () => {
@@ -65,18 +64,19 @@ const FAQPage = () => {
                 {faqs.map((faqItem) => (
                     <Accordion disableGutters sx={{
                         width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" },
-                        backgroundColor: "#292e2f", textAlign: "center", margin: "auto"
+                        backgroundColor: "#292e2f", margin: "auto"
                     }} elevation={0}>
                         <AccordionSummary
                             expandIcon={<ExpandMoreIcon className="accordionIcon" />}
                             aria-controls="panel1a-content"
                             id={faqItem.id}
+                            sx={{ textAlign: "left" }}
                         >
                             <Typography variant='h6' component="div" sx={{ color: "white", fontWeight: 'bold' }}>{faqItem.question}</Typography>
                         </AccordionSummary>
                         <AccordionDetails sx={{ textAlign: "left" }}>
                             <Typography>
-                                {faqItem.answer}
+                                {renderAnswer(faqItem.answer)}
                             </Typography>
                         </AccordionDetails>
                     </Accordion>

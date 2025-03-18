@@ -13,7 +13,7 @@ const AboutPage = () => {
     }, []);
 
     return (
-        <Box sx={{ width: "90%", margin: "auto" }}>
+        <Box sx={{ width: "60%", margin: "auto" }}>
             <Helmet>
                 <title>About | True Shuffle for Spotify</title>
             </Helmet>

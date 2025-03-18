@@ -1,6 +1,6 @@
 import React from "react";
-import Button from "@mui/material/Button";
-import { Typography, Grid, Box } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { Button, Typography, Box } from "@mui/material";
 import PlaylistItem from "./PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 
