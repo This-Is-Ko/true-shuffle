@@ -36,6 +36,7 @@ const RecentShufflesTable = ({ recentShuffles }) => {
   return (
     <Box sx={{ 
       paddingTop: 4, 
+      paddingBottom: 4, 
       maxWidth: { xs: "80%", md: 600, },
       mx: 'auto',
     }}>

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Typography, Button, Box, TextField, Stack, Paper, Grid } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { Typography, Button, Box, TextField, Stack, Paper } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";

@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
 import { getAccessTokenCall } from "../utils/SpotifyAuthService";
 import { useNavigate } from "react-router-dom";
-import { Typography, Button, Backdrop, CircularProgress, Snackbar, IconButton, Grid } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { Typography, Button, Backdrop, CircularProgress, Snackbar, IconButton } from "@mui/material";
 import CloseIcon from '@mui/icons-material/Close';
 import { Box } from "@mui/system";
 import { Helmet } from "react-helmet";

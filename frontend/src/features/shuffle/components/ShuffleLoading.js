@@ -1,6 +1,7 @@
 import React from "react";
 import LoadingMessage from "../../../components/LoadingMessage";
-import { Grid, Box } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { CircularProgress, Box } from "@mui/material";
 import PlaylistItem from "./PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 
@@ -22,6 +23,8 @@ const ShuffleLoading = ({ playlist, message }) => {
                     displayState={PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLING}
                 />
             </Grid>
+            <br/>
+            <CircularProgress />
             <LoadingMessage message={message}/>
         </Box>
     )

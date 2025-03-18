@@ -1,5 +1,6 @@
 import React from "react";
-import { Typography, Grid, Divider } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { Typography, Divider } from "@mui/material";
 
 const StatItem = ({ stat, description }) => {
     if (stat == null) {
