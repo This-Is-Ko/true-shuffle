@@ -36,7 +36,7 @@ To get the project up and running locally:
     cd spotify-true-shuffle-frontend
     ```
 
-3.   Install the dependencies:
+3. Install the dependencies:
 
     ```bash
     npm install
