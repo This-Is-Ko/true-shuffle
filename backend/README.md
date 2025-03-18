@@ -26,21 +26,21 @@ To get the project up and running locally:
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/This-Is-Ko/spotify-true-shuffle-frontend.git
-   ```
+    ```bash
+    git clone https://github.com/This-Is-Ko/spotify-true-shuffle-frontend.git
+    ```
 
 2. Navigate to the project folder:
 
-  ```bash
-  cd spotify-true-shuffle-frontend
-  ```
+    ```bash
+    cd spotify-true-shuffle-frontend
+    ```
 
 3.   Install the dependencies:
 
-  ```bash
-  npm install
-  ```
+    ```bash
+    npm install
+    ```
 
 4. Run the development server:
 
