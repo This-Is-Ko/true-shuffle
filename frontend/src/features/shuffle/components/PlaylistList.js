@@ -9,7 +9,7 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading 
         loading === true ?
             <Grid
                 sx={{ 
-                    width: "70%", 
+                    width: { sm: "90%", md: "70%" },
                     margin: "0 auto", 
                     paddingTop: "10px", 
                     paddingBottom: "20px" 
