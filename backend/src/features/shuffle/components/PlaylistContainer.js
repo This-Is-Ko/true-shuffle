@@ -56,14 +56,16 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
                 <ErrorMessage error={error} isGeneric={false} />
             ) : playlists.length > 0 ? (
                 <Box>
-                    {userShuffleCounter !== false && 
+                  {userShuffleCounter !== false && 
                         <UserShuffleCounterContainer userShuffleCounter={userShuffleCounter} />
                     }
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
+                    
+                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
+                    
                     {recentShuffles.length > 0 &&
                          <RecentShufflesTable recentShuffles={recentShuffles} />
                     }
-                    <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
-                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
                 </Box>
             ) : (
                 <Box>

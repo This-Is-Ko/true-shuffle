@@ -1,5 +1,6 @@
 import React from "react";
-import { Typography, Grid, Card, CardContent } from "@mui/material";
+import Grid from '@mui/material/Grid2';
+import { Typography, Card, CardContent } from "@mui/material";
 
 const OverallStatItemCard = ({ title, stat, description }) => {
     return (
