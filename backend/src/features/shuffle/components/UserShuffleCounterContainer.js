@@ -1,31 +1,32 @@
 import React from "react";
-import { Grid } from "@mui/material";
-import OverallStatItemCard from "../../../components/analysisPageComponents/OverallStatItemCard";
+import ListIcon from '@mui/icons-material/List';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import { Stack } from "@mui/material";
+import CounterTooltipChip from './CounterTooltipChip';
 
 const UserShuffleCounterContainer = ({ userShuffleCounter }) => {
     return (
-        <Grid
-            sx={{
-                margin: { sm: "auto", md: "0 auto", },
-                maxWidth: "600px",
-            }}
-            container
-            spacing={1}
+        <Stack
+            direction="row"
+            spacing={2}
             justifyContent="center"
-            alignItems="flex-start"
+            sx={{ flexWrap: "wrap", maxWidth: "400px", margin: "auto" }}
         >
-            <OverallStatItemCard 
-                title={"Playlists"} 
-                stat={userShuffleCounter.playlist_count} 
-                description={"Total number of playlists you've shuffled using True Shuffle"}
+            {/* Playlist Count Chip */}
+            <CounterTooltipChip
+                icon={<ListIcon sx={{ color: "#1DB954" }} />}
+                label={userShuffleCounter.playlist_count}
+                tooltipTitle="Number of playlists shuffled"
             />
-            <OverallStatItemCard
-                title={"Tracks"}
-                stat={userShuffleCounter.track_count}
-                description={"Total number of tracks you've shuffled using True Shuffle"}
+
+            {/* Track Count Chip */}
+            <CounterTooltipChip
+                icon={<AudiotrackIcon sx={{ color: "#1DB954" }} />}
+                label={userShuffleCounter.track_count}
+                tooltipTitle="Number of tracks shuffled"
             />
-        </Grid>
+        </Stack>
     );
-}
+};
 
 export default UserShuffleCounterContainer;

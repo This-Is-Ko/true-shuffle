@@ -1,5 +1,5 @@
 import React from "react";
-import Grid from "@mui/material/Grid";
+import Grid from '@mui/material/Grid2';
 
 import PlaylistItem from "./PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
@@ -8,7 +8,12 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading 
     return (
         loading === true ?
             <Grid
-                sx={{ width: "70%", margin: "0 auto" }}
+                sx={{ 
+                    width: { sm: "90%", md: "70%" },
+                    margin: "0 auto", 
+                    paddingTop: "10px", 
+                    paddingBottom: "20px" 
+                }}
                 className="contentHolder"
                 container
                 spacing={2}
@@ -25,10 +30,15 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, loading 
             </Grid>
             :
             <Grid
-                sx={{ width: "70%", margin: "0 auto" }}
+                sx={{
+                    width: { sm: "90%", md: "70%" },
+                    margin: "0 auto",
+                    paddingTop: "10px",
+                    paddingBottom: "20px"
+                }}
                 className="contentHolder"
                 container
-                spacing={2}
+                spacing={{ xs: 1, md: 2 }} rowSpacing={2}
                 justifyContent="center"
                 alignItems="flex-start"
             >

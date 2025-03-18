@@ -33,17 +33,17 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
     };
 
     const getRecentShuffles = () => {
-      axios
-          .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/shuffle/recent`, { withCredentials: true })
-          .then((result) => {
-              if (result.data != null && result.data.recent_shuffles != null) {
-                  setRecentShuffles(result.data.recent_shuffles);
-              }
-          })
-          .catch(() => {
-              console.error("Failed to fetch recent shuffles");
-          });
-  };
+        axios
+            .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/shuffle/recent`, { withCredentials: true })
+            .then((result) => {
+                if (result.data != null && result.data.recent_shuffles != null) {
+                    setRecentShuffles(result.data.recent_shuffles);
+                }
+            })
+            .catch(() => {
+                console.error("Failed to fetch recent shuffles");
+            });
+    };
 
     useEffect(() => {
         getPlaylistsCall();
@@ -57,13 +57,15 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist }) => {
             ) : playlists.length > 0 ? (
                 <Box>
                     {userShuffleCounter !== false && 
-                        <UserShuffleCounterContainer userShuffleCounter={userShuffleCounter} />
+                          <UserShuffleCounterContainer userShuffleCounter={userShuffleCounter} />
                     }
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>Select a playlist</Typography>
+                    
+                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
+                    
                     {recentShuffles.length > 0 &&
                          <RecentShufflesTable recentShuffles={recentShuffles} />
                     }
-                    <Typography variant='h4' component="div" sx={{ paddingTop: "30px", color: "white" }}>Select a playlist</Typography>
-                    <PlaylistList playlists={playlists} selectPlaylist={selectPlaylist} setSelectedPlaylist={setSelectedPlaylist} />
                 </Box>
             ) : (
                 <Box>

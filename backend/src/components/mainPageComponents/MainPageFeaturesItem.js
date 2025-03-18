@@ -1,11 +1,10 @@
 import React from "react"
-
-import Grid from '@mui/material/Grid';
+import Grid from '@mui/material/Grid2';
 import { Typography, Button } from "@mui/material";
 
 const MainPageFeaturesItem = (props) => {
     return (
-        <Grid item sx={{ width: "auto", maxWidth: "400px", textAlign: "left" }}>
+        <Grid item sx={{ width: "auto", maxWidth: {sm: "300px", md: "400px"}, textAlign: "left" }}>
             <img className={"featureIcon"}
                 src={process.env.PUBLIC_URL + 'assets/icons/' + props.feature.icon} alt={"equalizer"} />
             <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white" }}>
