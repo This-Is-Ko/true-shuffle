@@ -6,11 +6,18 @@ import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 
 const PlaylistItem = (props) => {
+    const { playlist } = props;
+
+    // Validate input
+    if (!playlist || !playlist.name || !playlist.images || !playlist.images.url) {
+        return (<></>);
+    }
+
     const displayState = props.displayState;
     const playlistUri = props.playlistUri;
 
     const updateSelectedPlaylist = () => {
-        props.setSelectedPlaylist(props.playlist);
+        props.setSelectedPlaylist(playlist);
     }
 
     const preparePlaylistItemContents = () => {
@@ -24,68 +31,68 @@ const PlaylistItem = (props) => {
     const skeletonContents = () => {
         return (
             <Box>
-                <Skeleton variant="rectangular" sx={{ bgcolor: 'grey.900' }} maxWidth={"250px"} height={100} />
+                <Skeleton data-testid="playlist-skeleton" variant="rectangular" sx={{ bgcolor: 'grey.900', maxWidth: "250px" }} height={100} />
                 <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Skeleton variant="text" sx={{ bgcolor: 'grey.900', fontSize: '1rem', "maxWidth": "230px" }} />
-                    <Skeleton variant="text" sx={{ bgcolor: 'grey.900', fontSize: '0.85rem', "maxWidth": "230px" }} />
-                    <Skeleton variant="rectangular" sx={{ bgcolor: 'grey.900' }} width="50%" />
+                    <Skeleton data-testid="playlist-skeleton" variant="text" sx={{ bgcolor: 'grey.900', fontSize: '1rem', maxWidth: "230px" }} />
+                    <Skeleton data-testid="playlist-skeleton" variant="text" sx={{ bgcolor: 'grey.900', fontSize: '0.85rem', maxWidth: "230px" }} />
+                    <Skeleton data-testid="playlist-skeleton" variant="rectangular" sx={{ bgcolor: 'grey.900' }} width="50%" />
                 </CardContent>
             </Box>
         );
     }
 
     const playlistContents = () => {
-      return (
-          <Box>
-              <CardMedia
-                  component="img"
-                  sx={{ maxWidth: "250px", width: "100%" }}
-                  image={props.playlist.images.url}
-                  alt={props.playlist.name}
-              />
-              <CardContent
-                  sx={{
-                      flex: "1 0 auto",
-                      paddingBottom: shuffleButton() ? "16px !important" : "8px !important",
-                      paddingLeft: { xs: 0, sm: "16px" },
-                      paddingRight: { xs: 0, sm: "16px" },
-                  }}
-              >
-                  <Typography
-                      component="div"
-                      variant="h5"
-                      color="common.white"
-                      sx={{
-                          fontSize: "1rem",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          display: "block",
-                          maxWidth: "100%",
-                          whiteSpace: "nowrap",
-                          fontFamily: "'Questrial', sans-serif",
-                      }}
-                  >
-                      {props.playlist.name}
-                  </Typography>
-                  <Typography
-                      variant="subtitle1"
-                      color="common.white"
-                      component="div"
-                      sx={{
-                          fontSize: "0.85rem",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                          maxWidth: "100%",
-                          whiteSpace: "nowrap",
-                      }}
-                  >
-                      {props.playlist.owner.display_name}
-                  </Typography>
-                  {shuffleButton()}
-              </CardContent>
-          </Box>
-      );
-  };
+        return (
+            <Box>
+                <CardMedia
+                    component="img"
+                    sx={{ maxWidth: "250px", width: "100%" }}
+                    image={playlist.images.url}
+                    alt={playlist.name}
+                />
+                <CardContent
+                    sx={{
+                        flex: "1 0 auto",
+                        paddingBottom: shuffleButton() ? "16px !important" : "8px !important",
+                        paddingLeft: { xs: 0, sm: "16px" },
+                        paddingRight: { xs: 0, sm: "16px" },
+                    }}
+                >
+                    <Typography
+                        component="div"
+                        variant="h5"
+                        color="common.white"
+                        sx={{
+                            fontSize: "1rem",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            display: "block",
+                            maxWidth: "100%",
+                            whiteSpace: "nowrap",
+                            fontFamily: "'Questrial', sans-serif",
+                        }}
+                    >
+                        {playlist.name}
+                    </Typography>
+                    <Typography
+                        variant="subtitle1"
+                        color="common.white"
+                        component="div"
+                        sx={{
+                            fontSize: "0.85rem",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            maxWidth: "100%",
+                            whiteSpace: "nowrap",
+                        }}
+                    >
+                        {playlist.owner.display_name}
+                    </Typography>
+                    {shuffleButton()}
+                </CardContent>
+            </Box>
+        );
+    };
   
 
     const shuffleButton = () => {
@@ -102,7 +109,7 @@ const PlaylistItem = (props) => {
     }
 
     return (
-        <Grid item>
+        <Grid>
             <Card 
                 sx={{
                     padding: "16px",
