@@ -5,14 +5,9 @@ import { Card, CardContent, CardMedia, Typography, Box, Button, Skeleton } from 
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 
+
 const PlaylistItem = (props) => {
     const { playlist } = props;
-
-    // Validate input
-    if (!playlist || !playlist.name || !playlist.images || !playlist.images.url) {
-        return (<></>);
-    }
-
     const displayState = props.displayState;
     const playlistUri = props.playlistUri;
 
@@ -24,6 +19,10 @@ const PlaylistItem = (props) => {
         if (displayState === PLAYLIST_ITEM_DISPLAY_STATES.LOADING) {
             return skeletonContents();
         } else {
+            // Validate input
+            if (!playlist || !playlist.name || !playlist.images || !playlist.images.url) {
+                return (<></>);
+            }
             return playlistContents();
         }
     }
@@ -120,7 +119,7 @@ const PlaylistItem = (props) => {
                     maxWidth: { xs: "150px", sm: "200px", md: "250px" },
                     maxHeight: { xs: "280px", sm: "280px", md: "360px" },
                     // Lighter grey and scale effect
-                    ...(displayState !== PLAYLIST_ITEM_DISPLAY_STATES.LOADING && {
+                    ...(displayState === PLAYLIST_ITEM_DISPLAY_STATES.SELECTION && {
                         cursor: "pointer",
                         transition: "transform 0.2s ease-in-out",
                         "&:hover": {
@@ -134,18 +133,22 @@ const PlaylistItem = (props) => {
                   })
               }}
               onTouchStart={(e) => {
-                  if (displayState !== PLAYLIST_ITEM_DISPLAY_STATES.LOADING) {
+                  if (displayState === PLAYLIST_ITEM_DISPLAY_STATES.SELECTION) {
                       e.currentTarget.style.background = "#232323";
                       e.currentTarget.style.transform = "scale(1.05)";
                   }
               }}
               onTouchEnd={(e) => {
-                  if (displayState !== PLAYLIST_ITEM_DISPLAY_STATES.LOADING) {
+                  if (displayState === PLAYLIST_ITEM_DISPLAY_STATES.SELECTION) {
                       e.currentTarget.style.background = "#181818";
                       e.currentTarget.style.transform = "scale(1)";
                   }
               }}
-                onClick={() => { updateSelectedPlaylist(); }}
+                onClick={() => { 
+                  if (displayState === PLAYLIST_ITEM_DISPLAY_STATES.SELECTION) {
+                      updateSelectedPlaylist(); 
+                  }
+              }}
             >
                 {preparePlaylistItemContents()}
             </Card>
