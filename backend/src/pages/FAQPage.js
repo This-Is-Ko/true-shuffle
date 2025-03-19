@@ -26,19 +26,24 @@ const faqs = [
         "id": "q4"
     },
     {
-        "question": "Is True Shuffle an official Spotify product?",
-        "answer": "No, True Shuffle is an independent website and is not affiliated with Spotify.",
+        "question": "Why is my shuffle taking so long?",
+        "answer": "As each call to Spotify is limited to 100 tracks, the larger your playlist is, the longer it takes to retrieve all tracks then add them to the shuffled playlist.",
         "id": "q5"
     },
     {
-        "question": "What user data is stored?",
-        "answer": "The only user data that is stored is the user ID, access token to retrieved Liked Songs, counters for shuffles and Liked Songs to generate historical data. All authentication is handled by Spotify.",
+        "question": "Is True Shuffle an official Spotify product?",
+        "answer": "No, True Shuffle is an independent website and is not affiliated with Spotify.",
         "id": "q6"
+    },
+    {
+        "question": "What user data is stored?",
+        "answer": "The only user data that is stored is the Spotify user ID, access token to retrieved Liked Songs and counters for shuffles. Cookies are used to maintain logged in sessions. No passwords are stored and all authentication is handled by Spotify.",
+        "id": "q7"
     },
     {
         "question": "How can I give feedback?",
         "answer": "I'd love to hear from you if you have any feedback or suggestions. You contact me with the email listed on the About page or click on the Contact link in the footer.",
-        "id": "q7"
+        "id": "q8"
     },
 ];
 
@@ -55,7 +60,16 @@ const FAQPage = () => {
         <Box>
             <Helmet>
                 <title>FAQ | True Shuffle for Spotify</title>
+                <meta name="description" content="Frequently asked questions about True Shuffle and the Spotify shuffler." />
+                <meta name="robots" content="index, follow" />
+                <link rel="canonical" href="https://www.trueshuffle.top/faq" />
+                <meta property="og:title" content="FAQ | True Shuffle for Spotify" />
+                <meta property="og:description" content="Frequently asked questions about True Shuffle and the Spotify shuffler." />
+                <meta property="og:url" content="https://www.trueshuffle.top/faq" />
+                <meta property="og:type" content="website" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Helmet>
+    
             <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                 FAQ
             </Typography>

@@ -295,7 +295,16 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
             <main>
                 <Helmet>
                     <title>Share Liked Songs | True Shuffle for Spotify</title>
+                    <meta name="description" content="Share your liked songs from Spotify with True Shuffle." />
+                    <meta name="robots" content="index, follow" />
+                    <link rel="canonical" href="https://www.trueshuffle.top/share-liked-songs" />
+                    <meta property="og:title" content="Share Liked Songs | True Shuffle for Spotify" />
+                    <meta property="og:description" content="Share your liked songs from Spotify with True Shuffle." />
+                    <meta property="og:url" content="https://www.trueshuffle.top/share-liked-songs" />
+                    <meta property="og:type" content="website" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
+
                 <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                     <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>
                     <Typography
