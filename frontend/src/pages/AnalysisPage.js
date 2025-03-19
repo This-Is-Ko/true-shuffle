@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Grid from '@mui/material/Grid2';
-import { Typography, Box, Paper, Button } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
 import { Helmet } from "react-helmet";
 import CircularProgress from "@mui/material/CircularProgress";
 import axios from "axios";
@@ -134,7 +134,16 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
             <Box sx={{ width: "90%", margin: "auto" }}>
                 <Helmet>
                     <title>Analyse My Music | True Shuffle for Spotify</title>
+                    <meta name="description" content="Analyze your Spotify music library with True Shuffle's and see statistics about your Liked Songs." />
+                    <meta name="robots" content="index, follow" />
+                    <link rel="canonical" href="https://www.trueshuffle.top/analyse-my-music" />
+                    <meta property="og:title" content="Analyse My Music | True Shuffle for Spotify" />
+                    <meta property="og:description" content="Analyze your Spotify music library with True Shuffle's and see statistics about your Liked Songs." />
+                    <meta property="og:url" content="https://www.trueshuffle.top/analyse-my-music" />
+                    <meta property="og:type" content="website" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
+
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
                     Analyse My Music
                 </Typography>
