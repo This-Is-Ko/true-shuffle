@@ -45,8 +45,14 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
         <main>
             <Helmet>
                 <title>Home | True Shuffle for Spotify</title>
-                <meta name='description' content='Create shuffled Spotify playlists that are randomly ordered' />
+                <meta name="description" content="Shuffle your Spotify playlists with a truly random order, no repeats, and no algorithmic bias." />
+                <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://www.trueshuffle.top/" />
+                <meta property="og:title" content="True Shuffle for Spotify - Experience Genuine Random Shuffling" />
+                <meta property="og:description" content="Create shuffled Spotify playlists with a truly random order, no repeats, and no algorithmic bias." />
+                <meta property="og:url" content="https://www.trueshuffle.top/" />
+                <meta property="og:type" content="website" />
+                <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Helmet>
             <Backdrop
                 sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}

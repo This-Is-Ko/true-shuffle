@@ -24,7 +24,16 @@ function App() {
             <div>
                 <Helmet>
                     <title>Shuffle | True Shuffle for Spotify</title>
+                    <meta name="description" content="Enjoy a truly random shuffle experience with True Shuffle for Spotify. Shuffle your playlists without bias and without repeats." />
+                    <meta name="robots" content="noindex, nofollow" />
+                    <link rel="canonical" href="https://www.trueshuffle.top/shuffle" />
+                    <meta property="og:title" content="Shuffle | True Shuffle for Spotify" />
+                    <meta property="og:description" content="Enjoy a truly random shuffle experience with True Shuffle for Spotify. Shuffle your playlists without bias and without repeats." />
+                    <meta property="og:url" content="https://www.trueshuffle.top/shuffle" />
+                    <meta property="og:type" content="website" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
+
                 <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
                 <Routes>
                     <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />

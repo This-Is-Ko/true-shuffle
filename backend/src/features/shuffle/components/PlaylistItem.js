@@ -92,24 +92,26 @@ const PlaylistItem = (props) => {
             </Box>
         );
     };
-  
+
 
     const shuffleButton = () => {
-      if (displayState === PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLED && playlistUri != null) {
+      if (playlistUri != null) {
             return (
-                <Button variant="contained"
-                    href={playlistUri} target="_blank"
-                    sx={{ color: 'white', bgcolor: "#1DB954" }}
-                    startIcon={<AudiotrackIcon />}>
-                        Open
-                </Button>
+                <Box sx={{paddingTop: "5px" }}>
+                    <Button variant="contained"
+                        href={playlistUri} target="_blank"
+                        sx={{ color: 'white', bgcolor: "#1DB954" }}
+                        startIcon={<AudiotrackIcon />}>
+                            Open
+                    </Button>
+                </Box>
             )
         }
     }
 
     return (
         <Grid>
-            <Card 
+            <Card
                 sx={{
                     padding: "16px",
                     background: "#181818",
@@ -144,9 +146,9 @@ const PlaylistItem = (props) => {
                       e.currentTarget.style.transform = "scale(1)";
                   }
               }}
-                onClick={() => { 
+                onClick={() => {
                   if (displayState === PLAYLIST_ITEM_DISPLAY_STATES.SELECTION) {
-                      updateSelectedPlaylist(); 
+                      updateSelectedPlaylist();
                   }
               }}
             >

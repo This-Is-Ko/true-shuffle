@@ -117,7 +117,16 @@ const DeletePage = ({ isAuth, loginUri }) => {
             <main>
                 <Helmet>
                     <title>Delete Playlists | True Shuffle for Spotify</title>
+                    <meta name="description" content="Easily delete your shuffled playlists created with Spotify True Shuffle." />
+                    <meta name="robots" content="index, follow" />
+                    <link rel="canonical" href="https://www.trueshuffle.top/delete-playlists" />
+                    <meta property="og:title" content="Delete Playlists | True Shuffle for Spotify" />
+                    <meta property="og:description" content="Easily delete your shuffled playlists created with Spotify True Shuffle." />
+                    <meta property="og:url" content="https://www.trueshuffle.top/delete-playlists" />
+                    <meta property="og:type" content="website" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
+
                 <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
                     <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Delete</Typography>
                     <Typography

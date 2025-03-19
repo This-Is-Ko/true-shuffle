@@ -1,7 +1,7 @@
 export const features = [
     {
-        "name": "Shuffle",
-        "description": "Create shuffled playlists at the click of a button without affecting your original playlist order",
+        "name": "Spotify Shuffler",
+        "description": "Shuffled playlists without affecting your original playlist order",
         "uri": "/shuffle",
         "special": "",
         "icon": "shuffle.png"
@@ -21,7 +21,7 @@ export const features = [
         "icon": "headphones.png"
     },
     {
-        "name": "Remove shuffled",
+        "name": "Remove Shuffled",
         "description": "Easy function to clean up created shuffled playlists while keeping all your original playlists",
         "uri": "/delete",
         "special": "",
