@@ -17,7 +17,7 @@ For the backend of the project, check out the [backend repository here](https://
 
 Ensure you have the following installed:
 
-- [Node.js](https://nodejs.org/) (v16 or higher)
+- [Node.js](https://nodejs.org/) (22 or higher)
 - [npm](https://www.npmjs.com/) (v7 or higher)
 
 ## Getting Started
