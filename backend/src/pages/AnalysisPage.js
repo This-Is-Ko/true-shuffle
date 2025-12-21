@@ -154,8 +154,6 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                             minWidth: "200px", maxWidth: "600px", paddingTop: "10px", color: "lightgrey"
                         }}>
                         Welcome to your personal Spotify library statistics page! Here, you can find a breakdown of the music you've saved, including your top artists, top albums, and more. We've analyzed your library to provide you with interesting insights about the music you enjoy.
-                        <br />
-                        The Spotify library count tracker is enabled when you first login. The tracker is updated weekly so check back frequently to see how your library grows.
                     </Typography>
                 </Box>
                 {error !== null && error.message !== null && <ErrorMessage error={error} isGeneric={false} />}
@@ -370,29 +368,6 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                                     </Box>
                                 </Grid>
                             </Grid>
-
-                            {/* <Box>
-                                <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                    Liked Songs Tracker
-                                </Typography>
-                                <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingTop: "5px" }}>
-                                    Only shows statistics after tracking was enabled on True Shuffle
-                                </Typography>
-                                {
-                                    likedTracksTrackerData.length > 0 ?
-                                        (<Box><Typography variant='subtitle2' component="div" sx={{ color: "lightgrey" }}>
-                                            Our liked tracks history is updated once a week so if you don't see many data points, come back in a few weeks to see more data.
-                                        </Typography>
-                                            <Paper sx={{ height: "500px", backgroundColor: "#b9b9b9" }}>
-                                                <LikedTracksHistoryGraph data={likedTracksTrackerData} />
-                                            </Paper>
-                                        </Box>)
-                                        :
-                                        (<Typography variant='subtitle2' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                            <strong>Not enough data to generate tracker data. Our liked tracks history is updated at the start of each week.</strong>
-                                        </Typography>)
-                                }
-                            </Box> */}
                         </Box>
                         <Footer></Footer>
                     </Box>
