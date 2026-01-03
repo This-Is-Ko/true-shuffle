@@ -107,7 +107,7 @@ export function  makeTrackLengthString(length_data) {
 
 export function formatNumberWithCommas(number) {
   if (number !== null && number > 0) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
   }
   return null
 }
