@@ -5,11 +5,6 @@ export const HowToShuffleEntry = [
     "Enjoy!"
 ]
 
-export const HowToDeletePlaylistsEntry = [
-    "Just click the below button to remove all shuffled playlists from your Spotify account. This will not affect any of your existing playlists and only delete playlists named \"[Shuffled] ...\"",
-    "Note: You don't need to remove an existing shuffled playlist to re-shuffle it"
-]
-
 export const HowToShareLikedTracksEntry = [
     "Click \"Start\"",
     "Enter a playlist name or leave as default",

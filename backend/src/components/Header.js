@@ -24,16 +24,11 @@ const pages = [
     {
         "title": "Anaylse My Music",
         "link": "/analysis",
-        "special": "NEW "
+        "special": ""
     },
     {
         "title": "Share Library",
         "link": "/share",
-        "special": ""
-    },
-    {
-        "title": "Delete",
-        "link": "/delete",
         "special": ""
     },
     {
