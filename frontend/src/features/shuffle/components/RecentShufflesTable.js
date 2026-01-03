@@ -1,102 +1,167 @@
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Typography } from '@mui/material';
+import { Box, Typography, Stack, Chip, Avatar } from '@mui/material';
+import SidebarCard from './SidebarCard';
 
 const RecentShufflesTable = ({ recentShuffles }) => {
   if (!recentShuffles || recentShuffles.length === 0) {
     return <></>;
   }
 
-  // Column order, excluding 'duration_seconds'
-  const columnOrder = ['shuffled_at', 'playlist_name', 'tracks_shuffled'];
-
   // Sort shuffles by most recent first
   const sortedShuffles = [...recentShuffles].sort(
     (a, b) => new Date(b.shuffled_at["$date"]) - new Date(a.shuffled_at["$date"])
   );
 
-  // Display time only if current day otherwise both date and time
+  // Get playlist image URL if available
+  const getPlaylistImage = (shuffle) => {
+    return shuffle.playlist_image_url || null;
+  };
+
+  // Format date with relative time up to last week, then day/month/year
   const formatDate = (timestamp) => {
     if (!timestamp || !timestamp["$date"]) return "";
 
     const dateObj = new Date(timestamp["$date"]);
-    const today = new Date();
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const shuffleDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
+    
+    const diffTime = today - shuffleDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    const timeStr = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", hour12: false });
 
-    // Extract date parts for comparison
-    const isToday =
-      dateObj.getDate() === today.getDate() &&
-      dateObj.getMonth() === today.getMonth() &&
-      dateObj.getFullYear() === today.getFullYear();
-
-    // Format date and time
-    const timeStr = dateObj.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-    const dateStr = dateObj.toLocaleDateString();
-
-    return isToday ? timeStr : `${dateStr} ${timeStr}`;
+    if (diffDays === 0) {
+      // Today: just show time
+      return timeStr;
+    } else if (diffDays === 1) {
+      // Yesterday
+      return `Yesterday, ${timeStr}`;
+    } else if (diffDays <= 7) {
+      // This week: show relative days
+      return `${diffDays} days ago`;
+    } else {
+      // Last week and older: show day/month/year
+      const day = dateObj.getDate();
+      const month = dateObj.getMonth() + 1;
+      const year = dateObj.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
   };
 
   return (
-    <Box sx={{ 
-      paddingTop: 4, 
-      paddingBottom: 4, 
-      maxWidth: { xs: "80%", md: 600, },
-      mx: 'auto',
-    }}>
-      <Paper elevation={3} sx={{ p: 1, bgcolor: '#333' }}>
-        <Typography variant="h6" gutterBottom sx={{ color: 'white' }}>
+    <SidebarCard>
+        <Typography 
+          variant="h6" 
+          sx={{ 
+            color: 'white', 
+            fontSize: '1.1rem', 
+            fontWeight: 600,
+            mb: 1.5,
+            letterSpacing: '0.01em',
+            textAlign: 'center'
+          }}
+        >
           Recent Shuffles
         </Typography>
-        <TableContainer sx={{ maxHeight: 130, overflowY: 'auto' }}>
-          <Table size="small" stickyHeader>
-            <TableHead>
-              <TableRow>
-                {columnOrder.map((col) => (
-                  <TableCell 
-                    key={col} 
+        <Stack 
+          spacing={0.75} 
+          sx={{ 
+            maxHeight: 250, 
+            overflowY: 'auto',
+            '&::-webkit-scrollbar': {
+              width: '6px',
+            },
+            '&::-webkit-scrollbar-track': {
+              background: '#222',
+            },
+            '&::-webkit-scrollbar-thumb': {
+              background: '#555',
+              borderRadius: '3px',
+            },
+            '&::-webkit-scrollbar-thumb:hover': {
+              background: '#666',
+            },
+          }}
+        >
+          {sortedShuffles.map((shuffle, index) => {
+            const playlistImage = getPlaylistImage(shuffle);
+            return (
+              <Box
+                key={index}
+                sx={{
+                  px: 1,
+                  py: 0.75,
+                  bgcolor: '#444',
+                  borderRadius: 1,
+                  transition: 'background-color 0.2s',
+                  '&:hover': {
+                    bgcolor: '#4a4a4a',
+                  },
+                }}
+              >
+                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 1 }}>
+                  <Box sx={{ display: 'flex', gap: 1, flex: 1, minWidth: 0, alignItems: 'flex-start' }}>
+                    {playlistImage && (
+                      <Avatar
+                        src={playlistImage}
+                        alt={shuffle.playlist_name}
+                        variant="rounded"
+                        sx={{
+                          width: 40,
+                          height: 40,
+                          flexShrink: 0,
+                          bgcolor: '#555',
+                        }}
+                      />
+                    )}
+                    <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: 'white',
+                          fontWeight: 500,
+                          overflow: 'hidden',
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          mb: 0.25,
+                          width: '100%',
+                          textAlign: 'left',
+                        }}
+                      >
+                        {shuffle.playlist_name}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{
+                          color: '#aaa',
+                          fontSize: '0.75rem',
+                          textAlign: 'left',
+                        }}
+                      >
+                        {formatDate(shuffle.shuffled_at)}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Chip
+                    label={shuffle.tracks_shuffled}
+                    size="small"
                     sx={{
-                      py: 0.5, 
-                      px: 1, 
-                      bgcolor: '#444', 
-                      color: 'white', 
-                      borderBottom: '2px solid #555',
-                      display: col === 'tracks_shuffled' ? { xs: 'none', sm: 'table-cell' } : 'table-cell',  // Hide on small screens
-                    }}
-                  >
-                    <strong>{col.replace(/_/g, ' ').toUpperCase()}</strong>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {sortedShuffles.map((shuffle, index) => (
-                <TableRow key={index} hover sx={{ bgcolor: index % 2 === 0 ? '#444' : '#555' }}>
-                  {columnOrder.map((col) => (
-                    <TableCell
-                      key={col}
-                      sx={{
-                        py: 0.5,
+                      bgcolor: '#555',
+                      color: 'white',
+                      fontSize: '0.7rem',
+                      height: '20px',
+                      flexShrink: 0,
+                      '& .MuiChip-label': {
                         px: 1,
-                        color: 'white',
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: col === "playlist_name" ? "200px" : "unset",
-                        display: col === 'tracks_shuffled' ? { xs: 'none', sm: 'table-cell' } : 'table-cell',
-                      }}
-                    >
-                      {col === "shuffled_at"
-                      ? formatDate(shuffle[col])
-                      : shuffle[col]}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        {/* <Typography variant="subtitle2" sx={{ color: 'grey' }}>
-          Quick selection of recent playlists
-        </Typography> */}
-      </Paper>
-    </Box>
+                      },
+                    }}
+                  />
+                </Box>
+              </Box>
+            );
+          })}
+        </Stack>
+      </SidebarCard>
   );
 };
 

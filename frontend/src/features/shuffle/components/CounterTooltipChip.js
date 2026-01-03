@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Chip, Tooltip, ClickAwayListener, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/system";
+import { formatNumberWithSpaces } from "../../../utils/NumberFormatter";
 
 const CounterTooltipChip = ({ icon, label, tooltipTitle, onClick }) => {
     const [openTooltip, setOpenTooltip] = useState(false);
@@ -48,7 +49,7 @@ const CounterTooltipChip = ({ icon, label, tooltipTitle, onClick }) => {
             >
                 <Chip
                     icon={icon}
-                    label={`${label}`}
+                    label={`${formatNumberWithSpaces(label)}`}
                     sx={{ backgroundColor: "#232323", color: "#FFF" }}
                     onClick={handleTooltipToggle}
                     onMouseEnter={handleMouseEnter}

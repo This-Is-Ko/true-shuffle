@@ -3,6 +3,7 @@ import { Typography, Link, Box } from "@mui/material";
 import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
 import { getStatisticsApi } from "../utils/StatisticsService";
+import { formatNumberWithSpaces } from "../utils/NumberFormatter";
 
 const AboutPage = () => {
     const [trackCounter, setTrackCounter] = React.useState(null);
@@ -64,13 +65,13 @@ const AboutPage = () => {
                         Statistics
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Shuffled tracks: {trackCounter}
+                        Shuffled tracks: {formatNumberWithSpaces(trackCounter)}
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Shuffled playlists: {playlistCounter}
+                        Shuffled playlists: {formatNumberWithSpaces(playlistCounter)}
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Libraries analysed: {analysisCounter}
+                        Libraries analysed: {formatNumberWithSpaces(analysisCounter)}
                     </Typography>
                 </div>
             }
