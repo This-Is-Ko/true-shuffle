@@ -24,7 +24,7 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                     overflowY: 'auto',
                 }}>
                     <Typography variant='h4' component="div" sx={{ color: "white", fontWeight: 'bold', marginBottom: 2 }}>
-                        How To Use
+                        How To
                     </Typography>
 
                     {

@@ -6,7 +6,6 @@ import { Helmet } from "react-helmet";
 
 import Main from "./components/Main"
 import ShufflePage from "./pages/ShufflePage";
-import DeletePage from "./pages/DeletePage";
 import ShareLikedTracksPage from "./pages/ShareLikedTracksPage";
 import AboutPage from "./pages/AboutPage";
 import FAQPage from "./pages/FAQPage";
@@ -34,7 +33,7 @@ function App() {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
 
-                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Shuffle</Typography>
+                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", paddingBottom: "20px", color: "white" }}>Shuffle</Typography>
                 <Routes>
                     <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />
                 </Routes>
@@ -54,7 +53,6 @@ function App() {
             <Routes>
                 <Route path="/" element={<Main loginUri={loginUri} isAuth={isAuth} setIsAuth={setIsAuth} />} />
                 <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />
-                <Route path="/delete" element={<DeletePage isAuth={isAuth} loginUri={loginUri}/>} />
                 <Route path="/share" element={<ShareLikedTracksPage isAuth={isAuth} loginUri={loginUri}/>} />
                 <Route path="/analysis" element={<AnalysisPage isAuth={isAuth} loginUri={loginUri}/>} />
                 <Route path="/faq" element={<FAQPage />} />

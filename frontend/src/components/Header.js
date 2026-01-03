@@ -32,11 +32,6 @@ const pages = [
         "special": ""
     },
     {
-        "title": "Delete",
-        "link": "/delete",
-        "special": ""
-    },
-    {
         "title": "FAQ",
         "link": "/faq",
         "special": ""

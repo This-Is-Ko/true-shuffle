@@ -174,11 +174,6 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                                 Start Analysis
                             </Button>
                         </Box>
-                        <img
-                            className="imgBlurPreview"
-                            src={process.env.PUBLIC_URL + '/assets/images/analysis-preview.png'}
-                            alt={"preview analysis"}
-                        />
                     </Box>
                 }
                 {isLoading && 

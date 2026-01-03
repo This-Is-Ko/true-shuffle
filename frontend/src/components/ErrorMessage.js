@@ -2,6 +2,10 @@ import React from "react";
 import { Typography } from "@mui/material";
 
 const ErrorMessage = ({ error, isGeneric }) => {
+    if (!error) {
+        return null;
+    }
+    
     return (
         <div className="loading-container">
             {
@@ -11,7 +15,7 @@ const ErrorMessage = ({ error, isGeneric }) => {
                     </Typography>
                     :
                     <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                        {error.message}
+                        {error?.message || "An error occurred"}
                     </Typography>
 
             }
