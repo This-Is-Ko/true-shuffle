@@ -24,7 +24,7 @@ const pages = [
     {
         "title": "Anaylse My Music",
         "link": "/analysis",
-        "special": "NEW "
+        "special": ""
     },
     {
         "title": "Share Library",

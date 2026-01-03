@@ -1,5 +1,6 @@
 import React from "react";
 import { TableContainer, Table, TableHead, TableRow, TableBody, TableCell, Box, Link } from "@mui/material";
+import { formatNumberWithSpaces } from "../../utils/NumberFormatter";
 
 const MostCommonTable = ({ data, type }) => {
     const numOfArtists = data.length
@@ -28,8 +29,8 @@ const MostCommonTable = ({ data, type }) => {
                                     {row.name}
                                 </Link>
                             </TableCell>
-                            <TableCell sx={{ color: "white" }} align="right">{row.count}</TableCell>
-                            <TableCell sx={{ color: "white" }} align="right">{Math.round(row.count / numOfArtists * 100)}</TableCell>
+                            <TableCell sx={{ color: "white" }} align="right">{formatNumberWithSpaces(row.count)}</TableCell>
+                            <TableCell sx={{ color: "white" }} align="right">{formatNumberWithSpaces(Math.round(row.count / numOfArtists * 100))}</TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

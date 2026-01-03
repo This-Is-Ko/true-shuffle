@@ -3,6 +3,7 @@ import { Typography, Stack, Box } from "@mui/material";
 import ListIcon from '@mui/icons-material/List';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import SidebarCard from "./SidebarCard";
+import { formatNumberWithSpaces } from "../../../utils/NumberFormatter";
 
 const SidebarStatistics = ({ userShuffleCounter }) => {
     if (!userShuffleCounter) {
@@ -40,7 +41,7 @@ const SidebarStatistics = ({ userShuffleCounter }) => {
                         </Typography>
                     </Stack>
                     <Typography variant="h4" component="div" sx={{ color: "#1DB954", fontWeight: 'bold' }}>
-                        {userShuffleCounter.playlist_count}
+                        {formatNumberWithSpaces(userShuffleCounter.playlist_count)}
                     </Typography>
                 </Box>
 
@@ -58,7 +59,7 @@ const SidebarStatistics = ({ userShuffleCounter }) => {
                         </Typography>
                     </Stack>
                     <Typography variant="h4" component="div" sx={{ color: "#1DB954", fontWeight: 'bold' }}>
-                        {userShuffleCounter.track_count}
+                        {formatNumberWithSpaces(userShuffleCounter.track_count)}
                     </Typography>
                 </Box>
             </Box>
