@@ -10,16 +10,60 @@ import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
 import LoadingMessage from "../../../components/LoadingMessage";
 import ErrorMessage from "../../../components/ErrorMessage";
 
-const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selectedPlaylist, shuffleState, shuffleStateMessage, shuffleError, playlistUri, loading, onHowToClick, onRefreshData }) => {
+/**
+ * PlaylistList component - Displays the list of playlists or the selected playlist with shuffle status.
+ * Handles three main states: all playlists view, shuffling in progress, and shuffle complete.
+ * 
+ * @param {Object} props - Component props
+ * @param {Array} props.playlists - Array of playlist objects to display
+ * @param {Function} props.selectPlaylist - Callback for playlist selection (legacy interface)
+ * @param {Function} props.setSelectedPlaylist - Function to set the selected playlist
+ * @param {Object|null} props.selectedPlaylist - Currently selected playlist
+ * @param {string} props.shuffleState - Current state of the shuffle operation
+ * @param {string} props.shuffleStateMessage - Message to display during shuffle progress
+ * @param {Object|boolean} props.shuffleError - Error object if shuffle failed, false otherwise
+ * @param {string|null} props.playlistUri - URI of the shuffled playlist
+ * @param {boolean} props.loading - Whether playlists are still loading
+ * @param {Function} props.onHowToClick - Callback to open "How To" modal
+ * @param {Function} props.onRefreshData - Callback to refresh playlist data
+ */
+const PlaylistList = ({ 
+    playlists, 
+    selectPlaylist, 
+    setSelectedPlaylist, 
+    selectedPlaylist, 
+    shuffleState, 
+    shuffleStateMessage, 
+    shuffleError, 
+    playlistUri, 
+    loading, 
+    onHowToClick, 
+    onRefreshData 
+}) => {
+    // Determine if shuffle operation is currently in progress
     const isShuffling = selectedPlaylist !== null && 
                        shuffleState !== "" && 
                        shuffleState !== PLAYLIST_SHUFFLE_STATE.SUCCESS &&
                        (shuffleState === PLAYLIST_SHUFFLE_STATE.PROGRESS || 
                         shuffleState === PLAYLIST_SHUFFLE_STATE.PENDING);
+    
+    // Determine if shuffle operation has completed successfully
     const isShuffled = selectedPlaylist !== null && shuffleState === PLAYLIST_SHUFFLE_STATE.SUCCESS;
+    
+    // Show loading animation when playlist is selected but shuffle hasn't started yet
+    const isInitializing = selectedPlaylist !== null && shuffleState === "";
+    
+    // Show all playlists when no playlist is selected and not loading
     const showAllPlaylists = selectedPlaylist === null && !loading;
-    const shouldCenterContent = selectedPlaylist !== null; // Center when playlist is selected, regardless of shuffle state
+    
+    // Center content when a playlist is selected (for better UX during shuffle)
+    const shouldCenterContent = selectedPlaylist !== null;
 
+    /**
+     * Gets the appropriate title based on the current shuffle state.
+     * 
+     * @returns {string} Title text to display
+     */
     const getTitle = () => {
         if (isShuffled) {
             return "Playlist shuffled!";
@@ -30,6 +74,10 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
         }
     };
 
+    /**
+     * Handles the "Shuffle another playlist" button click.
+     * Resets the selection and refreshes the playlist data.
+     */
     const handleShuffleAnother = () => {
         if (setSelectedPlaylist) {
             setSelectedPlaylist(null);
@@ -118,17 +166,23 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                     </Box>
                 )}
 
+                {/* 
+                    Main content area - dynamically switches between grid (all playlists) 
+                    and flex (selected playlist) layouts based on state
+                */}
                 <Box
                     sx={{
                         width: "100%",
                         paddingTop: { xs: "5px", sm: "10px" },
                         paddingBottom: { xs: "10px", sm: "20px" },
+                        // Grid layout for all playlists, flex for selected playlist
                         display: (showAllPlaylists || loading) ? "grid" : "flex",
                         flexDirection: (showAllPlaylists || loading) ? "row" : "column",
                         alignItems: (showAllPlaylists || loading) ? "stretch" : "center",
                         justifyContent: shouldCenterContent ? "center" : "flex-start",
                         flex: shouldCenterContent ? 1 : "none",
                         minHeight: shouldCenterContent ? 0 : "auto",
+                        // Responsive grid columns for playlist grid view
                         gridTemplateColumns: (showAllPlaylists || loading) ? {
                             xs: "repeat(2, 1fr)",
                             sm: "repeat(auto-fit, minmax(200px, 1fr))",
@@ -139,18 +193,18 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                     }}
                     className="contentHolder"
                 >
+                    {/* Loading state - show skeleton placeholders */}
                     {loading === true ? (
                         Array.from(Array(3)).map((_, index) => (
                             <PlaylistItem
-                                class="playlistItem"
                                 key={index}
                                 displayState={PLAYLIST_ITEM_DISPLAY_STATES.LOADING}
                             />
                         ))
                     ) : showAllPlaylists ? (
+                        /* All playlists grid view */
                         playlists.map((playlist) => (
                             <PlaylistItem
-                                class="playlistItem"
                                 key={playlist.id}
                                 playlist={playlist}
                                 selectPlaylist={selectPlaylist}
@@ -160,6 +214,7 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                         ))
                     ) : selectedPlaylist ? (
                         <>
+                            {/* Selected playlist card */}
                             <Box sx={{ 
                                 width: "100%", 
                                 maxWidth: "300px",
@@ -167,7 +222,6 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                                 justifyContent: "center"
                             }}>
                                 <PlaylistItem
-                                    class="playlistItem"
                                     key={selectedPlaylist.id}
                                     playlist={selectedPlaylist}
                                     playlistUri={playlistUri}
@@ -178,6 +232,23 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                                     }
                                 />
                             </Box>
+                            
+                            {/* Initializing shuffle - show loading immediately when playlist is selected */}
+                            {isInitializing && (
+                                <Box sx={{ 
+                                    display: "flex", 
+                                    flexDirection: "column", 
+                                    alignItems: "center",
+                                    paddingTop: { xs: "10px", sm: "20px" },
+                                    gap: 1,
+                                    width: "100%"
+                                }}>
+                                    <CircularProgress />
+                                    <LoadingMessage message="Starting shuffle..." />
+                                </Box>
+                            )}
+                            
+                            {/* Shuffling in progress UI */}
                             {isShuffling && (
                                 <Box sx={{ 
                                     display: "flex", 
@@ -187,6 +258,7 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                                     gap: 1,
                                     width: "100%"
                                 }}>
+                                    {/* Open button - available early in shuffle process */}
                                     {playlistUri != null && (
                                         <Button
                                             variant="contained"
@@ -208,11 +280,14 @@ const PlaylistList = ({ playlists, selectPlaylist, setSelectedPlaylist, selected
                                     )}
                                     <CircularProgress />
                                     <LoadingMessage message={shuffleStateMessage || "Shuffling..."} />
+                                    {/* Inform user they can start listening early */}
                                     {playlistUri != null && (
                                         <LoadingMessage message="You can start listening while the rest of the tracks are being added" />
                                     )}
                                 </Box>
                             )}
+                            
+                            {/* Shuffle complete UI */}
                             {isShuffled && (
                                 <Box sx={{ 
                                     display: "flex", 
