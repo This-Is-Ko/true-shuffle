@@ -29,23 +29,56 @@ const PlaylistItem = (props) => {
 
     const skeletonContents = () => {
         return (
-            <Box>
-                <Skeleton data-testid="playlist-skeleton" variant="rectangular" sx={{ bgcolor: 'grey.900', maxWidth: "250px" }} height={100} />
-                <CardContent sx={{ flex: '1 0 auto' }}>
-                    <Skeleton data-testid="playlist-skeleton" variant="text" sx={{ bgcolor: 'grey.900', fontSize: '1rem', maxWidth: "230px" }} />
-                    <Skeleton data-testid="playlist-skeleton" variant="text" sx={{ bgcolor: 'grey.900', fontSize: '0.85rem', maxWidth: "230px" }} />
-                    <Skeleton data-testid="playlist-skeleton" variant="rectangular" sx={{ bgcolor: 'grey.900' }} width="50%" />
+            <Box sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                width: "100%"
+            }}>
+                <Skeleton 
+                    data-testid="playlist-skeleton" 
+                    variant="rectangular" 
+                    sx={{ 
+                        bgcolor: 'grey.900', 
+                        maxWidth: "250px",
+                        width: "100%",
+                        aspectRatio: "1 / 1"
+                    }} 
+                />
+                <CardContent sx={{ 
+                    flex: '1 0 auto',
+                    paddingLeft: { xs: 0, sm: "16px" },
+                    paddingRight: { xs: 0, sm: "16px" },
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start"
+                }}>
+                    <Skeleton data-testid="playlist-skeleton" variant="text" sx={{ bgcolor: 'grey.900', fontSize: '1rem', width: "100%", maxWidth: "100%" }} />
+                    <Skeleton data-testid="playlist-skeleton" variant="text" sx={{ bgcolor: 'grey.900', fontSize: '0.85rem', width: "80%", maxWidth: "80%" }} />
                 </CardContent>
             </Box>
         );
     }
 
     const playlistContents = () => {
+        const isShufflingOrShuffled = displayState === PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLING || 
+                                      displayState === PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLED;
+        
         return (
-            <Box>
+            <Box sx={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: isShufflingOrShuffled ? "center" : "flex-start",
+                width: "100%"
+            }}>
                 <CardMedia
                     component="img"
-                    sx={{ maxWidth: "250px", width: "100%" }}
+                    sx={{ 
+                        maxWidth: "250px", 
+                        width: isShufflingOrShuffled ? "250px" : "100%",
+                        margin: isShufflingOrShuffled ? "0 auto" : "0"
+                    }}
                     image={playlist.images.url}
                     alt={playlist.name}
                 />
@@ -55,6 +88,11 @@ const PlaylistItem = (props) => {
                         paddingBottom: shuffleButton() ? "16px !important" : "8px !important",
                         paddingLeft: { xs: 0, sm: "16px" },
                         paddingRight: { xs: 0, sm: "16px" },
+                        width: "100%",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: isShufflingOrShuffled ? "center" : "flex-start",
+                        textAlign: isShufflingOrShuffled ? "center" : "left"
                     }}
                 >
                     <Typography
@@ -95,7 +133,10 @@ const PlaylistItem = (props) => {
 
 
     const shuffleButton = () => {
-      if (playlistUri != null) {
+      // Don't show button in SHUFFLING or SHUFFLED state - it will be rendered outside the card
+      if (playlistUri != null && 
+          displayState !== PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLED && 
+          displayState !== PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLING) {
             return (
                 <Box sx={{paddingTop: "5px" }}>
                     <Button variant="contained"
@@ -109,17 +150,32 @@ const PlaylistItem = (props) => {
         }
     }
 
+    const isShufflingOrShuffled = displayState === PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLING || 
+                                  displayState === PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLED;
+
     return (
         <Grid>
             <Card
+                elevation={0}
                 sx={{
-                    padding: "16px",
-                    background: "#181818",
+                    padding: { xs: "8px", sm: "16px", md: "16px" },
+                    background: 
+                        isShufflingOrShuffled
+                            ? "#232323"
+                            : "#181818",
                     "borderRadius": "5px",
                     "height": "auto",
-                    width: { xs: "150px", sm: "200px", md: "250px" },
-                    maxWidth: { xs: "150px", sm: "200px", md: "250px" },
+                    width: isShufflingOrShuffled 
+                        ? { xs: "100%", sm: "auto", md: "auto" }
+                        : { xs: "100%", sm: "100%", md: "100%" },
+                    maxWidth: isShufflingOrShuffled
+                        ? { xs: "100%", sm: "300px", md: "300px" }
+                        : { xs: "100%", sm: "none", md: "none" },
                     maxHeight: { xs: "280px", sm: "280px", md: "360px" },
+                    boxSizing: "border-box",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: isShufflingOrShuffled ? "center" : "stretch",
                     // Lighter grey and scale effect
                     ...(displayState === PLAYLIST_ITEM_DISPLAY_STATES.SELECTION && {
                         cursor: "pointer",

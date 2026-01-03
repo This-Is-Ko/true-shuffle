@@ -19,12 +19,5 @@ export const features = [
         "uri": "/share",
         "special": "",
         "icon": "headphones.png"
-    },
-    {
-        "name": "Remove Shuffled",
-        "description": "Easy function to clean up created shuffled playlists while keeping all your original playlists",
-        "uri": "/delete",
-        "special": "",
-        "icon": "equalizer.png"
     }
 ];
