@@ -38,7 +38,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
     useEffect(() => {
         getAccessTokenCall(getQueryParams().get('code'), setIsAuth, navigate, setLoadingAccessToken, setShowErrorMessage, setShowSuccessMessage);
         getStatisticsApi(setTrackCounter, setPlaylistCounter, setAnalysisCounter);
-    }, [isAuth]);
+    }, [isAuth, navigate, setIsAuth]);
 
 
     return (
