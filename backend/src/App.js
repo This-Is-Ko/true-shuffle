@@ -13,10 +13,10 @@ import Header from "./components/Header";
 import AnalysisPage from './pages/AnalysisPage';
 
 function App() {
-    const [loginUri, setLoginUri] = useState(process.env.REACT_APP_SPOTIFY_AUTH_URI);
+    const [loginUri] = useState(process.env.REACT_APP_SPOTIFY_AUTH_URI);
     const [isAuth, setIsAuth] = useState(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
-    const [showGlobalMessage, setShowGlobalMessage] = useState(process.env.REACT_APP_SHOW_GLOBAL_MESSAGE);
-    const [globalMessageContent, setGlobalMessageContent] = useState(process.env.REACT_APP_GLOBAL_MESSAGE_CONTENT);
+    const [showGlobalMessage] = useState(process.env.REACT_APP_SHOW_GLOBAL_MESSAGE);
+    const [globalMessageContent] = useState(process.env.REACT_APP_GLOBAL_MESSAGE_CONTENT);
 
     const ShufflePages = (isAuth, setIsAuth) => {
         return (

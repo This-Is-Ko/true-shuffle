@@ -42,7 +42,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     const [shuffleState, setShuffleState] = useState("");
     const [shuffleStateMessage, setShuffleStateMessage] = useState("");
     const [shuffleError, setShuffleError] = useState(false);
-    const [pollingAttemptCount, setPollingAttemptCount] = useState(0);
+    const [, setPollingAttemptCount] = useState(0);
     const [pollingWaitTimeMs, setPollingWaitTimeMs] = useState(POLLING_CONFIG.INITIAL_WAIT_TIME_MS);
 
     /**
