@@ -5,7 +5,7 @@ import { formatNumberWithSpaces } from "../../utils/NumberFormatter";
 const MostCommonTable = ({ data, type }) => {
     const numOfArtists = data.length
     return (
-        <TableContainer component={Box} sx={{ width: "90%", maxHeight: "300px" }}>
+        <TableContainer component={Box} sx={{ width: "100%", height: "100%" }}>
             <Table stickyHeader size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>

@@ -3,6 +3,11 @@ import { ResponsivePie } from '@nivo/pie'
 import Theme from "./GraphTheme"
 
 const Pie = ({ data, sideMargin, topMargin, labelDiagonalLength, labelStraightLength, enableArcLinkLabels, enableLegend }) => {
+    // Safety check for empty or invalid data
+    if (!data || !Array.isArray(data) || data.length === 0) {
+        return null;
+    }
+
     let legend = []
     if (enableLegend) {
         legend =

@@ -3,25 +3,16 @@ import Grid from '@mui/material/Grid2';
 import { Typography, Box, Button } from "@mui/material";
 import { Helmet } from "react-helmet";
 import CircularProgress from "@mui/material/CircularProgress";
-import axios from "axios";
-import MediaQuery from 'react-responsive'
-
 import Footer from "../components/Footer";
-import Pie from "../components/dataVisualisers/Pie"
-import MostCommonTable from "../components/dataVisualisers/MostCommonTable"
-import AudioFeaturesRadar from "../components/dataVisualisers/AudioFeaturesRadar"
-import { transformMostCommonArtists, transformMostCommonAlbums, transformAudioFeatureData } from "../utils/StatisticsService";
 import ErrorMessage from "../components/ErrorMessage";
-import OverallStatsContainer from "../components/analysisPageComponents/OverallStatsContainer";
-import FeatureScoreContainer from "../components/analysisPageComponents/FeatureScoreContainer";
-import FeatureScoreDetailedContainer from "../components/analysisPageComponents/FeatureScoreDetailedContainer";
-import TrackLengthContainer from "../components/analysisPageComponents/TrackLengthContainer";
-import TrackLengthTable from "../components/dataVisualisers/TrackLengthTable";
-import LikedTracksHistoryGraph from "../components/dataVisualisers/LikedTracksHistoryGraph";
-import ReleaseYearGraph from "../components/dataVisualisers/ReleaseYearGraph";
 import LoadingMessage from "../components/LoadingMessage";
-
 import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
+import { startAnalysis, getAggregateState, createErrorFromResponse, calcNewWaitTime } from "../features/analysis/services/AnalysisApiService";
+import OverviewCardsCard from "../features/analysis/components/OverviewCardsCard";
+import TopArtistsCard from "../features/analysis/components/TopArtistsCard";
+import TopAlbumsCard from "../features/analysis/components/TopAlbumsCard";
+import AudioFeaturesCard from "../features/analysis/components/AudioFeaturesCard";
+import TrackLengthsCard from "../features/analysis/components/TrackLengthsCard";
 
 const AnalysisPage = ({ isAuth, loginUri }) => {
     const [auth, setAuth] = useState(
@@ -30,105 +21,100 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
 
     const [isLoading, setIsLoading] = useState(null);
     const [analysisData, setAnalysisData] = useState(null);
-    const [likedTracksTrackerData, setLikedTracksTrackerData] = useState([]);
     const [aggregateTaskId, setAggregateTaskId] = useState("");
     const [aggregateState, setAggregateState] = useState("");
     const [attemptCount, setAttemptCount] = useState(0);
     const [aggregateStateMessage, setAggregateStateMessage] = useState("");
     const [error, setError] = useState(null);
     const [aggregateStatePollingWaitTime, setAggregateStatePollingWaitTime] = useState(1000);
-    const [featureShowMoreDetails, setFeatureShowMoreDetails] = useState(false);
 
     const handleStartAnalysis = () => {
         setIsLoading(true);
         setError(null);
-        axios
-            .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/aggregate`, { withCredentials: true })
+        setAttemptCount(0);
+        setAggregateStatePollingWaitTime(1000);
+        startAnalysis()
             .then(result => {
                 setAggregateTaskId(result.data.aggregate_task_id);
                 setError(false);
             })
             .catch((responseError) => {
                 setIsLoading(false);
-                if (responseError && responseError.response && responseError.response.status === 401) {
-                    setError({ message: "Unable to authenticate your account, please logout and try again" });
-                } else {
-                    setError({ message: "Unable to connect to Spotify, please try again later" });
-                }
+                setError(createErrorFromResponse(responseError));
             });
     };
 
     const getAggregateDataStateCall = () => {
         if (isLoading === true && aggregateTaskId !== null && aggregateTaskId !== "") {
-            axios
-                .get(process.env.REACT_APP_BACKEND_PATH + `/api/user/aggregate/state/` + aggregateTaskId, { withCredentials: true })
+            getAggregateState(aggregateTaskId)
                 .then(result => {
                     setAggregateState(result.data.state);
                     if (result.data.state === "SUCCESS") {
                         setIsLoading(false);
                         if (result.data.result.status === "success") {
-                            setAnalysisData(result.data.result.analysis)
-                            setLikedTracksTrackerData(result.data.result.track_liked_tracks.data)
+                            setAnalysisData(result.data.result.analysis);
                             setError(false);
                         } else {
                             setError({ message: "Error while analysing your music. Please try again later" });
                         }
                     } else if (result.data.state === "PROGRESS") {
                         setAggregateStateMessage(result.data.progress.state);
-                        if (attemptCount >= 30) {
-                            setError({ message: "Error while analysing your music. Please try again later" });
-                        } else {
-                            setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
-                        }
+                        setAttemptCount(prev => {
+                            const newCount = prev + 1;
+                            if (newCount >= 30) {
+                                setError({ message: "Error while analysing your music. Please try again later" });
+                            } else {
+                                setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
+                            }
+                            return newCount;
+                        });
                     } else if (result.data.state === "FAILURE") {
                         setIsLoading(false);
                         setError({ message: "Error while analysing your music. Please try again later" });
                     } else if (result.data.state === "PENDING") {
-                        setAttemptCount(attemptCount + 1);
-                        if (attemptCount >= 20) {
-                            setError({ message: "Error while analysing your music. Please try again later" });
-                        } else {
-                            setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
-                        }
+                        setAttemptCount(prev => {
+                            const newCount = prev + 1;
+                            if (newCount >= 20) {
+                                setError({ message: "Error while analysing your music. Please try again later" });
+                            } else {
+                                setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
+                            }
+                            return newCount;
+                        });
                     }
                 })
                 .catch((responseError) => {
                     setIsLoading(false);
-                    if (responseError && responseError.response && responseError.response.status === 401) {
-                        setError({ message: "Unable to authenticate your account, please logout and try again" });
-                    } else {
-                        setError({ message: "Unable to connect to Spotify, please try again later" });
-                    }
+                    setError(createErrorFromResponse(responseError));
                 });
         } else {
-            setAttemptCount(attemptCount + 1);
-            if (attemptCount >= 20) {
-                setIsLoading(false);
-                setError({ message: "Error while analysing your music. Please try again later" });
-            } else {
-                setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
-            }
+            setAttemptCount(prev => {
+                const newCount = prev + 1;
+                if (newCount >= 20) {
+                    setIsLoading(false);
+                    setError({ message: "Error while analysing your music. Please try again later" });
+                } else {
+                    setAggregateStatePollingWaitTime(calcNewWaitTime(aggregateStatePollingWaitTime));
+                }
+                return newCount;
+            });
         }
     };
-
-    // Apply backoff strategy for polling rate
-    const calcNewWaitTime = (currentWaitTime) => {
-        if (currentWaitTime != null){
-            return Math.min(currentWaitTime + 500, 10000);
-        }
-    }
     
     useEffect(() => {
+        if (!isLoading || !aggregateTaskId) {
+            return;
+        }
         const timer = setTimeout(() => {
             getAggregateDataStateCall();
         }, aggregateStatePollingWaitTime);
 
         return () => clearTimeout(timer);
-    }, [aggregateTaskId, aggregateStatePollingWaitTime]);
+    }, [aggregateTaskId, aggregateStatePollingWaitTime, isLoading]);
 
     // Validate page access and redirect to Spotify login if required
     if (auth === false) {
-        return checkPageAccessAndRedirect(auth, loginUri, "/analysis")
+        return checkPageAccessAndRedirect(auth, loginUri, "/analysis");
     } else {
         return (
             <Box sx={{ width: "90%", margin: "auto" }}>
@@ -153,7 +139,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                             width: { sm: '100%', md: "50%" },
                             minWidth: "200px", maxWidth: "600px", paddingTop: "10px", color: "lightgrey"
                         }}>
-                        Welcome to your personal Spotify library statistics page! Here, you can find a breakdown of the music you've saved, including your top artists, top albums, and more. We've analyzed your library to provide you with interesting insights about the music you enjoy.
+                        Welcome to your personal Spotify library statistics page! Here you can find a breakdown of the music you've saved, including your top artists, top albums, and more. We've analyzed your library to provide you with interesting insights about the music you enjoy.
                     </Typography>
                 </Box>
                 {error !== null && error.message !== null && <ErrorMessage error={error} isGeneric={false} />}
@@ -177,11 +163,11 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                     </Box>
                 }
                 {isLoading && 
-                    <div>
+                    <Box>
                         <br/>
                         <CircularProgress />
                         <LoadingMessage message={aggregateState === 'PROGRESS' ? aggregateStateMessage : "Analysing your library. If you have many Liked Songs, this process may take longer..."}/>
-                    </div>
+                    </Box>
                 }
                 {!isLoading && analysisData !== null && analysisData.num_tracks === 0 && 
                     <Box>
@@ -190,184 +176,30 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                         </Typography>
                     </Box>
                 }
-                {!isLoading && analysisData !== null && 
-                    <Box>
-                        <Box>
-                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                Overall Statistics
-                            </Typography>
-                            <OverallStatsContainer analysisData={analysisData} />
-                            <Grid
-                                sx={{ margin: "0 auto" }}
-                                className="contentHolder"
-                                container
-                                justifyContent="center"
-                                alignItems="flex-start"
-                            >
-                                <Grid item sx={{
-                                    width: "100%"
-                                }}>
-                                    <Box >
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Top 10 Artists Breakdown
-                                        </Typography>
-                                        <Box sx={{
-                                            height: { xs: "350px", sm: '300px', md: "500px" },
-                                        }}>
-                                            <MediaQuery maxWidth={600}>
-                                                <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey" }}>
-                                                    Click each section to reveal artist
-                                                </Typography>
-                                                <Pie data={transformMostCommonArtists(analysisData.most_common_artists, 0, 10)} sideMargin={30} topMargin={10} labelDiagonalLength={16} labelStraightLength={0} enableArcLinkLabels={false} enableLegend={false} />
-                                            </MediaQuery>
-                                            <MediaQuery minWidth={600}>
-                                                <Pie data={transformMostCommonArtists(analysisData.most_common_artists, 0, 10)} sideMargin={80} topMargin={40} labelDiagonalLength={24} labelStraightLength={16} />
-                                            </MediaQuery>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                <Grid item sx={{
-                                    width: "100%"
-                                }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Top 10 Albums Breakdown
-                                        </Typography>
-                                        <Box sx={{
-                                            height: { xs: "350px", sm: '300px', md: "500px" },
-                                        }}>
-                                            <MediaQuery maxWidth={600}>
-                                                <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey" }}>
-                                                    Click each section to reveal album
-                                                </Typography>
-                                                <Pie data={transformMostCommonAlbums(analysisData.most_common_albums, 0, 10)} sideMargin={30} topMargin={10} labelDiagonalLength={16} labelStraightLength={0} enableArcLinkLabels={false} enableLegend={false} />
-                                            </MediaQuery>
-                                            <MediaQuery minWidth={600}>
-                                                <Pie data={transformMostCommonAlbums(analysisData.most_common_albums, 0, 10)} sideMargin={80} topMargin={40} labelDiagonalLength={24} labelStraightLength={16} />
-                                            </MediaQuery>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                <Grid item sx={{
-                                    width: { xs: "100%", sm: '100%', md: "50%", lg: "50%", xl: "50%" },
-                                }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Top Artists
-                                        </Typography>
-                                        <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                            Click on an artist to go to their's Spotify page
-                                        </Typography>
-                                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                            <MostCommonTable data={analysisData.most_common_artists} type="Artist" />
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                <Grid item sx={{
-                                    width: { xs: "100%", sm: '100%', md: "50%", lg: "50%", xl: "50%" },
-                                }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Top Albums
-                                        </Typography>
-                                        <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                            Click on an album to go to it's Spotify page
-                                        </Typography>
-                                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                            <MostCommonTable data={analysisData.most_common_albums} type="Album" />
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                <Grid item sx={{ width: "90%" }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Track Length
-                                        </Typography>
-                                        <TrackLengthContainer shortestTracks={analysisData.shortest_tracks} longestTracks={analysisData.longest_tracks}></TrackLengthContainer>
-                                    </Box>
-                                </Grid>
-                                <Grid item sx={{
-                                    width: { xs: "100%", sm: '100%', md: "50%", lg: "50%", xl: "50%" },
-                                }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Shortest Tracks
-                                        </Typography>
-                                        <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                            Click on a track to go to it's Spotify page
-                                        </Typography>
-                                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                            <TrackLengthTable data={analysisData.shortest_tracks} />
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                <Grid item sx={{
-                                    width: { xs: "100%", sm: '100%', md: "50%", lg: "50%", xl: "50%" },
-                                }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Longest Tracks
-                                        </Typography>
-                                        <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                            Click on a track to go to it's Spotify page
-                                        </Typography>
-                                        <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                            <TrackLengthTable data={analysisData.longest_tracks} />
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                                {/* {analysisData.release_year_counts && 
-                                    <Grid item sx={{
-                                        width: { xs: "90%", sm: '90%', md: "80%", lg: "80%", xl: "75%" },
-                                    }}>
-                                        <Box>
-                                            <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                                Release Years
-                                            </Typography>
-                                            <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingBottom: "10px" }}>
-                                                Distribution of track release years
-                                            </Typography>
-                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
-                                                <ReleaseYearGraph data={analysisData.release_year_counts} />
-                                            </Box>
-                                        </Box>
-                                    </Grid>
-                                }    */}
-                                <Grid item sx={{ width: "90%" }}>
-                                    <Box>
-                                        <Typography variant='h5' component="div" sx={{ paddingTop: "20px", color: "white" }}>
-                                            Audio Features
-                                        </Typography>
-                                        <Typography variant='subtitle2' component="div" sx={{ color: "lightgrey", paddingTop: "5px" }}>
-                                            Based on Spotify's audio features, these are the average rankings of your library.
-                                        </Typography>
-                                        <Box sx={{
-                                            height: { xs: "250px", sm: '300px', md: "500px" },
-                                        }}>
-                                            <MediaQuery maxWidth={600}>
-                                                <AudioFeaturesRadar data={transformAudioFeatureData(analysisData.audio_features)} sideMargin={80} topMargin={30} gridLabelOffset={7} />
-                                            </MediaQuery>
-                                            <MediaQuery minWidth={600}>
-                                                <AudioFeaturesRadar data={transformAudioFeatureData(analysisData.audio_features)} sideMargin={80} topMargin={50} gridLabelOffset={36} />
-                                            </MediaQuery>
-                                        </Box>
-                                        <Box>
-                                            {
-                                                featureShowMoreDetails && 
-                                                <FeatureScoreDetailedContainer audioFeatures={analysisData.audio_features}></FeatureScoreDetailedContainer>
-                                            }
-                                        </Box>
-                                        <Box>
-                                            <FeatureScoreContainer audioFeatures={analysisData.audio_features}></FeatureScoreContainer>
-                                        </Box>
-                                    </Box>
-                                </Grid>
-                            </Grid>
+                {!isLoading && analysisData !== null && analysisData.num_tracks > 0 && 
+                    <Box sx={{ marginTop: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                        <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                            <OverviewCardsCard analysisData={analysisData} />
                         </Box>
-                        <Footer></Footer>
+                        <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                            <TopArtistsCard mostCommonArtists={analysisData.most_common_artists} />
+                        </Box>
+                        <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                            <TopAlbumsCard mostCommonAlbums={analysisData.most_common_albums} />
+                        </Box>
+                        <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                            <TrackLengthsCard
+                                shortestTracks={analysisData.shortest_tracks}
+                                longestTracks={analysisData.longest_tracks}
+                            />
+                        </Box>
+                        <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                            <AudioFeaturesCard audioFeatures={analysisData.audio_features} />
+                        </Box>
+                        <Footer />
                     </Box>
                 }
-            </Box >
+            </Box>
         );
     }
 }
