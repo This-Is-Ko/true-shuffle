@@ -6,6 +6,7 @@ import { isAuthenticated } from "../utils/AuthUtils";
 import AllPlaylistsContainer from "../features/shuffle/components/PlaylistContainer";
 import HowToModal from '../components/howToComponents/HowToModal';
 import { HowToShuffleEntry } from '../components/howToComponents/HowToEntries';
+import Footer from "../components/Footer";
 
 /**
  * ShufflePage component - Main page for playlist shuffling functionality.
@@ -70,6 +71,7 @@ const ShufflePage = ({ isAuth, loginUri }) => {
                     />
                 </Box>
             </Box>
+            <Footer />
         </main>
     );
 };
