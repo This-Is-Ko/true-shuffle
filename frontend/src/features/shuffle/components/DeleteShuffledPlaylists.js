@@ -39,7 +39,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
                 setTimeout(() => {
                     setOpen(false);
                     setIsSuccess(false);
-                }, 2000);
+                }, 4000);
             })
             .catch(error => {
                 setIsLoading(false);
@@ -83,7 +83,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
                 <DialogContent>
                     {isSuccess ? (
                         <DialogContentText id="delete-dialog-description" sx={{ color: "white" }}>
-                            <Typography variant="body1" sx={{ color: "#1DB954", fontWeight: 'bold' }}>
+                            <Typography variant="body1" sx={{ color: "white", fontWeight: 'bold' }}>
                                 Successfully deleted all shuffled playlists!
                             </Typography>
                         </DialogContentText>
@@ -105,7 +105,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
                         <CircularProgress size={24} sx={{ color: "#1DB954" }} />
                     ) : (
                         <>
-                            <Button onClick={handleClose} sx={{ color: "white" }} disabled={isSuccess}>
+                            <Button onClick={handleClose} sx={{ color: isSuccess ? "#1DB954" : "white" }}>
                                 {isSuccess ? "Close" : "Cancel"}
                             </Button>
                             {!isSuccess && (
