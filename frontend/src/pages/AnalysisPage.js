@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Grid from '@mui/material/Grid2';
-import { Typography, Box, Button } from "@mui/material";
+import { Typography, Box, Button, Card, CardContent } from "@mui/material";
 import { Helmet } from "react-helmet";
 import CircularProgress from "@mui/material/CircularProgress";
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 import Footer from "../components/Footer";
 import ErrorMessage from "../components/ErrorMessage";
 import LoadingMessage from "../components/LoadingMessage";
@@ -13,6 +14,7 @@ import TopArtistsCard from "../features/analysis/components/TopArtistsCard";
 import TopAlbumsCard from "../features/analysis/components/TopAlbumsCard";
 import AudioFeaturesCard from "../features/analysis/components/AudioFeaturesCard";
 import TrackLengthsCard from "../features/analysis/components/TrackLengthsCard";
+import AnalysisCard from "../features/analysis/components/AnalysisCard";
 
 const AnalysisPage = ({ isAuth, loginUri }) => {
     const [auth, setAuth] = useState(
@@ -149,10 +151,10 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                             <Button
                                 variant="contained"
                                 disableElevation
+                                startIcon={<AnalyticsIcon />}
                                 sx={{
                                     my: 2,
                                     color: "white",
-                                    display: "block",
                                     bgcolor: "#1DB954",
                                 }}
                                 onClick={handleStartAnalysis}
@@ -160,6 +162,112 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                                 Start Analysis
                             </Button>
                         </Box>
+                        <Box sx={{ marginTop: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            <Typography variant='h4' component="div" sx={{ paddingTop: "20px", color: "white", marginBottom: 1 }}>
+                                What You'll See
+                            </Typography>
+                            <Typography align="center" variant='body1' component="div"
+                                sx={{
+                                    width: { sm: '100%', md: "70%" },
+                                    minWidth: "200px", maxWidth: "800px", paddingBottom: "10px", color: "lightgrey"
+                                }}>
+                            </Typography>
+                            <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                                <AnalysisCard
+                                    title="Library Overview"
+                                    description="Key statistics about your music library"
+                                >
+                                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "space-around", alignItems: "center" }}>
+                                        <Card sx={{ backgroundColor: "#1DB954", borderRadius: 5, width: "100%", maxWidth: "180px", minWidth: "150px" }}>
+                                            <CardContent>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    <strong>Tracks</strong>
+                                                </Typography>
+                                                <Typography sx={{ color: "white", textAlign: "center" }} variant="h6">
+                                                    <strong>—</strong>
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                        <Card sx={{ backgroundColor: "#1DB954", borderRadius: 5, width: "100%", maxWidth: "180px", minWidth: "150px" }}>
+                                            <CardContent>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    <strong>Artists</strong>
+                                                </Typography>
+                                                <Typography sx={{ color: "white", textAlign: "center" }} variant="h6">
+                                                    <strong>—</strong>
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                        <Card sx={{ backgroundColor: "#1DB954", borderRadius: 5, width: "100%", maxWidth: "180px", minWidth: "150px" }}>
+                                            <CardContent>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    <strong>Albums</strong>
+                                                </Typography>
+                                                <Typography sx={{ color: "white", textAlign: "center" }} variant="h6">
+                                                    <strong>—</strong>
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                        <Card sx={{ backgroundColor: "#1DB954", borderRadius: 5, width: "100%", maxWidth: "180px", minWidth: "150px" }}>
+                                            <CardContent>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    <strong>Average Length</strong>
+                                                </Typography>
+                                                <Typography sx={{ color: "white", textAlign: "center" }} variant="h6">
+                                                    <strong>—</strong>
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                        <Card sx={{ backgroundColor: "#1DB954", borderRadius: 5, width: "100%", maxWidth: "180px", minWidth: "150px" }}>
+                                            <CardContent>
+                                                <Typography variant="subtitle2" color="text.secondary">
+                                                    <strong>Total Length</strong>
+                                                </Typography>
+                                                <Typography sx={{ color: "white", textAlign: "center" }} variant="h6">
+                                                    <strong>—</strong>
+                                                </Typography>
+                                            </CardContent>
+                                        </Card>
+                                    </Box>
+                                </AnalysisCard>
+                            </Box>
+                            <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                                <AnalysisCard
+                                    title="Top Artists"
+                                    description="Your most listened to artists"
+                                >
+                                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "300px" }}>
+                                        <Typography variant="body1" sx={{ color: "lightgrey", fontStyle: "italic" }}>
+                                            Pie chart and table showing your most common artists with play counts
+                                        </Typography>
+                                    </Box>
+                                </AnalysisCard>
+                            </Box>
+                            <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                                <AnalysisCard
+                                    title="Top Albums"
+                                    description="Your most listened to albums"
+                                >
+                                    <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "300px" }}>
+                                        <Typography variant="body1" sx={{ color: "lightgrey", fontStyle: "italic" }}>
+                                            Pie chart and table showing your most common albums with play counts
+                                        </Typography>
+                                    </Box>
+                                </AnalysisCard>
+                            </Box>
+                            <Box sx={{ display: "flex", justifyContent: "center", marginTop: 3, marginBottom: 2 }}>
+                                <Typography align="center" variant='body1' component="div"
+                                    sx={{
+                                        width: { sm: '100%', md: "70%" },
+                                        minWidth: "200px", maxWidth: "600px", 
+                                        color: "lightgrey",
+                                        fontStyle: "italic"
+                                    }}>
+                                    And more! Track length statistics, audio features analysis, and additional insights await after you start the analysis.
+                                </Typography>
+                            </Box>
+                        </Box>
+                        <Footer />
                     </Box>
                 }
                 {isLoading && 
@@ -167,6 +275,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                         <br/>
                         <CircularProgress />
                         <LoadingMessage message={aggregateState === 'PROGRESS' ? aggregateStateMessage : "Analysing your library. If you have many Liked Songs, this process may take longer..."}/>
+                        <Footer />
                     </Box>
                 }
                 {!isLoading && analysisData !== null && analysisData.num_tracks === 0 && 
@@ -174,6 +283,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                         <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white", textAlign: "center" }}>
                             Your library is empty. Add some music to your Liked Songs to analyse.
                         </Typography>
+                        <Footer />
                     </Box>
                 }
                 {!isLoading && analysisData !== null && analysisData.num_tracks > 0 && 
