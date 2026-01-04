@@ -1,6 +1,6 @@
 import React from "react";
-import Grid from '@mui/material/Grid2';
-import { Typography, Card, CardContent } from "@mui/material";
+import { Typography, Card, CardContent, IconButton, Box, Tooltip } from "@mui/material";
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import { formatNumberWithSpaces } from "../../utils/NumberFormatter";
 
 const OverallStatItemCard = ({ title, stat, description }) => {
@@ -9,47 +9,54 @@ const OverallStatItemCard = ({ title, stat, description }) => {
     const statString = String(formattedStat);
     
     return (
-        <Grid item
-            xs={12} sm={6}
-            sx={{
-                display: "flex",
-                justifyContent: "center",
-                margin: "0 auto",
-            }}
-        >
-            <Card sx={{
-                textAlign: "left",
-                backgroundColor: "#1DB954",
-                borderRadius: "5px",
-                height: "auto",
-                maxHeight: "360px",
-                width: "auto",
-                maxWidth: "270px"
-            }}>
-                <CardContent>
-                    <Typography sx={{ fontFamily: "'Questrial', sans-serif;" }} variant="subtitle1" color="text.secondary" gutterBottom>
+        <Card sx={{
+            textAlign: "left",
+            backgroundColor: "#1DB954",
+            borderRadius: "5px",
+            height: "auto",
+            width: "100%",
+            maxWidth: "180px",
+            flex: "1 1 0",
+            minWidth: "150px",
+            position: "relative"
+        }}>
+            <CardContent>
+                <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 1 }}>
+                    <Typography sx={{ fontFamily: "'Questrial', sans-serif;" }} variant="subtitle2" color="text.secondary">
                         <strong>{title}</strong>
                     </Typography>
-                    {
-                        statString.length > 9 ? 
-                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h4" component="div">
-                            <strong>{formattedStat}</strong>
-                        </Typography>
-                        : statString.length > 8 ?
-                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h3" component="div">
-                            <strong>{formattedStat}</strong>
-                        </Typography>
-                        : 
-                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h2" component="div">
-                            <strong>{formattedStat}</strong>
-                        </Typography>
-                    }
-                    <Typography variant="body2" color="black">
-                        {description}
+                    <Tooltip title={description || ""} arrow placement="top">
+                        <IconButton
+                            size="small"
+                            sx={{
+                                color: "black",
+                                padding: "2px",
+                                marginLeft: 1,
+                                "&:hover": {
+                                    backgroundColor: "rgba(0, 0, 0, 0.1)"
+                                }
+                            }}
+                        >
+                            <HelpOutlineIcon sx={{ fontSize: "16px" }} />
+                        </IconButton>
+                    </Tooltip>
+                </Box>
+                {
+                    statString.length > 9 ? 
+                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h6" component="div">
+                        <strong>{formattedStat}</strong>
                     </Typography>
-                </CardContent>
-            </Card>
-        </Grid>
+                    : statString.length > 8 ?
+                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h5" component="div">
+                        <strong>{formattedStat}</strong>
+                    </Typography>
+                    : 
+                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h4" component="div">
+                        <strong>{formattedStat}</strong>
+                    </Typography>
+                }
+            </CardContent>
+        </Card>
     )
 }
 

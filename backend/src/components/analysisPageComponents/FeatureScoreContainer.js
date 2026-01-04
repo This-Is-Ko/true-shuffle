@@ -7,7 +7,8 @@ const FeatureScoreContainer = ({ audioFeatures }) => {
         <Grid
             sx={{
                 margin: { sm: "auto", md: "0 auto", },
-                maxWidth: "600px"
+                maxWidth: "900px",
+                width: "100%"
             }}
             container
             spacing={2}
@@ -16,7 +17,7 @@ const FeatureScoreContainer = ({ audioFeatures }) => {
         >
             {
                 audioFeatures.map((audioFeatureItem) => (
-                    <FeatureScoreItem featureScoreData={audioFeatureItem}></FeatureScoreItem>
+                    <FeatureScoreItem key={audioFeatureItem.feature_name} featureScoreData={audioFeatureItem}></FeatureScoreItem>
                 ))
             }
         </Grid>
