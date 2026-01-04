@@ -3,7 +3,6 @@ import { TableContainer, Table, TableHead, TableRow, TableBody, TableCell, Box, 
 import { makeTrackLengthString } from "../../utils/StatisticsService";
 
 const TrackLengthTable = ({ data }) => {
-    const numOfArtists = data.length
     return (
         <TableContainer component={Box} sx={{ width: "90%", maxHeight: "300px" }}>
             <Table stickyHeader size="small" aria-label="a dense table">

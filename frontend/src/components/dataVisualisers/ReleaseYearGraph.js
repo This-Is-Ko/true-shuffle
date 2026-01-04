@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Paper } from "@mui/material";
+import { Box } from "@mui/material";
 import { ResponsiveBar } from '@nivo/bar'
 import { transformReleaseYearData } from "../../utils/StatisticsService"
 

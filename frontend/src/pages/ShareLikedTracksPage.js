@@ -60,61 +60,60 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
     }
     
 
-    const getCreateLikedTracksPlaylistsStateCall = () => {
-        if (isLoading === true && createLikedPlaylistTaskId !== null && createLikedPlaylistTaskId !== "") {
-            axios
-                .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks/` + createLikedPlaylistTaskId, { withCredentials: true })
-                .then(result => {
-                    setCreateLikedPlaylistState(result.data.state);
-                    if (result.data.state === "SUCCESS") {
-                        setIsLoading(false);
-                        if (result.data.result.status === "success") {
-                            setPlaylistUri(result.data.result.playlist_uri);
-                            setError(false);
-                            setPolling(false);
-                            setStep(3);
-                        } else {
-                            setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-                        }
-                    } else if (result.data.state === "PROGRESS") {
-                        setCreateLikedPlaylistStateMessage(result.data.progress.state);
-                        if (attemptCount >= 40) {
-                            setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-                            setPolling(false);
-                        }
-                    } else if (result.data.state === "FAILURE") {
-                        setIsLoading(false);
-                        setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-                        setPolling(false);
-                    } else if (result.data.state === "PENDING") {
-                        setAttemptCount(attemptCount + 1);
-                        if (attemptCount >= 20) {
-                            setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-                            setPolling(false);
-                        }
-                    }
-                })
-                .catch((responseError) => {
-                    setIsLoading(false);
-                    if (responseError && responseError.response && responseError.response.status === 401) {
-                        setError({ message: "Unable to authenticate your account, please logout and try again" });
-                    } else {
-                        setError({ message: "Unable to connect to Spotify, please try again later" });
-                    }
-                });
-        } else {
-            setAttemptCount(attemptCount + 1);
-            if (attemptCount >= 20) {
-                setIsLoading(false);
-                setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
-            }
-        }
-    };
-
-
     useEffect(() => {
       // Only start polling if it's active (polling state is true)
       if (!polling || !createLikedPlaylistTaskId) return;
+
+      const getCreateLikedTracksPlaylistsStateCall = () => {
+          if (isLoading === true && createLikedPlaylistTaskId !== null && createLikedPlaylistTaskId !== "") {
+              axios
+                  .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks/` + createLikedPlaylistTaskId, { withCredentials: true })
+                  .then(result => {
+                      setCreateLikedPlaylistState(result.data.state);
+                      if (result.data.state === "SUCCESS") {
+                          setIsLoading(false);
+                          if (result.data.result.status === "success") {
+                              setPlaylistUri(result.data.result.playlist_uri);
+                              setError(false);
+                              setPolling(false);
+                              setStep(3);
+                          } else {
+                              setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                          }
+                      } else if (result.data.state === "PROGRESS") {
+                          setCreateLikedPlaylistStateMessage(result.data.progress.state);
+                          if (attemptCount >= 40) {
+                              setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                              setPolling(false);
+                          }
+                      } else if (result.data.state === "FAILURE") {
+                          setIsLoading(false);
+                          setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                          setPolling(false);
+                      } else if (result.data.state === "PENDING") {
+                          setAttemptCount(attemptCount + 1);
+                          if (attemptCount >= 20) {
+                              setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+                              setPolling(false);
+                          }
+                      }
+                  })
+                  .catch((responseError) => {
+                      setIsLoading(false);
+                      if (responseError && responseError.response && responseError.response.status === 401) {
+                          setError({ message: "Unable to authenticate your account, please logout and try again" });
+                      } else {
+                          setError({ message: "Unable to connect to Spotify, please try again later" });
+                      }
+                  });
+          } else {
+              setAttemptCount(attemptCount + 1);
+              if (attemptCount >= 20) {
+                  setIsLoading(false);
+                  setError({ message: "Error while creating a playlist from your liked songs. Please try again later" });
+              }
+          }
+      };
 
       const interval = setInterval(() => {
           getCreateLikedTracksPlaylistsStateCall();
@@ -122,7 +121,7 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
 
       // Clean up interval on component unmount or when polling stops
       return () => clearInterval(interval);
-  }, [createLikedPlaylistTaskId, polling]);
+  }, [createLikedPlaylistTaskId, polling, isLoading, attemptCount]);
   
 
     const copyToClipboard = () => {

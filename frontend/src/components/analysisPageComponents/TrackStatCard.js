@@ -9,7 +9,7 @@ const TrackStatCard = ({ title, stat, description, track }) => {
         let artistNames = ""
         for (const artist of artists){
             numArtists +=1;
-            if (numArtists == 1){
+            if (numArtists === 1){
                 artistNames = artist["name"]
             } else {
                 artistNames += ", " + artist["name"]
