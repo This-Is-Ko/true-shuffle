@@ -20,13 +20,13 @@ const TopArtistsCard = ({ mostCommonArtists }) => {
             description="Your most listened to artists"
         >
             <Box sx={{ display: "flex", justifyContent: "center", width: "100%" }}>
-                <Grid container spacing={3} alignItems="center" sx={{ maxWidth: "1000px", justifyContent: "center" }}>
+                <Grid container spacing={1.5} alignItems="center" sx={{ maxWidth: "1000px", justifyContent: "center" }}>
                     <Grid item xs={12} sm={12} md={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <Box
                             sx={{
                                 width: { xs: "350px", sm: "400px", md: "500px" },
                                 height: { xs: "350px", sm: "300px", md: "500px" },
-                                marginBottom: 3,
+                                marginBottom: { xs: 1.5, md: 0 },
                                 display: "flex",
                                 justifyContent: "center",
                                 alignItems: "center",
