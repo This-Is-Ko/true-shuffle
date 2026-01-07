@@ -1,7 +1,6 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import MediaQuery from 'react-responsive';
 import AnalysisCard from "./AnalysisCard";
 import Pie from "../../../components/dataVisualisers/Pie";
 import MostCommonTable from "../../../components/dataVisualisers/MostCommonTable";
@@ -14,6 +13,9 @@ import { transformMostCommonAlbums } from "../../../utils/StatisticsService";
  * @param {Array} props.mostCommonAlbums - Array of most common albums data
  */
 const TopAlbumsCard = ({ mostCommonAlbums }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down(600));
+
     return (
         <AnalysisCard
             title="Top Albums"
@@ -32,8 +34,8 @@ const TopAlbumsCard = ({ mostCommonAlbums }) => {
                                 alignItems: "center",
                             }}
                         >
-                            <MediaQuery maxWidth={600}>
-                                <Box sx={{ marginBottom: 2 }}>
+                            {isMobile ? (
+                                <Box sx={{ marginBottom: 2, width: "100%", height: "100%" }}>
                                     <Pie
                                         data={transformMostCommonAlbums(mostCommonAlbums, 0, 10)}
                                         sideMargin={30}
@@ -44,8 +46,7 @@ const TopAlbumsCard = ({ mostCommonAlbums }) => {
                                         enableLegend={false}
                                     />
                                 </Box>
-                            </MediaQuery>
-                            <MediaQuery minWidth={601}>
+                            ) : (
                                 <Pie
                                     data={transformMostCommonAlbums(mostCommonAlbums, 0, 10)}
                                     sideMargin={80}
@@ -53,7 +54,7 @@ const TopAlbumsCard = ({ mostCommonAlbums }) => {
                                     labelDiagonalLength={24}
                                     labelStraightLength={16}
                                 />
-                            </MediaQuery>
+                            )}
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
