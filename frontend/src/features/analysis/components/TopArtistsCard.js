@@ -1,7 +1,6 @@
 import React from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery, useTheme } from "@mui/material";
 import Grid from '@mui/material/Grid2';
-import MediaQuery from 'react-responsive';
 import AnalysisCard from "./AnalysisCard";
 import Pie from "../../../components/dataVisualisers/Pie";
 import MostCommonTable from "../../../components/dataVisualisers/MostCommonTable";
@@ -14,6 +13,9 @@ import { transformMostCommonArtists } from "../../../utils/StatisticsService";
  * @param {Array} props.mostCommonArtists - Array of most common artists data
  */
 const TopArtistsCard = ({ mostCommonArtists }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down(600));
+
     return (
         <AnalysisCard
             title="Top Artists"
@@ -32,8 +34,8 @@ const TopArtistsCard = ({ mostCommonArtists }) => {
                                 alignItems: "center",
                             }}
                         >
-                            <MediaQuery maxWidth={600}>
-                                <Box sx={{ marginBottom: 2 }}>
+                            {isMobile ? (
+                                <Box sx={{ marginBottom: 2, width: "100%", height: "100%" }}>
                                     <Pie
                                         data={transformMostCommonArtists(mostCommonArtists, 0, 10)}
                                         sideMargin={30}
@@ -44,8 +46,7 @@ const TopArtistsCard = ({ mostCommonArtists }) => {
                                         enableLegend={false}
                                     />
                                 </Box>
-                            </MediaQuery>
-                            <MediaQuery minWidth={601}>
+                            ) : (
                                 <Pie
                                     data={transformMostCommonArtists(mostCommonArtists, 0, 10)}
                                     sideMargin={80}
@@ -53,7 +54,7 @@ const TopArtistsCard = ({ mostCommonArtists }) => {
                                     labelDiagonalLength={24}
                                     labelStraightLength={16}
                                 />
-                            </MediaQuery>
+                            )}
                         </Box>
                     </Grid>
                     <Grid item xs={12} sm={12} md={6} sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
