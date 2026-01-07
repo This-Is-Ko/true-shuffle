@@ -60,7 +60,7 @@ const Header = ({ loginUri, isAuth }) => {
     }, [loginUri, isAuth]);
 
     return (
-        <AppBar position="static" sx={{ bgcolor: "#161817" }}>
+        <AppBar position="static" sx={{ bgcolor: "#161817", zIndex: 1400 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <ShuffleIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
