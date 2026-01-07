@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import ErrorMessage from "../../../components/ErrorMessage";
-import axios from "axios";
 import ShuffleResponse from "./ShuffleResponse";
 import ShuffleLoading from "./ShuffleLoading";
 import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
+import { queueShufflePlaylist, fetchShuffleState } from "../services/PlaylistApiService";
 
 
 const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
@@ -25,16 +25,11 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
      */
     const postQueueShufflePlaylistCall = () => {
         if (selectedPlaylist !== null && selectedPlaylist.id !== null && selectedPlaylist.id !== "" && selectedPlaylist.name !== null ) {
-            // Call shuffle
-            axios
-                .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/shuffle`,
-                    {
-                        is_use_liked_tracks: "false",
-                        playlist_id: selectedPlaylist.id,
-                        playlist_name: selectedPlaylist.name,
-                        is_make_new_playlist: "false"
-                    },
-                    { headers: { "Content-Type": "application/json" }, withCredentials: true })
+            // Call shuffle using service function
+            queueShufflePlaylist({
+                playlist_id: selectedPlaylist.id,
+                playlist_name: selectedPlaylist.name
+            })
                 .then(result => {
                     setShuffleTaskId(result.data.shuffle_task_id);
                     setError(false);
@@ -57,8 +52,7 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
      */
     const getShuffleState = () => {
         if (shuffleTaskId) {
-            axios
-                .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/shuffle/state/` + shuffleTaskId, {withCredentials: true})
+            fetchShuffleState(shuffleTaskId)
                 .then(result => {
                     if (result?.data?.state) {
                         setShuffleState(result.data.state);
@@ -99,7 +93,8 @@ const ShufflePlaylistContainer = ({ isAuth, setIsAuth, selectedPlaylist }) => {
                                 break;
                         }
                     }
-                }).catch(responseError => {
+                })
+                .catch(responseError => {
                     setError({ message: "Error while checking shuffle state" });
                 });
         } else {

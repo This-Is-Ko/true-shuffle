@@ -17,6 +17,8 @@ import {
     POLLING_CONFIG,
     ERROR_MESSAGES
 } from "../constants/ShuffleConstants";
+import { CorrelationIdProvider, useCorrelationId, OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
+import { setCorrelationIdGetter } from "../../../utils/apiClient";
 
 /**
  * AllPlaylistsContainer component - Main container for the shuffle page.
@@ -30,6 +32,9 @@ import {
  * @param {Function} props.onDeleteSuccess - Callback when shuffle deletion succeeds
  */
 const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPlaylist, onHowToClick, onDeleteSuccess }) => {
+    // Correlation ID management
+    const { getCorrelationId, resetCorrelationId, resetAll } = useCorrelationId();
+    
     // Playlist data state
     const [playlists, setPlaylists] = useState([]);
     const [userShuffleCounter, setUserShuffleCounter] = useState(false);
@@ -49,8 +54,13 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     /**
      * Fetches all playlists for the current user from the API.
      * Also retrieves user shuffle counter statistics if available.
+     * Resets SHUFFLE and DELETE correlation IDs when fetching playlists (new playlist retrieval).
      */
     const loadUserPlaylists = () => {
+        // Reset correlation IDs for shuffle and delete operations when fetching playlists
+        resetCorrelationId(OPERATION_TYPES.SHUFFLE);
+        resetCorrelationId(OPERATION_TYPES.DELETE);
+        
         fetchUserPlaylists()
             .then((result) => {
                 setPlaylists(result.data.all_playlists);
@@ -133,6 +143,9 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
             return;
         }
 
+        // Reset correlation ID for shuffle operation when starting new shuffle
+        resetCorrelationId(OPERATION_TYPES.SHUFFLE);
+        
         // Reset state before starting new shuffle
         resetShuffleState();
         
@@ -251,10 +264,18 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
             });
     };
 
-    // Load playlists and recent shuffles on component mount
+    // Set up correlation ID getter for apiClient and reset all correlation IDs on mount
     useEffect(() => {
+        // Set the correlation ID getter function for apiClient
+        setCorrelationIdGetter(getCorrelationId);
+        
+        // Reset all correlation IDs on page load
+        resetAll();
+        
+        // Load playlists and recent shuffles on component mount
         loadUserPlaylists();
         loadRecentShuffles();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Initiate shuffle operation when a playlist is selected
@@ -346,4 +367,13 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     );
 };
 
-export default AllPlaylistsContainer;
+// Wrap component with CorrelationIdProvider
+const AllPlaylistsContainerWithProvider = (props) => {
+    return (
+        <CorrelationIdProvider>
+            <AllPlaylistsContainer {...props} />
+        </CorrelationIdProvider>
+    );
+};
+
+export default AllPlaylistsContainerWithProvider;

@@ -1,4 +1,5 @@
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
+import { OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
 
 /**
  * API service for analysis operations
@@ -11,9 +12,9 @@ const API_BASE_PATH = process.env.REACT_APP_BACKEND_PATH;
  * @returns {Promise} Promise that resolves with aggregate task ID
  */
 export const startAnalysis = () => {
-    return axios.get(
+    return apiClient.get(
         `${API_BASE_PATH}/api/user/aggregate`,
-        { withCredentials: true }
+        { operationType: OPERATION_TYPES.ANALYSIS }
     );
 };
 
@@ -23,9 +24,9 @@ export const startAnalysis = () => {
  * @returns {Promise} Promise that resolves with aggregate state data
  */
 export const getAggregateState = (taskId) => {
-    return axios.get(
+    return apiClient.get(
         `${API_BASE_PATH}/api/user/aggregate/state/${taskId}`,
-        { withCredentials: true }
+        { operationType: OPERATION_TYPES.ANALYSIS }
     );
 };
 

@@ -8,7 +8,6 @@ import PlaylistItem from "./PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
 import LoadingMessage from "../../../components/LoadingMessage";
-import ErrorMessage from "../../../components/ErrorMessage";
 
 /**
  * PlaylistList component - Displays the list of playlists or the selected playlist with shuffle status.
@@ -159,12 +158,6 @@ const PlaylistList = ({
                         <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
                     </IconButton>
                 </Box>
-                
-                {shuffleError && typeof shuffleError === 'object' && (
-                    <Box sx={{ paddingBottom: { xs: "10px", sm: "16px" } }}>
-                        <ErrorMessage error={shuffleError} isGeneric={false} />
-                    </Box>
-                )}
 
                 {/* 
                     Main content area - dynamically switches between grid (all playlists) 
@@ -233,8 +226,8 @@ const PlaylistList = ({
                                 />
                             </Box>
                             
-                            {/* Initializing shuffle - show loading immediately when playlist is selected */}
-                            {isInitializing && (
+                            {/* Error message or shuffle status - appears underneath the selected playlist item */}
+                            {(isInitializing || isShuffling || (shuffleError && typeof shuffleError === 'object')) && (
                                 <Box sx={{ 
                                     display: "flex", 
                                     flexDirection: "column", 
@@ -243,46 +236,49 @@ const PlaylistList = ({
                                     gap: 1,
                                     width: "100%"
                                 }}>
-                                    <CircularProgress />
-                                    <LoadingMessage message="Starting shuffle..." />
-                                </Box>
-                            )}
-                            
-                            {/* Shuffling in progress UI */}
-                            {isShuffling && (
-                                <Box sx={{ 
-                                    display: "flex", 
-                                    flexDirection: "column", 
-                                    alignItems: "center",
-                                    paddingTop: { xs: "10px", sm: "20px" },
-                                    gap: 1,
-                                    width: "100%"
-                                }}>
-                                    {/* Open button - available early in shuffle process */}
-                                    {playlistUri != null && (
-                                        <Button
-                                            variant="contained"
-                                            href={playlistUri}
-                                            target="_blank"
-                                            sx={{
-                                                color: 'white', 
-                                                bgcolor: "#1DB954",
-                                                width: "100%",
-                                                maxWidth: "300px",
-                                                '&:hover': {
-                                                    bgcolor: "#1ed760"
-                                                }
-                                            }}
-                                            startIcon={<AudiotrackIcon />}
-                                        >
-                                            Open
-                                        </Button>
-                                    )}
-                                    <CircularProgress />
-                                    <LoadingMessage message={shuffleStateMessage || "Shuffling..."} />
-                                    {/* Inform user they can start listening early */}
-                                    {playlistUri != null && (
-                                        <LoadingMessage message="You can start listening while the rest of the tracks are being added" />
+                                    {/* Show error if present, otherwise show normal shuffle UI */}
+                                    {shuffleError && typeof shuffleError === 'object' ? (
+                                        <Typography variant="subtitle1" sx={{ paddingTop: "10px", color: "white" }}>
+                                            {shuffleError.message || "Error while checking shuffle state. Please try again later."}
+                                        </Typography>
+                                    ) : (
+                                        <>
+                                            {/* Open button - available early in shuffle process */}
+                                            {playlistUri != null && (
+                                                <Button
+                                                    variant="contained"
+                                                    href={playlistUri}
+                                                    target="_blank"
+                                                    sx={{
+                                                        color: 'white', 
+                                                        bgcolor: "#1DB954",
+                                                        width: "100%",
+                                                        maxWidth: "300px",
+                                                        '&:hover': {
+                                                            bgcolor: "#1ed760"
+                                                        }
+                                                    }}
+                                                    startIcon={<AudiotrackIcon />}
+                                                >
+                                                    Open
+                                                </Button>
+                                            )}
+                                            {!isInitializing && <CircularProgress />}
+                                            {isInitializing ? (
+                                                <>
+                                                    <CircularProgress />
+                                                    <LoadingMessage message="Starting shuffle..." />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <LoadingMessage message={shuffleStateMessage || "Shuffling..."} />
+                                                    {/* Inform user they can start listening early */}
+                                                    {playlistUri != null && (
+                                                        <LoadingMessage message="You can start listening while the rest of the tracks are being added" />
+                                                    )}
+                                                </>
+                                            )}
+                                        </>
                                     )}
                                 </Box>
                             )}
