@@ -1,13 +1,20 @@
 import React, { useEffect, useState } from "react";
-import Grid from '@mui/material/Grid2';
-import { Typography, Button, Box, TextField, Stack, Paper } from "@mui/material";
+import { Typography, Button, Box, TextField, Stack, Card, CardContent, IconButton } from "@mui/material";
 import axios from "axios";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
 import HowToModal from '../components/howToComponents/HowToModal';
 import { HowToShareLikedTracksEntry } from '../components/howToComponents/HowToEntries';
-
+import ShareIcon from '@mui/icons-material/Share';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import QueueMusicIcon from '@mui/icons-material/QueueMusic';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import Footer from "../components/Footer";
+import ErrorMessage from "../components/ErrorMessage";
 import LoadingMessage from "../components/LoadingMessage";
+import PlaylistItem from "../features/shuffle/components/PlaylistItem";
+import PLAYLIST_ITEM_DISPLAY_STATES from "../features/shuffle/state/PlaylistItemDisplayStates";
 
 import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
 
@@ -50,7 +57,6 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
             })
             .catch((responseError) => {
                 setIsLoading(false);
-                setError(error.message);
                 if (responseError && responseError.response && responseError.response.status === 401) {
                     setError({ message: "Unable to authenticate your account, please logout and try again" });
                 } else {
@@ -151,134 +157,250 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
         setIsLoading(false);
     };
 
+    const renderCard = (title, children, showHelpButton = false) => {
+        return (
+            <Card sx={{
+                backgroundColor: "#181818",
+                borderRadius: "5px",
+                width: "100%",
+                minHeight: "100%",
+                height: "100%",
+                display: "flex",
+                flexDirection: "column"
+            }}>
+                <CardContent sx={{ 
+                    py: { xs: 1, sm: 2 }, 
+                    px: { xs: 1.5, sm: 2, md: 2 },
+                    display: "flex",
+                    flexDirection: "column",
+                    flex: 1,
+                    height: "100%",
+                    justifyContent: "flex-start"
+                }}>
+                    <Box sx={{ 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'space-between',
+                        gap: 1.5,
+                        paddingTop: { xs: "10px", sm: "20px" },
+                        paddingBottom: { xs: "8px", sm: "16px" },
+                        marginBottom: 0,
+                        flexShrink: 0
+                    }}>
+                        <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1.5,
+                            flex: 1
+                        }}>
+                            <QueueMusicIcon 
+                                sx={{ 
+                                    color: "#1DB954", 
+                                    fontSize: { xs: "28px", sm: "32px" },
+                                    flexShrink: 0
+                                }} 
+                            />
+                            <Typography 
+                                variant='h4' 
+                                component="div" 
+                                sx={{ 
+                                    color: "white",
+                                    fontSize: { xs: "1.5rem", sm: "2rem" },
+                                    fontWeight: 600,
+                                    fontFamily: "'Questrial', sans-serif",
+                                    letterSpacing: "-0.02em",
+                                    margin: 0
+                                }}
+                            >
+                                {title}
+                            </Typography>
+                        </Box>
+                        {showHelpButton && (
+                            <IconButton
+                                onClick={handleHowToModalOpen}
+                                sx={{
+                                    color: "#1DB954",
+                                    '&:hover': {
+                                        color: "#1ed760",
+                                        bgcolor: 'rgba(29, 185, 84, 0.1)'
+                                    },
+                                    padding: { xs: "8px", sm: "10px" }
+                                }}
+                                aria-label="How to use"
+                            >
+                                <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
+                            </IconButton>
+                        )}
+                    </Box>
+                    <Box sx={{ width: "100%", flex: 1, display: "flex", flexDirection: "column" }}>
+                        {children}
+                    </Box>
+                </CardContent>
+            </Card>
+        );
+    };
+
     const renderSwitch = (step) => {
         switch (step) {
             case 1:
                 return (
-                    <Box sx={{ display: "block" }}>
-                        <Button
-                            variant="contained"
-                            disableElevation
-                            sx={{
-                                color: "white",
-                                bgcolor: "#1DB954",
-                            }}
-                            onClick={handleNext}
-                        >
-                            Start
-                        </Button>
+                    <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                        {renderCard("Get Started", (
+                            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                                <Typography variant='body1' component="div" sx={{ color: "lightgrey", textAlign: "center" }}>
+                                    Click the button below to begin creating a playlist from your liked songs. You'll be able to customize the playlist name in the next step.
+                                </Typography>
+                                <Button
+                                    variant="contained"
+                                    disableElevation
+                                    startIcon={<ShareIcon />}
+                                    sx={{
+                                        my: 2,
+                                        color: "white",
+                                        bgcolor: "#1DB954",
+                                    }}
+                                    onClick={handleNext}
+                                >
+                                    Start
+                                </Button>
+                            </Box>
+                        ), true)}
                     </Box>
                 );
             case 2:
                 return (
-                    <div>
-                        {isLoading ? (
-                            <div>
-                                <CircularProgress />
-                                <LoadingMessage message={createLikedPlaylistState === 'PROGRESS' ? createLikedPlaylistStateMessage : "Creating playlist from your liked tracks..."}/>
-                            </div>
-                            ) : (
-                            <Box sx={{ width: '100%' }}>
-                                <Stack spacing={1}>
-                                    <Box>
-                                        <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                            Enter a playlist name or leave as default
-                                        </Typography>
+                    <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                        {renderCard("Creating Playlist", (
+                            <>
+                                {isLoading ? (
+                                    <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                                        <CircularProgress />
+                                        <LoadingMessage message={createLikedPlaylistState === 'PROGRESS' ? createLikedPlaylistStateMessage : "Creating playlist from your liked tracks..."}/>
                                     </Box>
-                                    <Box>
-                                        <TextField
-                                            id="filled-basic"
-                                            label="Playlist Name"
-                                            variant="filled"
-                                            defaultValue="My Liked Songs"
-                                            onChange={handlePlaylistNameChange}
-                                            inputProps={{ style: { color: "white" } }}
-                                            sx={{
-                                                "& .MuiFormLabel-root": {
-                                                    color: 'white'
-                                                },
-                                                "& .MuiFormLabel-root.Mui-focused": {
-                                                    color: 'white'
-                                                },
-                                                "& .MuiInputBase-root.Mui-disabled": {
-                                                    color: "white"
-                                                }
-                                            }}
-                                        />
+                                ) : (
+                                    <Box sx={{ width: '100%', display: "flex", flexDirection: "column", alignItems: "center" }}>
+                                        <Stack spacing={2} sx={{ width: "100%", maxWidth: "500px" }}>
+                                            <Typography variant='body1' component="div" sx={{ color: "lightgrey", textAlign: "center" }}>
+                                                Enter a playlist name or leave as default
+                                            </Typography>
+                                            <TextField
+                                                id="filled-basic"
+                                                label="Playlist Name"
+                                                variant="filled"
+                                                defaultValue="My Liked Songs"
+                                                onChange={handlePlaylistNameChange}
+                                                inputProps={{ style: { color: "white" } }}
+                                                sx={{
+                                                    "& .MuiFormLabel-root": {
+                                                        color: 'white'
+                                                    },
+                                                    "& .MuiFormLabel-root.Mui-focused": {
+                                                        color: 'white'
+                                                    },
+                                                    "& .MuiInputBase-root.Mui-disabled": {
+                                                        color: "white"
+                                                    }
+                                                }}
+                                            />
+                                            <Box sx={{ display: "flex", justifyContent: "center" }}>
+                                                <Button
+                                                    variant="contained"
+                                                    disableElevation
+                                                    sx={{
+                                                        my: 1,
+                                                        color: "white",
+                                                        bgcolor: "#1DB954",
+                                                    }}
+                                                    onClick={handleSubmit}
+                                                >
+                                                    Create
+                                                </Button>
+                                            </Box>
+                                        </Stack>
                                     </Box>
-                                    <Box>
-                                        <Button
-                                            variant="contained"
-                                            disableElevation
-                                            sx={{
-                                                my: 1,
-                                                color: "white",
-                                                bgcolor: "#1DB954",
-                                            }}
-                                            onClick={handleSubmit}
-                                        >
-                                            Create
-                                        </Button>
-                                    </Box>
-                                </Stack>
-                            </Box>
-                        )}
-                    </div>
+                                )}
+                            </>
+                        ), true)}
+                    </Box>
                 );
             case 3:
+                // Create a minimal playlist object for PlaylistItem
+                const createdPlaylist = {
+                    id: playlistUri.split('/').pop() || 'playlist',
+                    name: playlistName || "My Liked Songs",
+                    images: {
+                        url: "https://misc.scdn.co/liked-songs/liked-songs-300.png" // Default Spotify Liked Songs image
+                    },
+                    owner: {
+                        display_name: "You"
+                    }
+                };
+
                 return (
-                    <Box
-                        justifyContent="center"
-                        alignItems="center"
-                    >
-                        <Grid
-                        sx={{ width: "100%", margin: "auto" }}
-                        container
-                        spacing={1}
-                        justifyContent="center">
-                            <Grid item
-                              xs={12} sm={6}
-                              sx={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  margin: "0 auto",
-                              }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        my: 2, color: 'white', bgcolor: "#1DB954",
-                                        width: "30rem", maxWidth: "300px"
-                                    }}
-                                    href={playlistUri} target="_blank">
-                                    Open shuffled playlist
-                                </Button>
-                            </Grid>
-                            <Grid item
-                              xs={12} sm={6}
-                              sx={{
-                                  display: "flex",
-                                  justifyContent: "center",
-                                  margin: "0 auto",
-                              }}
-                            >
-                                <Button
-                                    variant="contained"
-                                    disableElevation
-                                    sx={{
-                                        my: 2, color: 'white', bgcolor: "#1DB954",
-                                        width: "30rem", maxWidth: "300px"
-                                    }}
-                                    onClick={() => copyToClipboard()}
-                                >
-                                    Copy To Clipboard
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Typography variant='subtitle1' component="div" sx={{ paddingBottom: "5px", color: "white" }}>
-                            <strong>Successfully created your new playlist</strong>
-                        </Typography>
+                    <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                        {renderCard("Playlist Created", (
+                            <Box sx={{ 
+                                display: "flex", 
+                                flexDirection: "column", 
+                                alignItems: "center",
+                                paddingTop: { xs: "10px", sm: "20px" },
+                                gap: 1,
+                                width: "100%"
+                            }}>
+                                <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+                                    <PlaylistItem
+                                        playlist={createdPlaylist}
+                                        playlistUri={playlistUri}
+                                        displayState={PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLED}
+                                    />
+                                </Box>
+                                <Box sx={{ 
+                                    width: "100%",
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    alignItems: "center",
+                                    paddingTop: { xs: "10px", sm: "20px" },
+                                    gap: 1
+                                }}>
+                                    {playlistUri && (
+                                        <Button
+                                            variant="contained"
+                                            href={playlistUri}
+                                            target="_blank"
+                                            sx={{
+                                                color: 'white', 
+                                                bgcolor: "#1DB954",
+                                                width: "100%",
+                                                maxWidth: "300px",
+                                                '&:hover': {
+                                                    bgcolor: "#1ed760"
+                                                }
+                                            }}
+                                            startIcon={<AudiotrackIcon />}
+                                        >
+                                            Open
+                                        </Button>
+                                    )}
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        onClick={() => copyToClipboard()}
+                                        sx={{
+                                            color: 'white', 
+                                            bgcolor: "#1DB954",
+                                            width: "100%",
+                                            maxWidth: "300px",
+                                            '&:hover': {
+                                                bgcolor: "#1ed760"
+                                            }
+                                        }}
+                                        startIcon={<ContentCopyIcon />}
+                                    >
+                                        Copy Link
+                                    </Button>
+                                </Box>
+                            </Box>
+                        ), true)}
                     </Box>
                 );
             default:
@@ -291,7 +413,7 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
         return checkPageAccessAndRedirect(auth, loginUri, "/share")
     } else {
         return (
-            <main>
+            <Box sx={{ width: "90%", margin: "auto" }}>
                 <Helmet>
                     <title>Share Liked Songs | True Shuffle for Spotify</title>
                     <meta name="description" content="Share your liked songs from Spotify with True Shuffle." />
@@ -304,70 +426,44 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
 
-                <Paper component={Stack} sx={{ height: "90vh", alignItems: "center", justifyContent: "center", boxShadow: "none", backgroundColor: "#292e2f" }}>
-                    <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>Share</Typography>
-                    <Typography
-                      variant="h6"
-                      component="div"
-                      sx={{
-                        paddingTop: "10px",
-                        color: "white",
-                        textAlign: "center",
-                        maxWidth: "90%",
-                        margin: "0 auto"
-                      }}
-                    >
-                      Easily share your Spotify library by creating a playlist containing all your liked songs
-                    </Typography>
-                    <Box sx={{
-                        width: "90%",
-                    }}>
-                        <Box sx={{
-                            textAlign: "center",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    my: 2,
-                                    color: "white",
-                                    display: "block",
-                                    bgcolor: "#1DB954",
-                                }}
-                                onClick={handleHowToModalOpen}
-                            >
-                                How to
-                            </Button>
+                <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                    Share
+                </Typography>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                </Box>
+                
+                {error && <ErrorMessage error={error} isGeneric={false} />}
+                
+                <Box sx={{ marginTop: 4, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                    {!error && renderSwitch(step)}
+                    {error && (
+                        <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
+                            {renderCard("Error", (
+                                <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+                                    <Typography variant='body1' component="div" sx={{ color: "lightgrey", textAlign: "center" }}>
+                                        {error?.message || "Something went wrong. Please try again later."}
+                                    </Typography>
+                                    <Button
+                                        variant="contained"
+                                        disableElevation
+                                        sx={{
+                                            my: 2,
+                                            color: "white",
+                                            bgcolor: "#1DB954",
+                                        }}
+                                        onClick={handleRetry}
+                                    >
+                                        Retry
+                                    </Button>
+                                </Box>
+                            ))}
                         </Box>
-                        <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShareLikedTracksEntry}></HowToModal>
-                    </Box>
-                    <Box>
-                        {!error && renderSwitch(step)}
-                    </Box>
-                    {error &&
-                        <Box>
-                            {/* <ErrorMessage error={isError} /> */}
-                            <Typography variant='body1' component="div" sx={{ paddingTop: "5px", color: "white" }}>
-                                Something went wrong. Please try again later.
-                            </Typography>
-                            <Button
-                                variant="contained"
-                                disableElevation
-                                sx={{
-                                    my: 2,
-                                    color: "white",
-                                    bgcolor: "#1DB954",
-                                }}
-                                onClick={handleRetry}
-                            >
-                                Retry
-                            </Button>
-                        </Box>
-                    }
-                </Paper>
-            </main>
+                    )}
+                </Box>
+                
+                <HowToModal isModalOpen={isHowToModalOpen} handleClose={handleHowToModalClose} steps={HowToShareLikedTracksEntry} />
+                <Footer />
+            </Box>
         )
     }
 };

@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import Grid from '@mui/material/Grid2';
+import React, { useEffect, useState, useCallback } from "react";
 import { Typography, Box, Button, Card, CardContent } from "@mui/material";
 import { Helmet } from "react-helmet";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -16,8 +15,8 @@ import AudioFeaturesCard from "../features/analysis/components/AudioFeaturesCard
 import TrackLengthsCard from "../features/analysis/components/TrackLengthsCard";
 import AnalysisCard from "../features/analysis/components/AnalysisCard";
 
-const AnalysisPage = ({ isAuth, loginUri }) => {
-    const [auth, setAuth] = useState(
+const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
+    const [auth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
 
@@ -25,7 +24,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
     const [analysisData, setAnalysisData] = useState(null);
     const [aggregateTaskId, setAggregateTaskId] = useState("");
     const [aggregateState, setAggregateState] = useState("");
-    const [attemptCount, setAttemptCount] = useState(0);
+    const [, setAttemptCount] = useState(0);
     const [aggregateStateMessage, setAggregateStateMessage] = useState("");
     const [error, setError] = useState(null);
     const [aggregateStatePollingWaitTime, setAggregateStatePollingWaitTime] = useState(1000);
@@ -46,7 +45,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
             });
     };
 
-    const getAggregateDataStateCall = () => {
+    const getAggregateDataStateCall = useCallback(() => {
         if (isLoading === true && aggregateTaskId !== null && aggregateTaskId !== "") {
             getAggregateState(aggregateTaskId)
                 .then(result => {
@@ -101,7 +100,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                 return newCount;
             });
         }
-    };
+    }, [aggregateTaskId, aggregateStatePollingWaitTime, isLoading]);
     
     useEffect(() => {
         if (!isLoading || !aggregateTaskId) {
@@ -112,7 +111,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
         }, aggregateStatePollingWaitTime);
 
         return () => clearTimeout(timer);
-    }, [aggregateTaskId, aggregateStatePollingWaitTime, isLoading]);
+    }, [aggregateTaskId, aggregateStatePollingWaitTime, isLoading, getAggregateDataStateCall]);
 
     // Validate page access and redirect to Spotify login if required
     if (auth === false) {
@@ -234,7 +233,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                             <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
                                 <AnalysisCard
                                     title="Top Artists"
-                                    description="Your most listened to artists"
+                                    description="Your most common artists"
                                 >
                                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "300px" }}>
                                         <Typography variant="body1" sx={{ color: "lightgrey", fontStyle: "italic" }}>
@@ -246,7 +245,7 @@ const AnalysisPage = ({ isAuth, loginUri }) => {
                             <Box sx={{ width: "100%", maxWidth: "1200px", marginBottom: 1.5 }}>
                                 <AnalysisCard
                                     title="Top Albums"
-                                    description="Your most listened to albums"
+                                    description="Your most common albums"
                                 >
                                     <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "300px" }}>
                                         <Typography variant="body1" sx={{ color: "lightgrey", fontStyle: "italic" }}>
