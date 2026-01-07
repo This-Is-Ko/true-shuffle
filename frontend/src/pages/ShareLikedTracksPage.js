@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Typography, Button, Box, TextField, Stack, Card, CardContent, IconButton } from "@mui/material";
-import axios from "axios";
+import apiClient from "../utils/apiClient";
+import { OPERATION_TYPES } from "../contexts/CorrelationIdContext";
 import CircularProgress from "@mui/material/CircularProgress";
 import { Helmet } from "react-helmet";
 import HowToModal from '../components/howToComponents/HowToModal';
@@ -17,8 +18,13 @@ import PlaylistItem from "../features/shuffle/components/PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../features/shuffle/state/PlaylistItemDisplayStates";
 
 import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
+import { CorrelationIdProvider, useCorrelationId } from "../contexts/CorrelationIdContext";
+import { setCorrelationIdGetter } from "../utils/apiClient";
 
 const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
+    // Correlation ID management
+    const { getCorrelationId, resetCorrelationId, resetAll } = useCorrelationId();
+    
     const [auth, setAuth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
@@ -44,13 +50,29 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
         setAuth(document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth')));
     }, [isAuth]);
 
+    // Set up correlation ID getter for apiClient and reset all correlation IDs on mount
+    useEffect(() => {
+        // Set the correlation ID getter function for apiClient
+        setCorrelationIdGetter(getCorrelationId);
+        
+        // Reset all correlation IDs on page load
+        resetAll();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const postCreateLikedTracksPlaylistsCall = () => {
+        // Reset correlation ID for share operation when starting new share
+        resetCorrelationId(OPERATION_TYPES.SHARE);
+        
         // Call create liked tracks playlist
         setIsLoading(true);
-        axios
+        apiClient
             .post(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks`,
                 { playlist_name: playlistName },
-                { headers: { "Content-Type": "application/json" }, withCredentials: true })
+                { 
+                    headers: { "Content-Type": "application/json" },
+                    operationType: OPERATION_TYPES.SHARE
+                })
             .then(result => {
                 setCreateLikedPlaylistTaskId(result.data.create_liked_playlist_id);
                 setError(false);
@@ -72,8 +94,8 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
 
       const getCreateLikedTracksPlaylistsStateCall = () => {
           if (isLoading === true && createLikedPlaylistTaskId !== null && createLikedPlaylistTaskId !== "") {
-              axios
-                  .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks/` + createLikedPlaylistTaskId, { withCredentials: true })
+              apiClient
+                  .get(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/share/liked-tracks/` + createLikedPlaylistTaskId, { operationType: OPERATION_TYPES.SHARE })
                   .then(result => {
                       setCreateLikedPlaylistState(result.data.state);
                       if (result.data.state === "SUCCESS") {
@@ -468,4 +490,13 @@ const ShareLikedTracksPage = ({ isAuth, loginUri }) => {
     }
 };
 
-export default ShareLikedTracksPage;
+// Wrap component with CorrelationIdProvider
+const ShareLikedTracksPageWithProvider = (props) => {
+    return (
+        <CorrelationIdProvider>
+            <ShareLikedTracksPage {...props} />
+        </CorrelationIdProvider>
+    );
+};
+
+export default ShareLikedTracksPageWithProvider;

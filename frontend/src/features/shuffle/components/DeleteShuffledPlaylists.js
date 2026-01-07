@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Box, CircularProgress, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
+import { OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
 
 const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount }) => {
     const [open, setOpen] = useState(false);
@@ -26,8 +27,8 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount }) => {
         setError(false);
         setIsSuccess(false);
 
-        axios
-            .delete(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`, { withCredentials: true })
+        apiClient
+            .delete(process.env.REACT_APP_BACKEND_PATH + `/api/playlist/delete`, { operationType: OPERATION_TYPES.DELETE })
             .then(result => {
                 setIsLoading(false);
                 setIsSuccess(true);

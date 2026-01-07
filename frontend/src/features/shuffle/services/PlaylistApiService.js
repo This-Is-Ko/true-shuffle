@@ -1,4 +1,5 @@
-import axios from "axios";
+import apiClient from "../../../utils/apiClient";
+import { OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
 
 /**
  * API service for playlist and shuffle operations
@@ -11,9 +12,9 @@ const API_BASE_PATH = process.env.REACT_APP_BACKEND_PATH;
  * @returns {Promise} Promise that resolves with playlists data
  */
 export const fetchUserPlaylists = () => {
-    return axios.get(
+    return apiClient.get(
         `${API_BASE_PATH}/api/playlist/me?include-stats=true`,
-        { withCredentials: true }
+        { operationType: OPERATION_TYPES.GENERAL }
     );
 };
 
@@ -22,9 +23,9 @@ export const fetchUserPlaylists = () => {
  * @returns {Promise} Promise that resolves with recent shuffles data
  */
 export const fetchRecentShuffles = () => {
-    return axios.get(
+    return apiClient.get(
         `${API_BASE_PATH}/api/user/shuffle/recent`,
-        { withCredentials: true }
+        { operationType: OPERATION_TYPES.GENERAL }
     );
 };
 
@@ -36,7 +37,7 @@ export const fetchRecentShuffles = () => {
  * @returns {Promise} Promise that resolves with shuffle task ID
  */
 export const queueShufflePlaylist = (playlistData) => {
-    return axios.post(
+    return apiClient.post(
         `${API_BASE_PATH}/api/playlist/shuffle`,
         {
             is_use_liked_tracks: "false",
@@ -46,7 +47,7 @@ export const queueShufflePlaylist = (playlistData) => {
         },
         {
             headers: { "Content-Type": "application/json" },
-            withCredentials: true
+            operationType: OPERATION_TYPES.SHUFFLE
         }
     );
 };
@@ -57,9 +58,9 @@ export const queueShufflePlaylist = (playlistData) => {
  * @returns {Promise} Promise that resolves with shuffle state data
  */
 export const fetchShuffleState = (shuffleTaskId) => {
-    return axios.get(
+    return apiClient.get(
         `${API_BASE_PATH}/api/playlist/shuffle/state/${shuffleTaskId}`,
-        { withCredentials: true }
+        { operationType: OPERATION_TYPES.SHUFFLE }
     );
 };
 
