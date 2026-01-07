@@ -13,14 +13,17 @@ const OverallStatItemCard = ({ title, stat, description }) => {
             textAlign: "left",
             backgroundColor: "#1DB954",
             borderRadius: "5px",
-            height: "auto",
+            height: "100%",
             width: "100%",
             maxWidth: "180px",
             flex: "1 1 0",
             minWidth: "150px",
-            position: "relative"
+            minHeight: "90px",
+            position: "relative",
+            display: "flex",
+            flexDirection: "column"
         }}>
-            <CardContent>
+            <CardContent sx={{ display: "flex", flexDirection: "column", flexGrow: 1 }}>
                 <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 1 }}>
                     <Typography sx={{ fontFamily: "'Questrial', sans-serif;" }} variant="subtitle2" color="text.secondary">
                         <strong>{title}</strong>
@@ -41,20 +44,28 @@ const OverallStatItemCard = ({ title, stat, description }) => {
                         </IconButton>
                     </Tooltip>
                 </Box>
-                {
-                    statString.length > 9 ? 
-                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h6" component="div">
-                        <strong>{formattedStat}</strong>
-                    </Typography>
-                    : statString.length > 8 ?
-                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h5" component="div">
-                        <strong>{formattedStat}</strong>
-                    </Typography>
-                    : 
-                    <Typography sx={{ color: "white", textAlign: "center" }} variant="h4" component="div">
-                        <strong>{formattedStat}</strong>
-                    </Typography>
-                }
+                <Box sx={{ 
+                    display: "flex", 
+                    alignItems: "center", 
+                    justifyContent: "center", 
+                    minHeight: "40px",
+                    flexGrow: 1
+                }}>
+                    {
+                        statString.length > 9 ? 
+                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h6" component="div">
+                            <strong>{formattedStat}</strong>
+                        </Typography>
+                        : statString.length > 8 ?
+                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h5" component="div">
+                            <strong>{formattedStat}</strong>
+                        </Typography>
+                        : 
+                        <Typography sx={{ color: "white", textAlign: "center" }} variant="h4" component="div">
+                            <strong>{formattedStat}</strong>
+                        </Typography>
+                    }
+                </Box>
             </CardContent>
         </Card>
     )

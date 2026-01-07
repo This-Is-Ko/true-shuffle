@@ -3,7 +3,7 @@ import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogAc
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from "axios";
 
-const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
+const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount }) => {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -63,7 +63,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
                     }
                 }}
             >
-                Delete Shuffled Playlists
+                Delete {playlistCount} shuffled playlist{playlistCount !== 1 ? 's' : ''}
             </Button>
 
             <Dialog
@@ -78,13 +78,13 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
                 }}
             >
                 <DialogTitle id="delete-dialog-title" sx={{ color: "white" }}>
-                    Delete Shuffled Playlists
+                    Delete {playlistCount} Shuffled Playlist{playlistCount !== 1 ? 's' : ''}
                 </DialogTitle>
                 <DialogContent>
                     {isSuccess ? (
                         <DialogContentText id="delete-dialog-description" sx={{ color: "white" }}>
                             <Typography variant="body1" sx={{ color: "white", fontWeight: 'bold' }}>
-                                Successfully deleted all shuffled playlists!
+                                Successfully deleted {playlistCount} shuffled playlist{playlistCount !== 1 ? 's' : ''}!
                             </Typography>
                         </DialogContentText>
                     ) : error ? (
@@ -95,7 +95,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess }) => {
                         </DialogContentText>
                     ) : (
                         <DialogContentText id="delete-dialog-description" sx={{ color: "white" }}>
-                            This will remove all playlists named "[Shuffled] ..." from your Spotify account.
+                            This will remove {playlistCount} playlist{playlistCount !== 1 ? 's' : ''} named "[Shuffled] ..." from your Spotify account.
                             This will not affect any of your existing playlists and only delete playlists created by True Shuffle.
                         </DialogContentText>
                     )}
