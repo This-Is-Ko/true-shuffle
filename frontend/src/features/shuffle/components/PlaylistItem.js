@@ -109,8 +109,8 @@ const PlaylistItem = (props) => {
                 <CardMedia
                     component="img"
                     sx={{ 
-                        maxWidth: "250px", 
-                        width: isShufflingOrShuffled ? "250px" : "100%",
+                        maxWidth: isShufflingOrShuffled ? { xs: "200px", sm: "250px" } : "250px", 
+                        width: isShufflingOrShuffled ? { xs: "200px", sm: "250px" } : "100%",
                         margin: isShufflingOrShuffled ? "0 auto" : "0"
                     }}
                     image={playlist.images.url}
@@ -213,7 +213,9 @@ const PlaylistItem = (props) => {
                     maxWidth: isShufflingOrShuffled
                         ? { xs: "100%", sm: "300px", md: "300px" }
                         : { xs: "100%", sm: "none", md: "none" },
-                    maxHeight: { xs: "280px", sm: "280px", md: "360px" },
+                    maxHeight: isShufflingOrShuffled
+                        ? { xs: "none", sm: "280px", md: "360px" }
+                        : { xs: "280px", sm: "280px", md: "360px" },
                     boxSizing: "border-box",
                     display: "flex",
                     flexDirection: "column",

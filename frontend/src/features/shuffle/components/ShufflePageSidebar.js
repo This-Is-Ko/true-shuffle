@@ -10,7 +10,8 @@ const ShufflePageSidebar = ({
     userShuffleCounter, 
     recentShuffles, 
     onHowToClick,
-    onDeleteSuccess 
+    onDeleteSuccess,
+    existingShuffledPlaylistCount 
 }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
@@ -63,10 +64,16 @@ const ShufflePageSidebar = ({
                 </>
             )}
 
-            <Divider sx={{ bgcolor: '#333', mb: 1 }} />
-
-            {/* Delete Button */}
-            <DeleteShuffledPlaylistsButton onDeleteSuccess={onDeleteSuccess} />
+            {/* Delete Button - only show if existing_shuffled_playlist_count exists and is not 0 */}
+            {existingShuffledPlaylistCount != null && existingShuffledPlaylistCount > 0 && (
+                <>
+                    <Divider sx={{ bgcolor: '#333', mb: 1 }} />
+                    <DeleteShuffledPlaylistsButton 
+                        onDeleteSuccess={onDeleteSuccess} 
+                        playlistCount={existingShuffledPlaylistCount}
+                    />
+                </>
+            )}
         </Card>
     );
 
