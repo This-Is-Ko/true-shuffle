@@ -72,7 +72,6 @@ const PlaylistItem = (props) => {
                     variant="rectangular" 
                     sx={{ 
                         bgcolor: 'grey.900', 
-                        maxWidth: "250px",
                         width: "100%",
                         aspectRatio: "1 / 1"
                     }} 
@@ -109,8 +108,11 @@ const PlaylistItem = (props) => {
                 <CardMedia
                     component="img"
                     sx={{ 
-                        maxWidth: isShufflingOrShuffled ? { xs: "200px", sm: "250px" } : "250px", 
+                        maxWidth: isShufflingOrShuffled ? { xs: "200px", sm: "250px" } : "100%", 
                         width: isShufflingOrShuffled ? { xs: "200px", sm: "250px" } : "100%",
+                        height: "auto",
+                        aspectRatio: "1 / 1",
+                        objectFit: "cover",
                         margin: isShufflingOrShuffled ? "0 auto" : "0"
                     }}
                     image={playlist.images.url}
@@ -196,7 +198,7 @@ const PlaylistItem = (props) => {
     };
 
     return (
-        <Grid>
+        <Grid sx={{ maxWidth: "200px", width: "100%" }}>
             <Card
                 elevation={0}
                 sx={{
@@ -212,7 +214,7 @@ const PlaylistItem = (props) => {
                         : { xs: "100%", sm: "100%", md: "100%" },
                     maxWidth: isShufflingOrShuffled
                         ? { xs: "100%", sm: "300px", md: "300px" }
-                        : { xs: "100%", sm: "none", md: "none" },
+                        : { xs: "100%", sm: "200px", md: "200px" },
                     maxHeight: isShufflingOrShuffled
                         ? { xs: "none", sm: "280px", md: "360px" }
                         : { xs: "280px", sm: "280px", md: "360px" },
