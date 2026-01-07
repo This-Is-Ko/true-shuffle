@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Box } from "@mui/material";
 
 import PlaylistList from "./PlaylistList";
@@ -19,6 +19,7 @@ import {
 } from "../constants/ShuffleConstants";
 import { CorrelationIdProvider, useCorrelationId, OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
 import { setCorrelationIdGetter } from "../../../utils/apiClient";
+import { filterPlaylists } from "../../../utils/playlistSearchUtils";
 
 /**
  * AllPlaylistsContainer component - Main container for the shuffle page.
@@ -37,6 +38,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     
     // Playlist data state
     const [playlists, setPlaylists] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [userShuffleCounter, setUserShuffleCounter] = useState(false);
     const [recentShuffles, setRecentShuffles] = useState([]);
     const [existingShuffledPlaylistCount, setExistingShuffledPlaylistCount] = useState(null);
@@ -50,6 +52,14 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     const [shuffleError, setShuffleError] = useState(false);
     const [, setPollingAttemptCount] = useState(0);
     const [pollingWaitTimeMs, setPollingWaitTimeMs] = useState(POLLING_CONFIG.INITIAL_WAIT_TIME_MS);
+
+    /**
+     * Filters playlists based on search term.
+     * Memoized to avoid unnecessary re-computations on unrelated state changes.
+     */
+    const filteredPlaylists = useMemo(() => {
+        return filterPlaylists(playlists, searchTerm);
+    }, [playlists, searchTerm]);
 
     /**
      * Fetches all playlists for the current user from the API.
@@ -345,7 +355,10 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                     <ErrorMessage error={error} isGeneric={false} />
                 ) : playlists.length > 0 ? (
                     <PlaylistList 
-                        playlists={playlists} 
+                        playlists={filteredPlaylists}
+                        allPlaylistsCount={playlists.length}
+                        searchTerm={searchTerm}
+                        setSearchTerm={setSearchTerm}
                         selectPlaylist={selectPlaylist} 
                         setSelectedPlaylist={setSelectedPlaylist}
                         selectedPlaylist={selectedPlaylist}

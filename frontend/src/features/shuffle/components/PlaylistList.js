@@ -1,8 +1,10 @@
 import React from "react";
-import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button } from "@mui/material";
+import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button, TextField, InputAdornment } from "@mui/material";
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import SearchIcon from '@mui/icons-material/Search';
+import ClearIcon from '@mui/icons-material/Clear';
 
 import PlaylistItem from "./PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
@@ -14,7 +16,10 @@ import LoadingMessage from "../../../components/LoadingMessage";
  * Handles three main states: all playlists view, shuffling in progress, and shuffle complete.
  * 
  * @param {Object} props - Component props
- * @param {Array} props.playlists - Array of playlist objects to display
+ * @param {Array} props.playlists - Array of playlist objects to display (filtered)
+ * @param {number} props.allPlaylistsCount - Total number of playlists (before filtering)
+ * @param {string} props.searchTerm - Current search term
+ * @param {Function} props.setSearchTerm - Function to update search term
  * @param {Function} props.selectPlaylist - Callback for playlist selection (legacy interface)
  * @param {Function} props.setSelectedPlaylist - Function to set the selected playlist
  * @param {Object|null} props.selectedPlaylist - Currently selected playlist
@@ -28,6 +33,9 @@ import LoadingMessage from "../../../components/LoadingMessage";
  */
 const PlaylistList = ({ 
     playlists, 
+    allPlaylistsCount,
+    searchTerm,
+    setSearchTerm,
     selectPlaylist, 
     setSelectedPlaylist, 
     selectedPlaylist, 
@@ -86,6 +94,44 @@ const PlaylistList = ({
         }
     };
 
+    /**
+     * Handles search input changes.
+     * Updates the search term state.
+     */
+    const handleSearchChange = (event) => {
+        if (setSearchTerm) {
+            setSearchTerm(event.target.value);
+        }
+    };
+
+    /**
+     * Handles clearing the search input.
+     */
+    const handleClearSearch = () => {
+        if (setSearchTerm) {
+            setSearchTerm("");
+        }
+    };
+
+    /**
+     * Gets the playlist count display text.
+     * Shows filtered count vs total if search is active.
+     */
+    const getPlaylistCountText = () => {
+        if (!playlists || playlists.length === 0) {
+            return "No playlists found";
+        }
+        
+        const filteredCount = playlists.length;
+        const totalCount = allPlaylistsCount || filteredCount;
+        
+        if (searchTerm && searchTerm.trim() !== "" && filteredCount !== totalCount) {
+            return `Showing ${filteredCount} of ${totalCount}`;
+        }
+        
+        return `${totalCount} playlist${totalCount !== 1 ? 's' : ''}`;
+    };
+
     return (
         <Card sx={{
             backgroundColor: "#181818",
@@ -107,56 +153,137 @@ const PlaylistList = ({
             }}>
                 <Box sx={{ 
                     display: 'flex', 
-                    alignItems: 'center', 
-                    justifyContent: 'space-between',
-                    gap: 1.5,
+                    flexDirection: 'column',
+                    gap: 2,
                     paddingTop: { xs: "10px", sm: "20px" },
                     paddingBottom: { xs: "8px", sm: "16px" },
                     marginBottom: 0,
                     flexShrink: 0
                 }}>
+                    {/* Title and How To Button Row */}
                     <Box sx={{ 
                         display: 'flex', 
                         alignItems: 'center', 
-                        gap: 1.5,
-                        flex: 1
+                        justifyContent: 'space-between',
+                        gap: 1.5
                     }}>
-                        <QueueMusicIcon 
-                            sx={{ 
-                                color: "#1DB954", 
-                                fontSize: { xs: "28px", sm: "32px" },
-                                flexShrink: 0
-                            }} 
-                        />
-                        <Typography 
-                            variant='h4' 
-                            component="div" 
-                            sx={{ 
-                                color: "white",
-                                fontSize: { xs: "1.5rem", sm: "2rem" },
-                                fontWeight: 600,
-                                fontFamily: "'Questrial', sans-serif",
-                                letterSpacing: "-0.02em",
-                                margin: 0
+                        <Box sx={{ 
+                            display: 'flex', 
+                            alignItems: 'center', 
+                            gap: 1.5,
+                            flex: 1
+                        }}>
+                            <QueueMusicIcon 
+                                sx={{ 
+                                    color: "#1DB954", 
+                                    fontSize: { xs: "28px", sm: "32px" },
+                                    flexShrink: 0
+                                }} 
+                            />
+                            <Typography 
+                                variant='h4' 
+                                component="div" 
+                                sx={{ 
+                                    color: "white",
+                                    fontSize: { xs: "1.5rem", sm: "2rem" },
+                                    fontWeight: 600,
+                                    fontFamily: "'Questrial', sans-serif",
+                                    letterSpacing: "-0.02em",
+                                    margin: 0
+                                }}
+                            >
+                                {getTitle()}
+                            </Typography>
+                        </Box>
+                        <IconButton
+                            onClick={onHowToClick}
+                            sx={{
+                                color: "#1DB954",
+                                '&:hover': {
+                                    color: "#1ed760",
+                                    bgcolor: 'rgba(29, 185, 84, 0.1)'
+                                },
+                                padding: { xs: "8px", sm: "10px" }
                             }}
+                            aria-label="How to use"
                         >
-                            {getTitle()}
-                        </Typography>
+                            <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
+                        </IconButton>
                     </Box>
-                    <IconButton
-                        onClick={onHowToClick}
-                        sx={{
-                            color: "#1DB954",
-                            '&:hover': {
-                                color: "#1ed760",
-                                bgcolor: 'rgba(29, 185, 84, 0.1)'
-                            },
-                            padding: { xs: "8px", sm: "10px" }
-                        }}
-                        aria-label="How to use"
-                    >
-                        <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
-                    </IconButton>
+
+                    {/* Search Bar and Count Row - Only show when viewing all playlists */}
+                    {showAllPlaylists && (
+                        <Box sx={{ 
+                            display: 'flex', 
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: 1,
+                            width: '100%'
+                        }}>
+                            <TextField
+                                placeholder="Search playlists..."
+                                value={searchTerm || ""}
+                                onChange={handleSearchChange}
+                                variant="outlined"
+                                size="small"
+                                sx={{
+                                    width: '100%',
+                                    '& .MuiOutlinedInput-root': {
+                                        color: 'white',
+                                        backgroundColor: '#282828',
+                                        '& fieldset': {
+                                            borderColor: '#404040',
+                                        },
+                                        '&:hover fieldset': {
+                                            borderColor: '#1DB954',
+                                        },
+                                        '&.Mui-focused fieldset': {
+                                            borderColor: '#1DB954',
+                                        },
+                                    },
+                                    '& .MuiInputBase-input::placeholder': {
+                                        color: '#b3b3b3',
+                                        opacity: 1
+                                    }
+                                }}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="start">
+                                            <SearchIcon sx={{ color: '#b3b3b3' }} />
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: searchTerm && searchTerm.trim() !== "" && (
+                                        <InputAdornment position="end">
+                                            <IconButton
+                                                aria-label="clear search"
+                                                onClick={handleClearSearch}
+                                                edge="end"
+                                                size="small"
+                                                sx={{
+                                                    color: '#b3b3b3',
+                                                    '&:hover': {
+                                                        color: '#1DB954'
+                                                    }
+                                                }}
+                                            >
+                                                <ClearIcon fontSize="small" />
+                                            </IconButton>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
+                            <Typography
+                                variant="body2"
+                                sx={{
+                                    color: '#b3b3b3',
+                                    fontSize: { xs: '0.875rem', sm: '0.875rem' },
+                                    textAlign: 'center'
+                                }}
+                            >
+                                {getPlaylistCountText()}
+                            </Typography>
+                        </Box>
+                    )}
                 </Box>
 
                 {/* 
@@ -172,14 +299,14 @@ const PlaylistList = ({
                         display: (showAllPlaylists || loading) ? "grid" : "flex",
                         flexDirection: (showAllPlaylists || loading) ? "row" : "column",
                         alignItems: (showAllPlaylists || loading) ? "stretch" : "center",
-                        justifyContent: shouldCenterContent ? "center" : "flex-start",
+                        justifyContent: shouldCenterContent ? "center" : (showAllPlaylists || loading) ? "center" : "flex-start",
                         flex: shouldCenterContent ? 1 : "none",
                         minHeight: shouldCenterContent ? 0 : "auto",
                         // Responsive grid columns for playlist grid view
                         gridTemplateColumns: (showAllPlaylists || loading) ? {
                             xs: "repeat(2, 1fr)",
-                            sm: "repeat(auto-fit, minmax(200px, 1fr))",
-                            md: "repeat(auto-fit, minmax(200px, 1fr))"
+                            sm: "repeat(auto-fit, minmax(150px, 200px))",
+                            md: "repeat(auto-fit, minmax(150px, 200px))"
                         } : "none",
                         gap: { xs: 1.5, sm: 2, md: 2 },
                         rowGap: { xs: 1.5, sm: 2, md: 2 }
@@ -210,7 +337,7 @@ const PlaylistList = ({
                             {/* Selected playlist card */}
                             <Box sx={{ 
                                 width: "100%", 
-                                maxWidth: "300px",
+                                maxWidth: { xs: "100%", sm: "200px" },
                                 display: "flex",
                                 justifyContent: "center"
                             }}>
