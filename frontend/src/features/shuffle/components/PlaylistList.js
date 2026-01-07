@@ -337,7 +337,7 @@ const PlaylistList = ({
                             {/* Selected playlist card */}
                             <Box sx={{ 
                                 width: "100%", 
-                                maxWidth: "300px",
+                                maxWidth: { xs: "100%", sm: "200px" },
                                 display: "flex",
                                 justifyContent: "center"
                             }}>
