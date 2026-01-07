@@ -1,10 +1,8 @@
 import React, { useState } from "react";
-import { Box, Drawer, useMediaQuery, Divider, Card } from "@mui/material";
+import { Box, Drawer, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/system";
-import SidebarStatistics from "./SidebarStatistics";
-import RecentShufflesTable from "./RecentShufflesTable";
-import DeleteShuffledPlaylistsButton from "./DeleteShuffledPlaylists";
-import FilteredLikedSongsShuffle from "./FilteredLikedSongsShuffle";
+import SidebarStatsCard from "./SidebarStatsCard";
+import SidebarActionButtonsCard from "./SidebarActionButtonsCard";
 
 const ShufflePageSidebar = ({ 
     userShuffleCounter, 
@@ -21,60 +19,24 @@ const ShufflePageSidebar = ({
         setMobileOpen(!mobileOpen);
     };
 
-    const sidebarContent = (
-        <Card
+    const sidebarWrapper = (
+        <Box
             sx={{
-                width: '100%',
-                maxWidth: '100%',
-                backgroundColor: '#181818',
-                borderRadius: '5px',
-                p: 2,
                 display: 'flex',
                 flexDirection: 'column',
-                boxSizing: 'border-box',
-                height: 'auto'
+                gap: 2,
+                width: '100%'
             }}
         >
-
-            {/* Statistics */}
-            {userShuffleCounter && (
-                <Box sx={{ mb: 2 }}>
-                    <SidebarStatistics userShuffleCounter={userShuffleCounter} />
-                </Box>
-            )}
-
-            <Divider sx={{ bgcolor: '#333', mb: 1 }} />
-
-            {/* Recent Shuffles */}
-            {recentShuffles && recentShuffles.length > 0 && (
-                <Box sx={{ mb: 2, flex: '0 0 auto', mt: 1 }}>
-                    <RecentShufflesTable recentShuffles={recentShuffles} />
-                </Box>
-            )}
-
-            {/* Filter Shuffle */}
-            {process.env.REACT_APP_ENABLE_FILTER_SHUFFLE === 'true' && (
-                <>
-
-                <Divider sx={{ bgcolor: '#333', mb: 2 }} />
-                    <Box sx={{ mb: 2 }}>
-                        <FilteredLikedSongsShuffle />
-                    </Box>
-                    <Divider sx={{ bgcolor: '#333', mb: 2 }} />
-                </>
-            )}
-
-            {/* Delete Button - only show if existing_shuffled_playlist_count exists and is not 0 */}
-            {existingShuffledPlaylistCount != null && existingShuffledPlaylistCount > 0 && (
-                <>
-                    <Divider sx={{ bgcolor: '#333', mb: 1 }} />
-                    <DeleteShuffledPlaylistsButton 
-                        onDeleteSuccess={onDeleteSuccess} 
-                        playlistCount={existingShuffledPlaylistCount}
-                    />
-                </>
-            )}
-        </Card>
+            <SidebarStatsCard 
+                userShuffleCounter={userShuffleCounter}
+                recentShuffles={recentShuffles}
+            />
+            <SidebarActionButtonsCard 
+                onDeleteSuccess={onDeleteSuccess}
+                existingShuffledPlaylistCount={existingShuffledPlaylistCount}
+            />
+        </Box>
     );
 
     return (
@@ -151,7 +113,7 @@ const ShufflePageSidebar = ({
                         },
                     }}
                 >
-                    {sidebarContent}
+                    {sidebarWrapper}
                 </Drawer>
             ) : (
                 <Box
@@ -166,7 +128,7 @@ const ShufflePageSidebar = ({
                         height: 'auto'
                     }}
                 >
-                    {sidebarContent}
+                    {sidebarWrapper}
                 </Box>
             )}
         </>
