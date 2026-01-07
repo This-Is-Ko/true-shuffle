@@ -34,6 +34,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     const [playlists, setPlaylists] = useState([]);
     const [userShuffleCounter, setUserShuffleCounter] = useState(false);
     const [recentShuffles, setRecentShuffles] = useState([]);
+    const [existingShuffledPlaylistCount, setExistingShuffledPlaylistCount] = useState(null);
     const [error, setError] = useState(false);
     
     // Shuffle operation state
@@ -55,6 +56,11 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                 setPlaylists(result.data.all_playlists);
                 if ("user_shuffle_counter" in result.data) {
                     setUserShuffleCounter(result.data.user_shuffle_counter);
+                }
+                if ("existing_shuffled_playlist_count" in result.data) {
+                    setExistingShuffledPlaylistCount(result.data.existing_shuffled_playlist_count);
+                } else {
+                    setExistingShuffledPlaylistCount(null);
                 }
                 setError(false);
             })
@@ -300,6 +306,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                     recentShuffles={recentShuffles}
                     onHowToClick={onHowToClick}
                     onDeleteSuccess={handleDeleteSuccess}
+                    existingShuffledPlaylistCount={existingShuffledPlaylistCount}
                 />
             )}
 

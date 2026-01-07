@@ -22,7 +22,7 @@ const OverviewCardsCard = ({ analysisData }) => {
                     flexWrap: "wrap",
                     gap: 2,
                     justifyContent: "space-around",
-                    alignItems: "center",
+                    alignItems: "stretch",
                 }}
             >
                 <OverallStatItemCard
