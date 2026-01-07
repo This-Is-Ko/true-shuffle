@@ -8,6 +8,8 @@ import ErrorMessage from "../components/ErrorMessage";
 import LoadingMessage from "../components/LoadingMessage";
 import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
 import { startAnalysis, getAggregateState, createErrorFromResponse, calcNewWaitTime } from "../features/analysis/services/AnalysisApiService";
+import { CorrelationIdProvider, useCorrelationId, OPERATION_TYPES } from "../contexts/CorrelationIdContext";
+import { setCorrelationIdGetter } from "../utils/apiClient";
 import OverviewCardsCard from "../features/analysis/components/OverviewCardsCard";
 import TopArtistsCard from "../features/analysis/components/TopArtistsCard";
 import TopAlbumsCard from "../features/analysis/components/TopAlbumsCard";
@@ -16,6 +18,9 @@ import TrackLengthsCard from "../features/analysis/components/TrackLengthsCard";
 import AnalysisCard from "../features/analysis/components/AnalysisCard";
 
 const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
+    // Correlation ID management
+    const { getCorrelationId, resetCorrelationId, resetAll } = useCorrelationId();
+    
     const [auth] = useState(
         document.cookie.split(';').some(cookie => cookie.trim().startsWith('trueshuffle-auth'))
     );
@@ -30,6 +35,9 @@ const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
     const [aggregateStatePollingWaitTime, setAggregateStatePollingWaitTime] = useState(1000);
 
     const handleStartAnalysis = () => {
+        // Reset correlation ID for analysis operation when starting new analysis
+        resetCorrelationId(OPERATION_TYPES.ANALYSIS);
+        
         setIsLoading(true);
         setError(null);
         setAttemptCount(0);
@@ -112,6 +120,16 @@ const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
 
         return () => clearTimeout(timer);
     }, [aggregateTaskId, aggregateStatePollingWaitTime, isLoading, getAggregateDataStateCall]);
+
+    // Set up correlation ID getter for apiClient and reset all correlation IDs on mount
+    useEffect(() => {
+        // Set the correlation ID getter function for apiClient
+        setCorrelationIdGetter(getCorrelationId);
+        
+        // Reset all correlation IDs on page load
+        resetAll();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Validate page access and redirect to Spotify login if required
     if (auth === false) {
@@ -313,4 +331,13 @@ const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
     }
 }
 
-export default AnalysisPage;
+// Wrap component with CorrelationIdProvider
+const AnalysisPageWithProvider = (props) => {
+    return (
+        <CorrelationIdProvider>
+            <AnalysisPage {...props} />
+        </CorrelationIdProvider>
+    );
+};
+
+export default AnalysisPageWithProvider;
