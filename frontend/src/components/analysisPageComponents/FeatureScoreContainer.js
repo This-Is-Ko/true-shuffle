@@ -6,7 +6,7 @@ const FeatureScoreContainer = ({ audioFeatures }) => {
     return (
         <Grid
             sx={{
-                margin: { sm: "auto", md: "0 auto", },
+                margin: { xs: "auto", sm: "auto", md: "0 auto" },
                 maxWidth: "900px",
                 width: "100%"
             }}

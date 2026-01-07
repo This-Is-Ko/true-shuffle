@@ -30,16 +30,16 @@ const FeatureScoreItem = ({ featureScoreData }) => {
     const tooltipText = featureDescriptions[featureName] || "";
 
     return (
-        <Grid item size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid item size={{ xs: 12, sm: 6, md: 4 }} sx={{ display: "flex", justifyContent: "center" }}>
             <Card sx={{
                 textAlign: "left",
                 backgroundColor: "#1DB954",
                 borderRadius: "5px",
                 height: "auto",
                 maxHeight: "360px",
-                width: "auto",
-                maxWidth: "270px",
-                minWidth: "270px",
+                width: { xs: "100%", sm: "270px" },
+                maxWidth: { xs: "100%", sm: "270px" },
+                minWidth: { xs: "100%", sm: "270px" },
                 position: "relative"
             }}>
                 <CardContent>
