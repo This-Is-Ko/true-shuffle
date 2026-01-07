@@ -1,9 +1,10 @@
-import axios from "axios";
+import apiClient from './apiClient';
+import { OPERATION_TYPES } from '../contexts/CorrelationIdContext';
 
 const STATISTICS_URL = process.env.REACT_APP_BACKEND_PATH + "/api/statistics/overall";
 
 export function getStatisticsApi(setTrackCounter, setPlaylistCounter, setAnalysisCounter) {
-    axios.get(STATISTICS_URL)
+    apiClient.get(STATISTICS_URL, { operationType: OPERATION_TYPES.GENERAL })
         .then(result => {
             setTrackCounter(result.data.track_counter)
             setPlaylistCounter(result.data.playlist_counter)

@@ -1,4 +1,5 @@
-import axios from "axios";
+import apiClient from './apiClient';
+import { OPERATION_TYPES } from '../contexts/CorrelationIdContext';
 
 import RestrictedAccessPage from '../pages/RestrictedAccessPage'
 import RedirectBackdrop from '../features/common/RedirectBackdrop'
@@ -8,7 +9,7 @@ const LOGOUT_URL = process.env.REACT_APP_BACKEND_PATH + "/api/spotify/auth/logou
 
 export function getLoginUriApi(setLoginUri) {
   console.debug("Retrieving login uri")
-  axios.get(process.env.REACT_APP_BACKEND_PATH + `/api/spotify/auth/login`)
+  apiClient.get(process.env.REACT_APP_BACKEND_PATH + `/api/spotify/auth/login`, { operationType: OPERATION_TYPES.GENERAL })
     .then(result => {
       setLoginUri(result.data.loginUri)
     })
@@ -28,11 +29,11 @@ export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessTo
   if (!accessToken) {
     if (code != null) {
       setLoadingAccessToken(true)
-      axios.post(AUTH_CODE_URL,
+      apiClient.post(AUTH_CODE_URL,
         {
           code: code
         },
-        { withCredentials: true }
+        { operationType: OPERATION_TYPES.GENERAL }
       ).then(result => {
         console.log(result)
         setIsAuth(true);
@@ -77,9 +78,9 @@ export const checkPageAccessAndRedirect = (auth, loginUri, targetPage) => {
 }
 
 export const logoutUser = (setAuth) => {
-  axios.post(LOGOUT_URL,
+  apiClient.post(LOGOUT_URL,
     {},
-    { withCredentials: true }
+    { operationType: OPERATION_TYPES.GENERAL }
   ).then(result => {
     setAuth(false)
   }).catch(error => {
