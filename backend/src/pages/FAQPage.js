@@ -6,8 +6,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const faqs = [
     {
-        "question": "What is True Shuffle?",
-        "answer": "I created this website with the goal to have a way of properly shuffling Spotify playlists. There are also features to share your Liked Songs and Analyse your library.",
+        "question": "What is True Shuffle for Spotify?",
+        "answer": "I created this website with the goal to have a way of properly shuffling Spotify playlists. There are also features to easily share your Liked Songs and Analyse your library.",
         "id": "q1"
     },
     {
