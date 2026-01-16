@@ -15,10 +15,7 @@ const AboutPage = () => {
     }, []);
 
     return (
-        <Box sx={{ 
-            width: { xs: "90%", sm: "50%" }, 
-            margin: "auto" 
-        }}>
+        <Box>
             <Helmet>
                 <title>About | True Shuffle for Spotify</title>
                 <meta name="description" content="Learn more about Spotify True Shuffle and how it provides an authentic, random playlist shuffling experience." />
@@ -31,69 +28,95 @@ const AboutPage = () => {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Helmet>
 
-            <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+            <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white", textAlign: "center" }}>
                 About
             </Typography>
-            <Box 
-                component="img"
-                className="about-image"
-                src={process.env.PUBLIC_URL + '/assets/images/listening.png'}
-                alt="listening to music"
-                sx={{ width: "300px", height: "300px", maxWidth: "100%", maxHeight: "100%" }}
-            />
-            <Typography variant='body1' component="div" sx={{ paddingTop: "20px", color: "white", textAlign: 'left' }}>
-                Have you been wondering how to get a truly random shuffle experience on Spotify?
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                Welcome to True Shuffle, a way to shuffle your Spotify music without the same tracks being played repeatedly.
-            </Typography>
-            <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
-                How does it work?
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                True Shuffle allows you to randomly reorder your playlists to create a shuffled experience.
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                In case you have a custom playlist order you would like to keep, we create a copy of your playlist which can easily be deleted at any time.
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                If you add new music on Spotify, just shuffle again and the new tracks will be added to your shuffled playlist.
-            </Typography>
-            {trackCounter !== null && playlistCounter !== null &&
-                <div>
+
+            <Box sx={{ 
+                paddingBottom: "20px",
+                paddingTop: "20px",
+                display: "flex",
+                justifyContent: "center",
+                width: "100%"
+            }}>
+                <Box
+                    sx={{
+                        width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" },
+                        display: 'flex',
+                        flexDirection: 'column',
+                        boxSizing: 'border-box',
+                        gap: 1
+                    }}
+                >
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        Welcome to True Shuffle, the Spotify Shuffler designed to bring back actual shuffling to Spotify.
+                    </Typography>
+
                     <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
-                        Statistics
+                        How It Works
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Shuffled tracks: {formatNumberWithSpaces(trackCounter)}
+                        True Shuffle creates a new playlist containing all the tracks in a random order.
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Shuffled playlists: {formatNumberWithSpaces(playlistCounter)}
+                        True Shuffle preserves the original playlist order and the date that tracks were added to it. In case you have a custom playlist order you would like to keep, a copy of your playlist is created which can easily be deleted at any time.
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Libraries analysed: {formatNumberWithSpaces(analysisCounter)}
+                        True Shuffle supports shuffling Liked Songs as well as playlists.
                     </Typography>
-                </div>
-            }
-            <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
-                Privacy and Credit
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                This application only stores the Spotify user ID, access token to retrieved Liked Songs and counters for shuffles. 
-                Cookies are used to keep you logged in and able to interact with the site. No passwords are stored and all authentication is handled by Spotify.
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                Images were created by
-                <Link underline="none" href={"https://www.flaticon.com/authors/paulalee"}> paulalee </Link>
-                and icons by
-                <Link underline="none" href={"https://www.flaticon.com/authors/freepik"}> Freepik </Link>
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                Spotify brand logos have been provided by Spotify.
-            </Typography>
-            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", paddingBottom: "20px", color: "white", textAlign: 'left' }}>
-                For any help or feedback, feel free to send me an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
-            </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        When you add new tracks, just shuffle again and the new tracks will be included.
+                    </Typography>
+
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
+                        About the Project
+                    </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        This is a personal project created because I wasn't happy with the listening experience provided by Spotify's built-in shuffle. Certain tracks and artists would keep playing even with a large Liked Songs collection. I created this website in 2022 to rediscover my own library and to be able to listen to tracks buried under more recent tracks. Additional features like Sharing Liked Songs and library analysis were added down the line.
+                    </Typography>
+
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
+                        Free to Use
+                    </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        True Shuffle is completely free. Currently I personally cover the hosting costs for running True Shuffle.
+                    </Typography>
+                    
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        Any support is greatly appreciated! <Link underline="none" href="https://ko-fi.com/trueshuffle">Buy me a coffee</Link>
+                    </Typography>
+
+                    {trackCounter !== null && playlistCounter !== null &&
+                        <div>
+                            <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
+                                Statistics
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                                Shuffled tracks: {formatNumberWithSpaces(trackCounter)}
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                                Shuffled playlists: {formatNumberWithSpaces(playlistCounter)}
+                            </Typography>
+                            <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                                Libraries analysed: {formatNumberWithSpaces(analysisCounter)}
+                            </Typography>
+                        </div>
+                    }
+
+                    <Typography variant='h4' component="div" sx={{ paddingTop: "40px", color: "white", textAlign: 'left' }}>
+                        Privacy and Credit
+                    </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        This application stores the Spotify user ID, access token to retrieve Liked Songs. The count of shuffled tracks and playlists are also stored for each user so users can track how many times they used True Shuffle. Cookies are used to keep you logged in and able to interact with the site. No passwords are stored and all authentication is handled by Spotify.
+                    </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
+                        Spotify brand logos have been provided by Spotify.
+                    </Typography>
+                    <Typography variant='body1' component="div" sx={{ paddingTop: "10px", paddingBottom: "20px", color: "white", textAlign: 'left' }}>
+                        For any help or feedback, feel free to send me an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
+                    </Typography>
+                </Box>
+            </Box>
             <Footer></Footer>
         </Box>
     );
