@@ -45,13 +45,14 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
         <main>
             <Helmet>
                 <title>Home | True Shuffle for Spotify</title>
-                <meta name="description" content="Shuffle your Spotify playlists with a truly random order, no repeats, and no algorithmic bias." />
+                <meta name="description" content="True Shuffle is a Spotify shuffler that creates truly random playlist orders with no bias. Shuffle playlists and liked songs properly." />
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://www.trueshuffle.top/" />
-                <meta property="og:title" content="True Shuffle for Spotify - Experience Genuine Random Shuffling" />
-                <meta property="og:description" content="Create shuffled Spotify playlists with a truly random order, no repeats, and no algorithmic bias." />
+                <meta property="og:title" content="True Shuffle - True Spotify Playlist Shuffler" />
+                <meta property="og:description" content="A true Spotify shuffler that fixes Spotify’s biased shuffle. Randomize playlists and liked songs with real randomness." />
                 <meta property="og:url" content="https://www.trueshuffle.top/" />
                 <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://www.trueshuffle.top/favicon.ico" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Helmet>
             <Backdrop
@@ -116,7 +117,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     margin: "0 auto"
                   }}
                 >
-                    Properly shuffle your Spotify playlists and analyse your library
+                    Properly shuffle your Spotify playlists and analyse stats about your library
                 </Typography>
 
                 <Box className={"centerSpacingContainer"}>
