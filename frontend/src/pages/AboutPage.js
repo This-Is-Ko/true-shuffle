@@ -135,7 +135,7 @@ const AboutPage = () => {
                         Spotify brand assets are used in accordance with Spotify’s branding guidelines.
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        Header logo created by Freepik
+                        Header logo created by Freepik.
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", paddingBottom: "20px", color: "white", textAlign: 'left' }}>
                         For any help or feedback, feel free to send me an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
