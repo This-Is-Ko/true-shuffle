@@ -15,7 +15,7 @@ import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
  * @param {Function} props.setSelectedPlaylist - Callback to set the selected playlist
  */
 const PlaylistItem = (props) => {
-    const { playlist, displayState, playlistUri, setSelectedPlaylist } = props;
+    const { playlist, displayState, setSelectedPlaylist } = props;
 
     /**
      * Handles playlist selection when user clicks on the card.
