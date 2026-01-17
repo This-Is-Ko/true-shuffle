@@ -104,8 +104,6 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     True Shuffle
                 </Typography>
                 
-                <img className={"spotifyNameLogo"}
-                    src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                 <Typography
                   variant="h6"
                   component="div"
@@ -126,10 +124,21 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                         variant="contained"
                         disableElevation
                         sx={{
-                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954"
+                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
                         }}
                         href="/shuffle"
-                    >Get started</Button>
+                    >
+                        <img 
+                            className={"spotifyNameLogo"}
+                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-white.svg'} 
+                            alt={"spotify logo"}
+                            style={{ height: '25px', width: 'auto' }}
+                        />
+                        Get started
+                    </Button>
                 </Box>
             </div>
             
@@ -149,9 +158,6 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     <StatItem stat={playlistCounter} description="Shuffled playlists"></StatItem>
                     <StatItem stat={analysisCounter} description="Libraries analysed"></StatItem>
                 </Grid>
-                <Typography variant='caption' component="div" sx={{ color: "white" }}>
-                    Refreshed every 15 minutes
-                </Typography>
             </div>
 
             <Box sx={{ width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" }, margin: "0 auto", paddingBottom: "32px", justifyContent: "center" }}>
