@@ -132,7 +132,7 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                         variant="contained"
                         disableElevation
                         sx={{
-                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
+                            my: 2, color: 'white', bgcolor: "#1DB954",
                             display: 'flex',
                             alignItems: 'center',
                             gap: 1
