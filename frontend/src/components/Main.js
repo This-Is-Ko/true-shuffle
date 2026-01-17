@@ -100,7 +100,15 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
             />
 
             <div className={"mainTopContainer"}>
-                <Typography variant='h1' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                <Typography 
+                    variant='h1' 
+                    component="div" 
+                    sx={{ 
+                        paddingTop: { xs: "10px", sm: "20px" },
+                        fontSize: { xs: "3rem", sm: "4rem", md: "6rem" },
+                        color: "white" 
+                    }}
+                >
                     True Shuffle
                 </Typography>
                 
@@ -108,14 +116,14 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                   variant="h6"
                   component="div"
                   sx={{
-                    paddingTop: "10px",
+                    paddingTop: { xs: "5px", sm: "10px" },
                     color: "white",
                     textAlign: "center",
                     maxWidth: "90%",
                     margin: "0 auto"
                   }}
                 >
-                    Properly shuffle your Spotify playlists and analyse stats about your library
+                    Rediscover your music with truly random Spotify shuffling, without repeats or bias.
                 </Typography>
 
                 <Box className={"centerSpacingContainer"}>
