@@ -45,13 +45,14 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
         <main>
             <Helmet>
                 <title>Home | True Shuffle for Spotify</title>
-                <meta name="description" content="Shuffle your Spotify playlists with a truly random order, no repeats, and no algorithmic bias." />
+                <meta name="description" content="True Shuffle is a Spotify shuffler that creates truly random playlist orders with no bias. Shuffle playlists and liked songs properly." />
                 <meta name="robots" content="index, follow" />
                 <link rel="canonical" href="https://www.trueshuffle.top/" />
-                <meta property="og:title" content="True Shuffle for Spotify - Experience Genuine Random Shuffling" />
-                <meta property="og:description" content="Create shuffled Spotify playlists with a truly random order, no repeats, and no algorithmic bias." />
+                <meta property="og:title" content="True Shuffle - True Spotify Playlist Shuffler" />
+                <meta property="og:description" content="A true Spotify shuffler that fixes Spotify’s biased shuffle. Randomize playlists and liked songs with real randomness." />
                 <meta property="og:url" content="https://www.trueshuffle.top/" />
                 <meta property="og:type" content="website" />
+                <meta property="og:image" content="https://www.trueshuffle.top/favicon.ico" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Helmet>
             <Backdrop
@@ -99,24 +100,30 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
             />
 
             <div className={"mainTopContainer"}>
-                <Typography variant='h1' component="div" sx={{ paddingTop: "20px", color: "white" }}>
+                <Typography 
+                    variant='h1' 
+                    component="div" 
+                    sx={{ 
+                        paddingTop: { xs: "10px", sm: "20px" },
+                        fontSize: { xs: "3rem", sm: "4rem", md: "6rem" },
+                        color: "white" 
+                    }}
+                >
                     True Shuffle
                 </Typography>
                 
-                <img className={"spotifyNameLogo"}
-                    src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-green-name.png'} alt={"spotify logo"} />
                 <Typography
                   variant="h6"
                   component="div"
                   sx={{
-                    paddingTop: "10px",
+                    paddingTop: { xs: "5px", sm: "10px" },
                     color: "white",
                     textAlign: "center",
                     maxWidth: "90%",
                     margin: "0 auto"
                   }}
                 >
-                    Properly shuffle your Spotify playlists and analyse your library
+                    Rediscover your music with truly random Spotify shuffling, without repeats or bias.
                 </Typography>
 
                 <Box className={"centerSpacingContainer"}>
@@ -125,10 +132,21 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                         variant="contained"
                         disableElevation
                         sx={{
-                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954"
+                            my: 2, color: 'white', display: 'block', bgcolor: "#1DB954",
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 1
                         }}
                         href="/shuffle"
-                    >Get started</Button>
+                    >
+                        <img 
+                            className={"spotifyNameLogo"}
+                            src={process.env.PUBLIC_URL + 'assets/icons/spotify-logo-white.svg'} 
+                            alt={"spotify logo"}
+                            style={{ height: '25px', width: 'auto' }}
+                        />
+                        Get started
+                    </Button>
                 </Box>
             </div>
             
@@ -148,9 +166,6 @@ const Main = ({ loginUri, isAuth, setIsAuth }) => {
                     <StatItem stat={playlistCounter} description="Shuffled playlists"></StatItem>
                     <StatItem stat={analysisCounter} description="Libraries analysed"></StatItem>
                 </Grid>
-                <Typography variant='caption' component="div" sx={{ color: "white" }}>
-                    Refreshed every 15 minutes
-                </Typography>
             </div>
 
             <Box sx={{ width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" }, margin: "0 auto", paddingBottom: "32px", justifyContent: "center" }}>

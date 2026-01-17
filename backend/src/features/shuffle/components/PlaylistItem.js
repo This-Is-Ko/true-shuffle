@@ -1,8 +1,7 @@
 import React from "react";
 
 import Grid from '@mui/material/Grid2';
-import { Card, CardContent, CardMedia, Typography, Box, Button, Skeleton } from "@mui/material";
-import AudiotrackIcon from '@mui/icons-material/Audiotrack';
+import { Card, CardContent, CardMedia, Typography, Box, Skeleton } from "@mui/material";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 
 /**
@@ -103,7 +102,9 @@ const PlaylistItem = (props) => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
-                width: "100%"
+                width: "100%",
+                maxWidth: "100%",
+                boxSizing: "border-box"
             }}>
                 <CardMedia
                     component="img"
@@ -121,14 +122,17 @@ const PlaylistItem = (props) => {
                 <CardContent
                     sx={{
                         flex: "1 0 auto",
-                        paddingBottom: renderOpenButton() ? "16px !important" : "8px !important",
-                        paddingLeft: { xs: 0, sm: "16px" },
-                        paddingRight: { xs: 0, sm: "16px" },
+                        paddingBottom: "0px !important",
+                        paddingLeft: { xs: 0, sm: 0 },
+                        paddingRight: { xs: 0, sm: 0 },
                         width: "100%",
+                        maxWidth: "100%",
+                        boxSizing: "border-box",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "flex-start",
-                        textAlign: "left"
+                        textAlign: "left",
+                        overflow: "hidden"
                     }}
                 >
                     <Typography
@@ -140,7 +144,8 @@ const PlaylistItem = (props) => {
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             display: "block",
-                            maxWidth: "100%",
+                            width: "100%",
+                            minWidth: 0,
                             whiteSpace: "nowrap",
                             fontFamily: "'Questrial', sans-serif",
                         }}
@@ -155,46 +160,16 @@ const PlaylistItem = (props) => {
                             fontSize: "0.85rem",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
-                            maxWidth: "100%",
+                            width: "100%",
+                            minWidth: 0,
                             whiteSpace: "nowrap",
                         }}
                     >
                         {playlist.owner.display_name}
                     </Typography>
-                    {renderOpenButton()}
                 </CardContent>
             </Box>
         );
-    };
-
-
-    /**
-     * Renders the "Open" button to access the shuffled playlist.
-     * Only shown when playlist URI is available and NOT in shuffling/shuffled states
-     * (in those states, the button is rendered outside the card in the parent component).
-     * 
-     * @returns {JSX.Element|null} Open button or null
-     */
-    const renderOpenButton = () => {
-        // Don't show button in SHUFFLING or SHUFFLED state - it will be rendered outside the card
-        if (playlistUri != null && 
-            displayState !== PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLED && 
-            displayState !== PLAYLIST_ITEM_DISPLAY_STATES.SHUFFLING) {
-            return (
-                <Box sx={{ paddingTop: "5px" }}>
-                    <Button 
-                        variant="contained"
-                        href={playlistUri} 
-                        target="_blank"
-                        sx={{ color: 'white', bgcolor: "#1DB954" }}
-                        startIcon={<AudiotrackIcon />}
-                    >
-                        Open
-                    </Button>
-                </Box>
-            );
-        }
-        return null;
     };
 
     return (

@@ -6,8 +6,8 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 const faqs = [
     {
-        "question": "What is True Shuffle?",
-        "answer": "I created this website with the goal to have a way of properly shuffling Spotify playlists. There are also features to share your Liked Songs and Analyse your library.",
+        "question": "What is True Shuffle for Spotify?",
+        "answer": "I created this website with the goal to have a way of properly shuffling Spotify playlists. There are also features to easily share your Liked Songs and Analyse your library.",
         "id": "q1"
     },
     {
@@ -56,9 +56,14 @@ const faqs = [
         "id": "q10"
     },
     {
+        "question": "Why are new playlists created each time I shuffle?",
+        "answer": "I like to see the original date that a track was added to my Liked Songs or a playlist and don't want to lose this information when shuffling. By creating a new playlist, I make sure the original playlist is unaffected.",
+        "id": "q11"
+    },
+    {
         "question": "How can I give feedback?",
         "answer": "I'd love to hear from you if you have any feedback or suggestions. You can contact me with the email listed on the About page or click on the Contact link in the footer.",
-        "id": "q11"
+        "id": "q12"
     }
 ];
 
