@@ -25,7 +25,7 @@ const MainPageFeaturesItem = (props) => {
                     my: 2, color: 'white', bgcolor: "#1DB954"
                 }}
                 href={props.feature.uri}
-            >Select</Button>
+            >Learn more</Button>
         </Grid>
     );
 }

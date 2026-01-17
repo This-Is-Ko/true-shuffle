@@ -5,7 +5,6 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Button from '@mui/material/Button';
-import ShuffleIcon from '@mui/icons-material/Shuffle';
 import SpotifyLogin from "./SpotifyLogin";
 import SpotifyLogout from "./SpotifyLogout";
 import SpotifyMenuLogout from "./SpotifyMenuLogout";
@@ -63,7 +62,17 @@ const Header = ({ loginUri, isAuth }) => {
         <AppBar position="static" sx={{ bgcolor: "#161817", zIndex: 1400 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <ShuffleIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+                    <Box
+                        component="img"
+                        src={`${process.env.PUBLIC_URL}/favicon.ico`}
+                        alt="True Shuffle"
+                        sx={{ 
+                            display: { xs: 'none', md: 'flex' }, 
+                            mr: 1,
+                            width: 24,
+                            height: 24
+                        }} 
+                    />
                     <Typography
                         variant="h6"
                         noWrap
@@ -137,7 +146,17 @@ const Header = ({ loginUri, isAuth }) => {
                             }
                         </Menu>
                     </Box>
-                    <ShuffleIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+                    <Box
+                        component="img"
+                        src={`${process.env.PUBLIC_URL}/favicon.ico`}
+                        alt="True Shuffle"
+                        sx={{ 
+                            display: { xs: 'flex', md: 'none' }, 
+                            mr: 1,
+                            width: 24,
+                            height: 24
+                        }} 
+                    />
                     <Typography
                         variant="h5"
                         noWrap

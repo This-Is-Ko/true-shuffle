@@ -1,5 +1,6 @@
 import React from "react";
 import { Typography, Fade, Box, Modal, Divider, Link } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
 
 const HowToModal = ({ isModalOpen, handleClose, steps }) => {
     return (
@@ -56,9 +57,12 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                         })
                     }
 
-                    <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 3 }}>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, gap: 1 }}>
                         <Typography variant="body2" sx={{ color: "lightgrey" }}>
                             For more assistance, feel free to send an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: "lightgrey" }}>
+                            Or check out our <Link component={RouterLink} to="/faq" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>FAQ</Link> and <Link component={RouterLink} to="/about" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>About</Link> pages.
                         </Typography>
                     </Box>
                 </Box>
