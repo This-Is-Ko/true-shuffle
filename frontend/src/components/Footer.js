@@ -16,6 +16,8 @@ function Footer(props) {
                     &nbsp;&nbsp;|&nbsp;&nbsp;
                     <Link className="footer-links" to="/about">About</Link>
                     &nbsp;&nbsp;|&nbsp;&nbsp;
+                    <MuiLink sx={{ color: "lightgrey" }} variant="caption" underline="none" href="https://trueshuffle.featurebase.app/" target="_blank" rel="noopener noreferrer">Feedback</MuiLink>
+                    &nbsp;&nbsp;|&nbsp;&nbsp;
                     <MuiLink sx={{ color: "lightgrey" }} variant="caption" underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>Contact</MuiLink>
                 </Typography>
                 <Typography sx={{ color: "lightgrey", paddingBottom: "5px" }} variant="caption" component="div">
