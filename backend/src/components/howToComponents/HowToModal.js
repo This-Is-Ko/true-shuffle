@@ -64,6 +64,9 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                         <Typography variant="body2" sx={{ color: "lightgrey" }}>
                             Or check out our <Link component={RouterLink} to="/faq" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>FAQ</Link> and <Link component={RouterLink} to="/about" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>About</Link> pages.
                         </Typography>
+                        <Typography variant="body2" sx={{ color: "lightgrey" }}>
+                            Have ideas? Share them on our <Link underline="none" href="https://trueshuffle.featurebase.app/" target="_blank" rel="noopener noreferrer" sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>feedback board</Link>.
+                        </Typography>
                     </Box>
                 </Box>
             </Fade>
