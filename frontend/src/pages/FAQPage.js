@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { Typography, Box, Accordion, AccordionSummary, AccordionDetails, Card } from "@mui/material";
+import MuiLink from "@mui/material/Link";
 import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -100,8 +101,13 @@ const FAQPage = () => {
                 paddingTop: "20px",
                 display: "flex",
                 justifyContent: "center",
-                width: "100%"
+                width: "100%",
+                flexDirection: "column",
+                alignItems: "center"
             }}>
+                <Typography variant='body1' component="div" sx={{ color: "lightgrey", marginBottom: "20px", textAlign: "center", width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" } }}>
+                    Have a suggestion or idea? Share your feedback on our <MuiLink href="https://trueshuffle.featurebase.app/" target="_blank" rel="noopener noreferrer" sx={{ color: "#1DB954", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}>feedback board</MuiLink>.
+                </Typography>
                 <Card
                     sx={{
                         width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" },
