@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Typography, Link, Box, List, ListItem, ListItemText } from "@mui/material";
+import { Typography, Link, Box, List, ListItem, ListItemText, Button } from "@mui/material";
 import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
 import { getStatisticsApi } from "../utils/StatisticsService";
@@ -105,8 +105,28 @@ const AboutPage = () => {
                     </Typography>
                     
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                    If you find True Shuffle useful and would like to support the website, you can choose to buy me a coffee. <Link underline="none" href="https://ko-fi.com/trueshuffle">Buy me a coffee</Link>
+                    If you find True Shuffle useful and would like to support the website, any contributions will be greatly appreciated.
                     </Typography>
+                    <Box sx={{ paddingTop: "10px" }}>
+                        <Button
+                            variant="contained"
+                            disableElevation
+                            href="https://ko-fi.com/trueshuffle"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            startIcon={<img src="/assets/icons/kofi-symbol.svg" alt="Ko-fi" style={{ width: '24px', height: '24px' }} />}
+                            sx={{
+                                my: 2,
+                                color: "white",
+                                bgcolor: "#FF5E78",
+                                "&:hover": {
+                                    backgroundColor: "#E85166"
+                                }
+                            }}
+                        >
+                            Support Me on Ko-fi
+                        </Button>
+                    </Box>
 
                     {trackCounter !== null && playlistCounter !== null &&
                         <div>
@@ -138,7 +158,7 @@ const AboutPage = () => {
                         Header logo created by Freepik.
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", paddingBottom: "20px", color: "white", textAlign: 'left' }}>
-                        For any help or feedback, feel free to send me an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
+                        For any help or feedback, feel free to send me an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link> or share your ideas and suggestions on our <Link underline="none" href="https://trueshuffle.featurebase.app/" target="_blank" rel="noopener noreferrer">feedback board</Link>.
                     </Typography>
                 </Box>
             </Box>
