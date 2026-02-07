@@ -16,8 +16,9 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                     top: '50%',
                     left: '50%',
                     transform: 'translate(-50%, -50%)',
-                    width: { xs: "80%", sm: '70%', md: "50%", lg: "40%" },
+                    width: { xs: "70%", sm: '70%', md: "50%", lg: "40%" },
                     maxWidth: 600,
+                    maxHeight: { xs: "80%", sm: '80%', md: "50%", lg: "40%" },
                     bgcolor: '#292e2f',
                     borderRadius: 2,
                     boxShadow: 24,
@@ -59,10 +60,7 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
 
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: 3, gap: 1 }}>
                         <Typography variant="body2" sx={{ color: "lightgrey" }}>
-                            For more assistance, feel free to send an email <Link underline="none" href={"mailto:" + process.env.REACT_APP_CONTACT_EMAIL_ADDRESS}>here</Link>.
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: "lightgrey" }}>
-                            Or check out our <Link component={RouterLink} to="/faq" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>FAQ</Link> and <Link component={RouterLink} to="/about" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>About</Link> pages.
+                            For more assistance, check out our <Link component={RouterLink} to="/faq" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>FAQ</Link> and <Link component={RouterLink} to="/about" underline="none" onClick={handleClose} sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>About</Link> pages.
                         </Typography>
                         <Typography variant="body2" sx={{ color: "lightgrey" }}>
                             Have ideas? Share them on our <Link underline="none" href="https://trueshuffle.featurebase.app/" target="_blank" rel="noopener noreferrer" sx={{ color: "#1DB954", "&:hover": { textDecoration: "underline" } }}>feedback board</Link>.

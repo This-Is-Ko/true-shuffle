@@ -1,7 +1,7 @@
 export const HowToShuffleEntry = [
-    "Select a playlist below. If the playlist you want isn't appearing, ensure it is either a playlist you created or are following",
-    "A new playlist will be created named \"[Shuffled]\" and your playlist name e.g. [Shuffled] My Playlist",
-    "If you have already shuffled the playlist before, the existing shuffled one will be replaced (Prevents build up of playlists in your account)",
+    "Select a playlist below. Only playlists you created or are following will appear",
+    "Classic: If an existing shuffled playlist exists, it will be removed. A new playlist will be created named \"[Shuffled]\" and your playlist name e.g. [Shuffled] My Playlist",
+    "Clutter free: If an existing shuffled playlist exists, it will be reused. Otherwise a new playlist will be created like classic mode. Slighly slower due to extra processing",
     "Enjoy!"
 ]
 
