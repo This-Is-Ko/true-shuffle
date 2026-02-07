@@ -34,16 +34,16 @@ export const fetchRecentShuffles = () => {
  * @param {Object} playlistData - The playlist data to shuffle
  * @param {string} playlistData.playlist_id - The ID of the playlist to shuffle
  * @param {string} playlistData.playlist_name - The name of the playlist
+ * @param {string} playlistData.shuffle_type - The shuffle type (e.g., "REUSE_EXISTING_PLAYLIST", "CLASSIC_NEW_PLAYLIST")
  * @returns {Promise} Promise that resolves with shuffle task ID
  */
 export const queueShufflePlaylist = (playlistData) => {
     return apiClient.post(
         `${API_BASE_PATH}/api/playlist/shuffle`,
         {
-            is_use_liked_tracks: "false",
             playlist_id: playlistData.playlist_id,
             playlist_name: playlistData.playlist_name,
-            is_make_new_playlist: "false"
+            shuffle_type: playlistData.shuffle_type
         },
         {
             headers: { "Content-Type": "application/json" },

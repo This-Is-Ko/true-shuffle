@@ -1,5 +1,5 @@
-import React from "react";
-import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button, TextField, InputAdornment } from "@mui/material";
+import React, { useState } from "react";
+import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button, TextField, InputAdornment, Divider, RadioGroup, FormControlLabel, Radio, Tooltip } from "@mui/material";
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
@@ -47,6 +47,7 @@ const PlaylistList = ({
     onHowToClick, 
     onRefreshData 
 }) => {
+    const [shuffleMode, setShuffleMode] = useState('REUSE_EXISTING_PLAYLIST');
     // Determine if shuffle operation is currently in progress
     const isShuffling = selectedPlaylist !== null && 
                        shuffleState !== "" && 
@@ -65,6 +66,21 @@ const PlaylistList = ({
     
     // Center content when a playlist is selected (for better UX during shuffle)
     const shouldCenterContent = selectedPlaylist !== null;
+
+    /**
+     * Wrapper function to attach the selected shuffleMode to the playlist before calling setSelectedPlaylist.
+     * Ensures the shuffle type (Classic or Clean) is available when the shuffle operation is initiated.
+     * 
+     * @param {Object} playlist - The playlist object to select
+     */
+    const handleSelectPlaylist = (playlist) => {
+        if (setSelectedPlaylist && playlist) {
+            setSelectedPlaylist({
+                ...playlist,
+                shuffleMode: shuffleMode
+            });
+        }
+    };
 
     /**
      * Gets the appropriate title based on the current shuffle state.
@@ -282,6 +298,39 @@ const PlaylistList = ({
                             >
                                 {getPlaylistCountText()}
                             </Typography>
+                            <Divider sx={{ bgcolor: '#333', width: '100%' }} />
+                            <Box sx={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                width: '100%'
+                            }}>
+                                <RadioGroup
+                                    row
+                                    value={shuffleMode}
+                                    onChange={(e) => setShuffleMode(e.target.value)}
+                                >
+                                    <FormControlLabel
+                                        value="REUSE_EXISTING_PLAYLIST"
+                                        control={<Radio sx={{
+                                            color: '#b3b3b3',
+                                            '&.Mui-checked': {
+                                                color: '#1DB954'
+                                            }
+                                        }} />}
+                                        label={<Typography sx={{ color: '#b3b3b3', fontSize: '0.875rem' }}>Clutter free</Typography>}
+                                    />
+                                    <FormControlLabel
+                                        value="CLASSIC_NEW_PLAYLIST"
+                                        control={<Radio sx={{
+                                            color: '#b3b3b3',
+                                            '&.Mui-checked': {
+                                                color: '#1DB954'
+                                            }
+                                        }} />}
+                                        label={<Typography sx={{ color: '#b3b3b3', fontSize: '0.875rem' }}>Classic</Typography>}
+                                    />
+                                </RadioGroup>
+                            </Box>
                         </Box>
                     )}
                 </Box>
@@ -293,7 +342,7 @@ const PlaylistList = ({
                 <Box
                     sx={{
                         width: "100%",
-                        paddingTop: { xs: "5px", sm: "10px" },
+                        paddingTop: { xs: "5px", sm: "10px", md: "0px" },
                         paddingBottom: { xs: "10px", sm: "20px" },
                         // Grid layout for all playlists, flex for selected playlist
                         display: (showAllPlaylists || loading) ? "grid" : "flex",
@@ -328,7 +377,7 @@ const PlaylistList = ({
                                 key={playlist.id}
                                 playlist={playlist}
                                 selectPlaylist={selectPlaylist}
-                                setSelectedPlaylist={setSelectedPlaylist}
+                                setSelectedPlaylist={handleSelectPlaylist}
                                 displayState={PLAYLIST_ITEM_DISPLAY_STATES.SELECTION}
                             />
                         ))
@@ -352,7 +401,7 @@ const PlaylistList = ({
                                     }
                                 />
                             </Box>
-                            
+
                             {/* Error message or shuffle status - appears underneath the selected playlist item */}
                             {(isInitializing || isShuffling || (shuffleError && typeof shuffleError === 'object')) && (
                                 <Box sx={{ 
@@ -383,7 +432,8 @@ const PlaylistList = ({
                                                         maxWidth: "300px",
                                                         '&:hover': {
                                                             bgcolor: "#1ed760"
-                                                        }
+                                                        },
+                                                        marginBottom: 1,
                                                     }}
                                                     startIcon={<AudiotrackIcon />}
                                                 >

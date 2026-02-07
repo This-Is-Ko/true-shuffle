@@ -162,7 +162,8 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
         // Queue shuffle operation
         queueShufflePlaylist({
             playlist_id: selectedPlaylist.id,
-            playlist_name: selectedPlaylist.name
+            playlist_name: selectedPlaylist.name,
+            shuffle_type: selectedPlaylist.shuffleMode
         })
             .then(result => {
                 setShuffleTaskId(result.data.shuffle_task_id);
