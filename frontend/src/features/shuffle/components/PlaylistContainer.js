@@ -216,9 +216,6 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                 // Playlist URI may be available early in the shuffle process
                 if (stateData?.progress?.playlist_uri) {
                     setShuffledPlaylistUri(stateData.progress.playlist_uri);
-                    // Reset polling state if we have the playlist URI (indicates progress and allows user to access playlist)
-                    setPollingAttemptCount(0);
-                    setPollingWaitTimeMs(POLLING_CONFIG.INITIAL_WAIT_TIME_MS);
                 }
                 handlePollingRetry(MAX_RETRY_ATTEMPTS.PROGRESS_STATE, ERROR_MESSAGES.SHUFFLE_STATE_FAILED);
                 break;
