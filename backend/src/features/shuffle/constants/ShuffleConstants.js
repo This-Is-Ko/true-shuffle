@@ -4,7 +4,7 @@
 
 // Maximum retry attempts for different shuffle states
 export const MAX_RETRY_ATTEMPTS = {
-    PROGRESS_STATE: 40,
+    PROGRESS_STATE: 50,
     PENDING_STATE: 30,
     ERROR_STATE: 5,
     FALLBACK_STATE: 30
@@ -13,8 +13,8 @@ export const MAX_RETRY_ATTEMPTS = {
 // Polling configuration
 export const POLLING_CONFIG = {
     INITIAL_WAIT_TIME_MS: 1000,
-    MAX_WAIT_TIME_MS: 5000,
-    BACKOFF_INCREMENT_MS: 500
+    MAX_WAIT_TIME_MS: 15000,
+    BACKOFF_INCREMENT_MS: 50
 };
 
 // Error messages
