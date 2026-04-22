@@ -35,7 +35,6 @@ export const getAccessTokenCall = (code, setIsAuth, navigate, setLoadingAccessTo
         },
         { operationType: OPERATION_TYPES.GENERAL }
       ).then(result => {
-        console.log(result)
         setIsAuth(true);
         setLoadingAccessToken(false)
         setShowSuccessMessage(true)
