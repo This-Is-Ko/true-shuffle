@@ -53,7 +53,7 @@ const faqs = [
     },
     {
         "question": "What user data is stored?",
-        "answer": "The only user data that is stored is the Spotify user ID, access token to retrieve Liked Songs, and counters for shuffles. Cookies are used to maintain logged-in sessions. No passwords are stored and all authentication is handled by Spotify.",
+        "answer": "The only user data that is stored is the Spotify user ID, access token to interact with Spotify API and shuffling history for display your statistic. Cookies are used to maintain logged-in sessions. No passwords are stored and all authentication is handled by Spotify.",
         "id": "q10"
     },
     {
