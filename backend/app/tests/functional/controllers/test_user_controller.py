@@ -843,14 +843,11 @@ def test_get_recent_shuffles_success(mocker, client, env_patch):  # noqa: F811
 
     mocker.patch.object(
         database,
-        "find_shuffle_counter",
-        return_value={
-            "user_id": "user_id",
-            "recent_shuffles": [
-                {"playlist_id": "playlist1", "playlist_name": "Playlist 1"},
-                {"playlist_id": "playlist2", "playlist_name": "Playlist 2"}
-            ]
-        }
+        "get_user_recent_shuffle_events",
+        return_value=[
+            {"playlist_id": "playlist1", "playlist_name": "Playlist 1", "shuffled_at": datetime.now(timezone.utc)},
+            {"playlist_id": "playlist2", "playlist_name": "Playlist 2", "shuffled_at": datetime.now(timezone.utc)}
+        ]
     )
 
     # Init cookies
@@ -866,6 +863,7 @@ def test_get_recent_shuffles_success(mocker, client, env_patch):  # noqa: F811
     assert response.status_code == 200
     assert "recent_shuffles" in response_json
     assert len(response_json["recent_shuffles"]) == 2
+    assert isinstance(response_json["recent_shuffles"][0]["shuffled_at"], str)
 
 
 def test_get_recent_shuffles_empty_success(mocker, client, env_patch):  # noqa: F811
@@ -894,8 +892,8 @@ def test_get_recent_shuffles_empty_success(mocker, client, env_patch):  # noqa: 
 
     mocker.patch.object(
         database,
-        "find_shuffle_counter",
-        return_value=None
+        "get_user_recent_shuffle_events",
+        return_value=[]
     )
 
     # Init cookies

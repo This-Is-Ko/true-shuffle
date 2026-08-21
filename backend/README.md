@@ -16,7 +16,7 @@ The following env variables are required to run. Add them into a .env file
     SPOTIFY_CLIENT_SECRET # retrieve from Spotify Dev Console
     SPOTIFY_REDIRECT_URI # frontend uri
     COOKIE_DOMAIN # cookie domain value (Leave empty for localhost)
-    CORS_ORIGIN # cors origin value (http://127.0.0.1:3000)
+    CORS_ORIGIN # cors origin value(s), comma-separated (e.g. http://localhost:3000,http://127.0.0.1:3000)
     MONGO_URI # database uri
     ENV=local
     CELERY_BROKER_URL # celery url
@@ -45,7 +45,7 @@ Example config
         SPOTIFY_CLIENT_ID=abcd
         SPOTIFY_CLIENT_SECRET=******
         SPOTIFY_REDIRECT_URI=http://127.0.0.1:3000
-        CORS_ORIGIN=http://127.0.0.1:3000
+        CORS_ORIGIN=http://localhost:3000,http://127.0.0.1:3000
         CRON_API_KEY=******
         CONFIG_TYPE=config.DevelopmentConfig
         MONGO_URI=mongodb+srv://username:password@cluster0.abcd.mongodb.net
@@ -64,6 +64,10 @@ Start redis instance (e.g. docker) then run celery worker:
 
     cd app
     celery -A make_celery worker --pool=solo --loglevel INFO
+
+Alternatively run all via docker locally
+
+    docker compose up -d --build
 
 ## Deployment
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List
 from flask import current_app
 import spotipy
@@ -12,6 +12,32 @@ PLAYLIST_MAX_TRACKS = 10900
 CELERY_PROGRESS_STATE_CLEAN_UP_EXISTING_PLAYLIST_TEMPLATE = "Cleaning up existing tracks {}/{} ..."
 CELERY_PROGRESS_STATE_CREATE_PLAYLIST_TEMPLATE = "Adding {}/{} tracks..."
 CELERY_PROGRESS_STATE_CREATE_PLAYLIST_LAST_TEMPLATE = "Added {}/{} tracks"
+
+
+def to_iso_utc(dt):
+    """
+    Convert a datetime to an ISO 8601 UTC string with a Z suffix.
+    Accepts timezone-aware or naive datetimes (naive is treated as UTC).
+    """
+    if dt is None:
+        return None
+    if isinstance(dt, str):
+        return dt
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
+
+
+def serialize_shuffle_events(events):
+    """
+    Serialize shuffle event documents so dates are ISO 8601 strings.
+    """
+    serialized = []
+    for event in events:
+        event_copy = dict(event)
+        event_copy["shuffled_at"] = to_iso_utc(event_copy.get("shuffled_at"))
+        serialized.append(event_copy)
+    return serialized
 
 
 def update_task_progress(task, state, meta, correlation_id=None):
