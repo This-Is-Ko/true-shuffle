@@ -11,6 +11,7 @@ import AboutPage from "./pages/AboutPage";
 import FAQPage from "./pages/FAQPage";
 import Header from "./components/Header";
 import AnalysisPage from './pages/AnalysisPage';
+import AdminPage from "./pages/AdminPage";
 
 function App() {
     const [loginUri] = useState(process.env.REACT_APP_SPOTIFY_AUTH_URI);
@@ -55,6 +56,7 @@ function App() {
                 <Route path="/shuffle/*" element={<ShufflePages isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />
                 <Route path="/share" element={<ShareLikedTracksPage isAuth={isAuth} loginUri={loginUri}/>} />
                 <Route path="/analysis" element={<AnalysisPage isAuth={isAuth} loginUri={loginUri}/>} />
+                <Route path="/admin" element={<AdminPage loginUri={loginUri} />} />
                 <Route path="/faq" element={<FAQPage />} />
                 <Route path="/about" element={<AboutPage />} />
             </Routes>

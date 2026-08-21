@@ -149,7 +149,7 @@ const AboutPage = () => {
                         Privacy, Data, and Credits
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
-                        This application stores the Spotify user ID, access token to retrieve Liked Songs. The count of shuffled tracks and playlists are also stored for each user so users can track how many times they used True Shuffle. Cookies are used to keep you logged in and able to interact with the site. No passwords are stored and all authentication is handled by Spotify.
+                        This application stores the Spotify user ID and access token to interact with Spotify API. The count of shuffled tracks and playlists are also stored for each user so users can track how many times they used True Shuffle. Cookies are used to keep you logged in and able to interact with the site. No passwords are stored and all authentication is handled by Spotify.
                     </Typography>
                     <Typography variant='body1' component="div" sx={{ paddingTop: "10px", color: "white", textAlign: 'left' }}>
                         Spotify brand assets are used in accordance with Spotify’s branding guidelines.
