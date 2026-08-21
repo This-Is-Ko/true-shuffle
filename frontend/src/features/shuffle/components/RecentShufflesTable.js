@@ -8,7 +8,7 @@ const RecentShufflesTable = ({ recentShuffles }) => {
 
   // Sort shuffles by most recent first
   const sortedShuffles = [...recentShuffles].sort(
-    (a, b) => new Date(b.shuffled_at["$date"]) - new Date(a.shuffled_at["$date"])
+    (a, b) => new Date(b.shuffled_at) - new Date(a.shuffled_at)
   );
 
   // Get playlist image URL if available
@@ -18,9 +18,9 @@ const RecentShufflesTable = ({ recentShuffles }) => {
 
   // Format date with relative time up to last week, then day/month/year
   const formatDate = (timestamp) => {
-    if (!timestamp || !timestamp["$date"]) return "";
+    if (!timestamp) return "";
 
-    const dateObj = new Date(timestamp["$date"]);
+    const dateObj = new Date(timestamp);
     const now = new Date();
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const shuffleDate = new Date(dateObj.getFullYear(), dateObj.getMonth(), dateObj.getDate());
