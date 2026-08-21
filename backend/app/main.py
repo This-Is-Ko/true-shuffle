@@ -38,7 +38,14 @@ def create_app():
     app.logger.info("Config set up for " + CONFIG_TYPE)
 
     # Enable CORS
-    CORS(app, supports_credentials=True, origins=[app.config["CORS_ORIGIN"]])
+    # CORS_ORIGIN supports a comma-separated list of origins, e.g.
+    # 'http://localhost:3000,http://127.0.0.1:3000'
+    cors_origins = [
+        origin.strip()
+        for origin in app.config["CORS_ORIGIN"].split(",")
+        if origin.strip()
+    ]
+    CORS(app, supports_credentials=True, origins=cors_origins)
 
     # Add correlation ID handling
     @app.before_request
@@ -88,6 +95,7 @@ def register_all_blueprints(app):
     from controllers.trackers_controller import trackers_controller
     from controllers.user_controller import user_controller
     from controllers.session_controller import session_controller
+    from controllers.admin_controller import admin_controller
 
     app.register_blueprint(spotify_auth_controller)
     app.register_blueprint(playlist_controller)
@@ -95,6 +103,7 @@ def register_all_blueprints(app):
     app.register_blueprint(trackers_controller)
     app.register_blueprint(user_controller)
     app.register_blueprint(session_controller)
+    app.register_blueprint(admin_controller)
 
 
 def celery_init_app(app: Flask) -> Celery:

@@ -77,6 +77,7 @@ def test_shuffle_playlist_success(mocker, env_patch):
             }
         }
     )
+    mocker.patch.object(database, "insert_shuffle_event", return_value=None)
 
     response = shuffle_playlist(spotify_auth_sample, "playlist_id", "playlist_name")
 
@@ -107,6 +108,7 @@ def test_shuffle_playlist_shuffled_playlist_exists_success(mocker, env_patch):
             }
         }
     )
+    mocker.patch.object(database, "insert_shuffle_event", return_value=None)
 
     response = shuffle_playlist(spotify_auth_sample, "playlist_id", "playlist1")
 
@@ -137,6 +139,7 @@ def test_shuffle_playlist_user_not_found_success(mocker, env_patch):
           }
       }
     )
+    mocker.patch.object(database, "insert_shuffle_event", return_value=None)
 
     response = shuffle_playlist(spotify_auth_sample, "playlist_id", "playlist_name")
 
@@ -149,10 +152,55 @@ def test_shuffle_playlist_user_not_found_success(mocker, env_patch):
 def test_shuffle_playlist_playlist_tracks_empty_failure(mocker, env_patch):
     # Prepare mocks
     mocker.patch("utils.util.get_tracks_from_playlist", return_value=None)
+    mocker.patch.object(database, "insert_shuffle_event", return_value=None)
 
     response = shuffle_playlist(spotify_auth_sample, "playlist_id", "playlist_name")
 
     assert response["error"] == "No tracks found for playlist playlist_id"
+
+
+def test_shuffle_playlist_records_success_event(mocker, env_patch):
+    # Prepare mocks
+    mocker.patch("utils.util.update_task_progress", return_value=None)
+    mocker.patch("utils.tracker_utils.update_user_trackers", return_value=None)
+    mocker.patch("utils.tracker_utils.update_overall_trackers", return_value=None)
+    mocker.patch("tasks.playlist_tasks.update_track_statistics.delay", return_value=None)
+    mocker.patch.object(Spotify, "current_user_saved_tracks", return_value=mock_tracks_response)
+    mocker.patch.object(Spotify, "playlist_items", side_effect=[mock_tracks_response, empty_all_user_playlists_response_sample])
+    mocker.patch.object(Spotify, "current_user_playlists", return_value=all_user_playlists_response_sample)
+    mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+    mocker.patch.object(Spotify, "user_playlist_create", return_value=create_user_playlist_response)
+    mocker.patch.object(Spotify, "playlist_add_items", return_value=playlist_add_items_response)
+    mocker.patch.object(database, "find_user",
+        return_value={
+            "user_id": "user_id",
+            "user_attributes": {
+                "trackers_enabled": True
+            }
+        }
+    )
+    mock_insert = mocker.patch.object(database, "insert_shuffle_event", return_value=None)
+
+    shuffle_playlist(spotify_auth_sample, "playlist_id", "playlist_name")
+
+    mock_insert.assert_called_once()
+    recorded = mock_insert.call_args[0][0]
+    assert recorded["status"] == "success"
+    assert recorded["tracks_shuffled"] == 2
+    assert recorded["user_id"] == "user_id"
+
+
+def test_shuffle_playlist_records_failure_event(mocker, env_patch):
+    # Prepare mocks
+    mocker.patch("utils.util.get_tracks_from_playlist", return_value=None)
+    mock_insert = mocker.patch.object(database, "insert_shuffle_event", return_value=None)
+
+    shuffle_playlist(spotify_auth_sample, "playlist_id", "playlist_name")
+
+    mock_insert.assert_called_once()
+    recorded = mock_insert.call_args[0][0]
+    assert recorded["status"] == "failed"
+    assert recorded["error_message"] == "No tracks found for playlist playlist_id"
 
 
 

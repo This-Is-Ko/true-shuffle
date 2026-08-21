@@ -1,5 +1,6 @@
+import sys
 import time
-from datetime import date
+from datetime import date, datetime, timezone
 from typing import List
 from celery import shared_task
 import random
@@ -27,90 +28,129 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
         if not hasattr(self.request, 'meta'):
             self.request.meta = {}
         self.request.meta['correlation_id'] = correlation_id
-    
-    spotify_client = create_spotify_client(current_app, spotify_auth_dict)
 
-    # Store start time to calculate duration
     start_time = time.time()
-
-    # Fetch playlist details to get image URL
-    playlist_image_url = None
-    if playlist_id == LIKED_TRACKS_PLAYLIST_ID:
-        # Use default liked songs image URL
-        playlist_image_url = "https://misc.scdn.co/liked-songs/liked-songs-300.png"
-    else:
-        try:
-            playlist_details = spotify_client.playlist(playlist_id)
-            if playlist_details and "images" in playlist_details and len(playlist_details["images"]) > 0:
-                playlist_image_url = playlist_details["images"][0].get("url")
-        except Exception as e:
-            logWarning(f"Could not fetch playlist image for {playlist_id}: {str(e)}")
-
-    # Grab all tracks from playlist
-    all_tracks = util.get_tracks_from_playlist(self, spotify_client, playlist_id)
-    if not all_tracks:
-        return {"error": "No tracks found for playlist " + playlist_id}
-
-    # Check if user exists
-    user = database.find_user(spotify_client.me()["id"])
-    if user is None:
-        return {"error": "No user found"}
-
-    util.update_task_progress(
-        self,
-        state='PROGRESS',
-        meta={'progress': {'state': "Shuffling " + str(len(all_tracks)) + " tracks..."}},
-        correlation_id=correlation_id
-    )
-    random.shuffle(all_tracks)
-
-    # Check if shuffled playlist exists
-    user_playlists = spotify_client.current_user_playlists()
-    shuffled_playlist_id = None
-    for playlist in user_playlists["items"]:
-        if playlist["name"] == (SHUFFLED_PLAYLIST_PREFIX + playlist_name):
-            shuffled_playlist_id = playlist["id"]
-            shuffled_playlist_uri = playlist["external_urls"]["spotify"]
-            break
-
-    all_tracks_uri = [track['uri'] for track in all_tracks]
-
+    celery_task_id = self.request.id if self.request else None
+    user_id = spotify_auth_dict.get("user_id") if isinstance(spotify_auth_dict, dict) else None
     response = None
-    if shuffle_type == Shuffle_Type.REUSE_EXISTING_PLAYLIST.value and shuffled_playlist_id:
-        # Reuse existing shuffled playlist if selected and exists
-        response = util.reuse_existing_playlist_with_updated_tracks(
-            self,
-            spotify_client,
-            shuffled_playlist_id,
-            shuffled_playlist_uri,
-            all_tracks_uri
-        )
-    else:
-        # Classic: create new playlist
-        # Clean up existing shuffled playlist
-        if shuffled_playlist_id != None:
-            spotify_client.current_user_unfollow_playlist(shuffled_playlist_id)
+    error_message = None
+    tracks_shuffled = 0
+    playlist_image_url = None
 
-        response = util.create_new_playlist_with_tracks(
-            self,
-            spotify_client,
-            SHUFFLED_PLAYLIST_PREFIX + playlist_name,
-            False,
-            "Shuffled by True Shuffle",
-            all_tracks_uri
-        )
+    try:
+        spotify_client = create_spotify_client(current_app, spotify_auth_dict)
 
-    if response is not None and response["status"] == "success":
-        # Calculate duration of process
+        # Fetch playlist details to get image URL
+        if playlist_id == LIKED_TRACKS_PLAYLIST_ID:
+            # Use default liked songs image URL
+            playlist_image_url = "https://misc.scdn.co/liked-songs/liked-songs-300.png"
+        else:
+            try:
+                playlist_details = spotify_client.playlist(playlist_id)
+                if playlist_details and "images" in playlist_details and len(playlist_details["images"]) > 0:
+                    playlist_image_url = playlist_details["images"][0].get("url")
+            except Exception as e:
+                logWarning(f"Could not fetch playlist image for {playlist_id}: {str(e)}")
+
+        # Grab all tracks from playlist
+        all_tracks = util.get_tracks_from_playlist(self, spotify_client, playlist_id)
+        if not all_tracks:
+            error_message = "No tracks found for playlist " + playlist_id
+            response = {"error": error_message}
+            return response
+
+        tracks_shuffled = len(all_tracks)
+
+        # Check if user exists
+        me = spotify_client.me()
+        user_id = me["id"] if me and me.get("id") else user_id
+        user = database.find_user(user_id) if user_id else None
+        if user is None:
+            error_message = "No user found"
+            response = {"error": error_message}
+            return response
+
+        util.update_task_progress(
+            self,
+            state='PROGRESS',
+            meta={'progress': {'state': "Shuffling " + str(len(all_tracks)) + " tracks..."}},
+            correlation_id=correlation_id
+        )
+        random.shuffle(all_tracks)
+
+        # Check if shuffled playlist exists
+        user_playlists = spotify_client.current_user_playlists()
+        shuffled_playlist_id = None
+        shuffled_playlist_uri = None
+        for playlist in user_playlists["items"]:
+            if playlist["name"] == (SHUFFLED_PLAYLIST_PREFIX + playlist_name):
+                shuffled_playlist_id = playlist["id"]
+                shuffled_playlist_uri = playlist["external_urls"]["spotify"]
+                break
+
+        all_tracks_uri = [track['uri'] for track in all_tracks]
+
+        if shuffle_type == Shuffle_Type.REUSE_EXISTING_PLAYLIST.value and shuffled_playlist_id:
+            # Reuse existing shuffled playlist if selected and exists
+            response = util.reuse_existing_playlist_with_updated_tracks(
+                self,
+                spotify_client,
+                shuffled_playlist_id,
+                shuffled_playlist_uri,
+                all_tracks_uri
+            )
+        else:
+            # Classic: create new playlist
+            # Clean up existing shuffled playlist
+            if shuffled_playlist_id is not None:
+                spotify_client.current_user_unfollow_playlist(shuffled_playlist_id)
+
+            response = util.create_new_playlist_with_tracks(
+                self,
+                spotify_client,
+                SHUFFLED_PLAYLIST_PREFIX + playlist_name,
+                False,
+                "Shuffled by True Shuffle",
+                all_tracks_uri
+            )
+
+        if response is not None and response["status"] == "success":
+            # Increment user counters for playlists and tracks
+            tracker_utils.update_user_trackers(user, tracks_shuffled)
+
+            # Increment overall counters for playlists and tracks
+            tracker_utils.update_overall_trackers(tracks_shuffled)
+
+        return response
+    finally:
         duration_seconds = int(time.time() - start_time)
 
-        # Increment user counters for playlists and tracks
-        tracker_utils.update_user_trackers(self, user, playlist_id, playlist_name, len(all_tracks), duration_seconds, playlist_image_url)
+        # Detect an in-flight exception so failure events are recorded before it propagates
+        active_exception = sys.exc_info()[1]
+        if active_exception is not None:
+            status = "failed"
+            if not error_message:
+                error_message = str(active_exception)
+        else:
+            status = "success" if (response is not None and response.get("status") == "success") else "failed"
+            if not error_message and isinstance(response, dict):
+                error_message = response.get("error")
 
-        # Increment overall counters for playlists and tracks
-        tracker_utils.update_overall_trackers(len(all_tracks))
-
-    return response
+        try:
+            database.insert_shuffle_event({
+                "user_id": user_id,
+                "playlist_id": playlist_id,
+                "playlist_name": playlist_name,
+                "tracks_shuffled": tracks_shuffled,
+                "duration_seconds": duration_seconds,
+                "status": status,
+                "error_message": error_message,
+                "celery_task_id": celery_task_id,
+                "playlist_image_url": playlist_image_url,
+                "shuffled_at": datetime.now(timezone.utc)
+            })
+        except Exception as e:
+            current_app.logger.error("Unable to record shuffle event: " + str(e))
 
 
 @shared_task(bind=True, ignore_result=False, expires=60)

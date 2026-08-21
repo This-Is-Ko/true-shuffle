@@ -32,8 +32,11 @@ class Config:
         'CRON_API_KEY', default=None)
 
     # CORS
+    # Comma-separated list of allowed origins, e.g.
+    # 'http://localhost:3000,http://127.0.0.1:3000'
     CORS_ORIGIN = os.getenv(
-        'CORS_ORIGIN', default='http://127.0.0.1:3000')
+        'CORS_ORIGIN',
+        default='http://localhost:3000,http://127.0.0.1:3000')
 
     # Database
     MONGO_URI = os.getenv(

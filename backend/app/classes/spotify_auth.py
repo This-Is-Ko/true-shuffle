@@ -9,7 +9,8 @@ class SpotifyAuth:
             refresh_token=None,
             expires_at=None,
             scope=None,
-            session_expiry=None
+            session_expiry=None,
+            is_admin=None
             ):
         self.user_id = user_id
         self.access_token = access_token
@@ -18,6 +19,7 @@ class SpotifyAuth:
         self.scope = scope
         self.token_type = "Bearer"
         self.session_expiry = session_expiry
+        self.is_admin = is_admin
 
     @classmethod
     def from_session_entry(cls, session_entry):
@@ -27,7 +29,8 @@ class SpotifyAuth:
             refresh_token=session_entry["refresh_token"],
             expires_at=session_entry["expires_at"],
             scope=session_entry["scope"],
-            session_expiry=None
+            session_expiry=None,
+            is_admin=session_entry.get("is_admin", False)
         )
 
     def is_expired(self):
@@ -50,4 +53,6 @@ class SpotifyAuth:
             data["token_type"] = self.token_type
         if self.session_expiry is not None:
             data["session_expiry"] = self.session_expiry
+        if self.is_admin is not None:
+            data["is_admin"] = self.is_admin
         return data

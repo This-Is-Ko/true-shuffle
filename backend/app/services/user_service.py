@@ -9,7 +9,7 @@ from flask import current_app, g
 from exceptions.custom_exceptions import SpotifyAuthInvalid
 from services.spotify_client import create_auth_manager_with_token
 from tasks.task_state import get_celery_task_state
-from utils.constants import RECENT_SHUFFLES_KEY
+from utils.util import serialize_shuffle_events
 
 LIKED_TRACKS_PLAYLIST_ID = "likedTracks"
 
@@ -146,12 +146,7 @@ def get_recent_shuffles(spotify_auth: SpotifyAuth):
     if user is None:
         raise Exception("User not found in Spotify")
 
-    user_shuffle_counter_entry = database.find_shuffle_counter(user["id"])
-
-    if user_shuffle_counter_entry is not None and user_shuffle_counter_entry[RECENT_SHUFFLES_KEY] is not None:
-        recent_shuffles = user_shuffle_counter_entry[RECENT_SHUFFLES_KEY]
-        return {
-          "recent_shuffles": json.loads(json_util.dumps(recent_shuffles))
-        }
-    else:
-        return {"recent_shuffles": []}
+    recent_shuffles = database.get_user_recent_shuffle_events(user["id"], limit=10)
+    return {
+        "recent_shuffles": serialize_shuffle_events(recent_shuffles)
+    }

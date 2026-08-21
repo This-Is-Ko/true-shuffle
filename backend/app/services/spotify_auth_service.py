@@ -42,6 +42,7 @@ def get_spotify_tokens(code):
         #    scope
         try:
             spotify_auth.user_id = save_user_result["user"]["user_id"]
+            spotify_auth.is_admin = save_user_result["user"].get("is_admin", False)
             # Generate and hash session id
             session_id = generate_session_id()
             hashed_session_id = generate_hashed_session_id(session_id)

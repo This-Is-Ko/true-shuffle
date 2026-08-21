@@ -1,9 +1,11 @@
+from datetime import datetime, timezone
+
 from flask_pymongo import PyMongo
 from main import mongo
 import pymongo
 from pymongo.collection import ReturnDocument
 from bson.objectid import ObjectId
-from utils.constants import USER_ID_KEY
+from utils.constants import USER_ID_KEY, IS_ADMIN_KEY, CREATED_AT_KEY
 
 
 # Liked tracks history functions
@@ -25,22 +27,6 @@ def get_all_user_liked_tracks_history_data(user_id):
         sort=[('_id', pymongo.ASCENDING)]
     )
 
-
-# Shuffled history functions
-# Schema
-# {
-#    USER_ID_KEY: user_id,
-#    "count": current_count,
-#    "difference": difference,
-# }
-
-
-def get_all_user_shuffle_history_data(user_id):
-    return mongo.db.shuffle_history.find(
-        {USER_ID_KEY: user_id},
-        {USER_ID_KEY: 0, "_id": 0},
-        sort=[('_id', pymongo.DESCENDING)]
-    )
 
 # Shuffled history total shuffle counters functions
 
@@ -129,7 +115,13 @@ def get_top_artists(limit: int):
 def find_and_update_user(user_id, user_entry):
     return mongo.db.users.find_one_and_update(
         {USER_ID_KEY: user_id},
-        {"$set": user_entry},
+        {
+            "$set": user_entry,
+            "$setOnInsert": {
+                CREATED_AT_KEY: datetime.now(timezone.utc),
+                IS_ADMIN_KEY: False,
+            },
+        },
         upsert=True,
         return_document=ReturnDocument.AFTER
     )
@@ -172,3 +164,116 @@ def delete_expired_session(current_datetime):
     return mongo.db.sessions.delete_many(
         {"session_expiry": {"$lt": current_datetime}},
     )
+
+
+# User/session count functions
+
+def count_users():
+    return mongo.db.users.count_documents({})
+
+
+def count_active_sessions(current_datetime):
+    return mongo.db.sessions.count_documents(
+        {"session_expiry": {"$gt": current_datetime}}
+    )
+
+
+# Shuffle events functions
+
+def insert_shuffle_event(shuffle_event):
+    return mongo.db.shuffle_events.insert_one(shuffle_event)
+
+
+def get_recent_shuffle_events(limit):
+    return list(mongo.db.shuffle_events.find(
+        {},
+        {"_id": 0},
+    ).sort("shuffled_at", pymongo.DESCENDING).limit(limit))
+
+
+def get_recent_shuffle_failures(limit):
+    return list(mongo.db.shuffle_events.find(
+        {"status": "failed"},
+        {"_id": 0},
+    ).sort("shuffled_at", pymongo.DESCENDING).limit(limit))
+
+
+def get_user_recent_shuffle_events(user_id, limit):
+    return list(mongo.db.shuffle_events.find(
+        {"user_id": user_id},
+        {"_id": 0},
+    ).sort("shuffled_at", pymongo.DESCENDING).limit(limit))
+
+
+def count_shuffle_events():
+    return mongo.db.shuffle_events.count_documents({})
+
+
+def count_shuffle_failures():
+    return mongo.db.shuffle_events.count_documents({"status": "failed"})
+
+
+def get_shuffle_averages():
+    result = list(mongo.db.shuffle_events.aggregate([
+        {"$match": {"status": "success"}},
+        {
+            "$group": {
+                "_id": None,
+                "avg_tracks_per_shuffle": {"$avg": "$tracks_shuffled"},
+                "avg_shuffle_duration_seconds": {"$avg": "$duration_seconds"},
+            }
+        },
+    ]))
+    if result:
+        return {
+            "avg_tracks_per_shuffle": result[0].get("avg_tracks_per_shuffle", 0),
+            "avg_shuffle_duration_seconds": result[0].get("avg_shuffle_duration_seconds", 0),
+        }
+    return {"avg_tracks_per_shuffle": 0, "avg_shuffle_duration_seconds": 0}
+
+
+def get_monthly_active_users():
+    pipeline = [
+        {
+            "$group": {
+                "_id": {
+                    "month": {"$dateToString": {"format": "%Y-%m", "date": "$shuffled_at"}},
+                    "user_id": "$user_id",
+                }
+            }
+        },
+        {
+            "$group": {
+                "_id": "$_id.month",
+                "active_users": {"$sum": 1},
+            }
+        },
+        {"$sort": {"_id": 1}},
+        {"$project": {"_id": 0, "month": "$_id", "active_users": 1}},
+    ]
+    return list(mongo.db.shuffle_events.aggregate(pipeline))
+
+
+def get_shuffle_failure_rate(group_by):
+    format_map = {"day": "%Y-%m-%d", "week": "%G-%V", "month": "%Y-%m"}
+    date_format = format_map.get(group_by, "%Y-%m-%d")
+    pipeline = [
+        {
+            "$group": {
+                "_id": {"$dateToString": {"format": date_format, "date": "$shuffled_at"}},
+                "total": {"$sum": 1},
+                "failures": {"$sum": {"$cond": [{"$eq": ["$status", "failed"]}, 1, 0]}},
+            }
+        },
+        {"$sort": {"_id": 1}},
+        {
+            "$project": {
+                "_id": 0,
+                "period": "$_id",
+                "total": 1,
+                "failures": 1,
+                "rate": {"$cond": [{"$eq": ["$total", 0]}, 0, {"$divide": ["$failures", "$total"]}]},
+            }
+        },
+    ]
+    return list(mongo.db.shuffle_events.aggregate(pipeline))
