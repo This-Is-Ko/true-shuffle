@@ -30,6 +30,18 @@ export const fetchMonthlyActiveUsers = () => {
 };
 
 /**
+ * Fetches the number of users created per month for the last `months` months.
+ * @param {number} months - Number of months to include (default 6)
+ * @returns {Promise} Promise that resolves with created users per month
+ */
+export const fetchCreatedUsers = (months = 6) => {
+    return apiClient.get(
+        `${API_BASE_PATH}/api/admin/users/created?months=${months}`,
+        { operationType: OPERATION_TYPES.GENERAL }
+    );
+};
+
+/**
  * Fetches the most recent shuffle events across all users.
  * @param {number} limit - Max number of events to fetch
  * @returns {Promise} Promise that resolves with recent shuffle events
