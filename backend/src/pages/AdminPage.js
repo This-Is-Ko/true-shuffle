@@ -7,6 +7,7 @@ import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
 import {
     fetchAdminOverview,
     fetchMonthlyActiveUsers,
+    fetchCreatedUsers,
     fetchRecentShuffles,
     fetchRecentFailures,
     fetchFailureRate,
@@ -14,9 +15,13 @@ import {
 } from "../features/admin/services/AdminApiService";
 import StatCard from "../features/admin/components/StatCard";
 import MonthlyActiveUsersChart from "../features/admin/components/MonthlyActiveUsersChart";
+import CreatedUsersTable from "../features/admin/components/CreatedUsersTable";
 import RecentShufflesTable from "../features/admin/components/RecentShufflesTable";
 import RecentFailuresTable from "../features/admin/components/RecentFailuresTable";
 import FailureRateChart from "../features/admin/components/FailureRateChart";
+
+const CREATED_USERS_EXPAND_STEP = 6;
+const CREATED_USERS_MAX_MONTHS = 120;
 
 const AdminPage = ({ loginUri }) => {
     const [auth, setAuth] = useState(
@@ -27,46 +32,77 @@ const AdminPage = ({ loginUri }) => {
     const [isForbidden, setIsForbidden] = useState(false);
     const [overview, setOverview] = useState(null);
     const [monthlyActiveUsers, setMonthlyActiveUsers] = useState([]);
+    const [createdUsers, setCreatedUsers] = useState([]);
+    const [createdUsersMonths, setCreatedUsersMonths] = useState(6);
     const [recentShuffles, setRecentShuffles] = useState([]);
     const [recentFailures, setRecentFailures] = useState([]);
     const [failureRate, setFailureRate] = useState([]);
+
+    const handleRequestError = useCallback((error) => {
+        const status = error && error.response && error.response.status;
+        if (status === 401) {
+            // Session is invalid or expired - send user through the login flow
+            setAuth(false);
+        } else if (status === 403) {
+            setIsForbidden(true);
+        } else {
+            setError(createErrorFromResponse(error));
+        }
+    }, []);
+
+    const loadCreatedUsers = useCallback(async (months) => {
+        try {
+            const response = await fetchCreatedUsers(months);
+            setCreatedUsers(response.data.created_users_monthly || []);
+            setCreatedUsersMonths(months);
+        } catch (responseError) {
+            handleRequestError(responseError);
+        }
+    }, [handleRequestError]);
 
     const loadAdminData = useCallback(async () => {
         setIsLoading(true);
         setError(null);
         setIsForbidden(false);
         try {
-            const [overviewResponse, monthlyResponse, recentResponse, failuresResponse, rateResponse] = await Promise.all([
+            const [
+                overviewResponse,
+                monthlyResponse,
+                createdResponse,
+                recentResponse,
+                failuresResponse,
+                rateResponse,
+            ] = await Promise.all([
                 fetchAdminOverview(),
                 fetchMonthlyActiveUsers(),
+                fetchCreatedUsers(6),
                 fetchRecentShuffles(20),
                 fetchRecentFailures(20),
                 fetchFailureRate("month"),
             ]);
             setOverview(overviewResponse.data);
             setMonthlyActiveUsers(monthlyResponse.data.monthly_active_users || []);
+            setCreatedUsers(createdResponse.data.created_users_monthly || []);
             setRecentShuffles(recentResponse.data.recent_shuffles || []);
             setRecentFailures(failuresResponse.data.recent_failures || []);
             setFailureRate(rateResponse.data.failure_rate || []);
         } catch (responseError) {
-            if (responseError && responseError.response && responseError.response.status === 401) {
-                // Session is invalid or expired - send user through the login flow
-                setAuth(false);
-            } else if (responseError && responseError.response && responseError.response.status === 403) {
-                setIsForbidden(true);
-            } else {
-                setError(createErrorFromResponse(responseError));
-            }
+            handleRequestError(responseError);
         } finally {
             setIsLoading(false);
         }
-    }, []);
+    }, [handleRequestError]);
 
     useEffect(() => {
         if (auth === true) {
             loadAdminData();
         }
     }, [auth, loadAdminData]);
+
+    const handleShowMoreMonths = () => {
+        const nextMonths = Math.min(createdUsersMonths + CREATED_USERS_EXPAND_STEP, CREATED_USERS_MAX_MONTHS);
+        loadCreatedUsers(nextMonths);
+    };
 
     const formatDuration = (seconds) => {
         if (seconds == null || isNaN(seconds)) return "-";
@@ -148,6 +184,18 @@ const AdminPage = ({ loginUri }) => {
                         <Paper elevation={0} sx={{ bgcolor: "#181818", borderRadius: "5px", p: 2 }}>
                             <MonthlyActiveUsersChart data={monthlyActiveUsers} />
                         </Paper>
+                    </Box>
+
+                    {/* New users per month */}
+                    <Box sx={{ marginTop: 4 }}>
+                        <Typography variant='h5' component="div" sx={{ color: "white", marginBottom: 1 }}>
+                            New Users Per Month
+                        </Typography>
+                        <CreatedUsersTable
+                            data={createdUsers}
+                            canExpand={createdUsersMonths < CREATED_USERS_MAX_MONTHS}
+                            onShowMore={handleShowMoreMonths}
+                        />
                     </Box>
 
                     {/* Recent shuffles */}
