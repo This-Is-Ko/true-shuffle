@@ -50,6 +50,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     const [shuffleState, setShuffleState] = useState("");
     const [shuffleStateMessage, setShuffleStateMessage] = useState("");
     const [shuffleError, setShuffleError] = useState(false);
+    const [playlistTrimmed, setPlaylistTrimmed] = useState(false);
     const [, setPollingAttemptCount] = useState(0);
     const [pollingWaitTimeMs, setPollingWaitTimeMs] = useState(POLLING_CONFIG.INITIAL_WAIT_TIME_MS);
 
@@ -135,6 +136,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
         setShuffleStateMessage("");
         setShuffledPlaylistUri(null);
         setShuffleError(false);
+        setPlaylistTrimmed(false);
         setPollingAttemptCount(0);
         setPollingWaitTimeMs(POLLING_CONFIG.INITIAL_WAIT_TIME_MS);
     };
@@ -206,6 +208,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
             case PLAYLIST_SHUFFLE_STATE.SUCCESS:
                 setShuffleStateMessage("");
                 setShuffledPlaylistUri(stateData.result.playlist_uri);
+                setPlaylistTrimmed(stateData?.result?.playlist_trimmed === true);
                 // Reset polling state on successful completion
                 setPollingAttemptCount(0);
                 setPollingWaitTimeMs(POLLING_CONFIG.INITIAL_WAIT_TIME_MS);
@@ -367,6 +370,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                         shuffleStateMessage={shuffleStateMessage}
                         shuffleError={shuffleError}
                         playlistUri={shuffledPlaylistUri}
+                        playlistTrimmed={playlistTrimmed}
                         onHowToClick={onHowToClick}
                         onRefreshData={refreshData}
                     />
