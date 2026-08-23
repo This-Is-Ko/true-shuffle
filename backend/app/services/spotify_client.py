@@ -6,6 +6,9 @@ from classes.spotify_auth import SpotifyAuth
 
 load_dotenv()
 
+# Spotify API requests can be slow when handling large playlist operations
+SPOTIFY_REQUESTS_TIMEOUT = 30
+
 
 def create_auth_manager(current_app):
     return SpotifyOAuth(requests_session=False,
@@ -38,4 +41,4 @@ def create_auth_manager_with_token_dict(current_app, spotify_auth_dict: dict):
 
 def create_spotify_client(current_app, spotify_auth_dict) -> Spotify:
     auth_manager = create_auth_manager_with_token_dict(current_app, spotify_auth_dict)
-    return Spotify(auth_manager=auth_manager)
+    return Spotify(auth_manager=auth_manager, requests_timeout=SPOTIFY_REQUESTS_TIMEOUT)

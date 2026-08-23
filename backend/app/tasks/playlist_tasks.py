@@ -52,8 +52,8 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
             except Exception as e:
                 logWarning(f"Could not fetch playlist image for {playlist_id}: {str(e)}")
 
-        # Grab all tracks from playlist
-        all_tracks = util.get_tracks_from_playlist(self, spotify_client, playlist_id)
+        # Grab all tracks from playlist (capped at Spotify's playlist limit)
+        all_tracks = util.get_tracks_from_playlist(self, spotify_client, playlist_id, max_tracks=util.PLAYLIST_MAX_TRACKS)
         if not all_tracks:
             error_message = "No tracks found for playlist " + playlist_id
             response = {"error": error_message}
@@ -165,7 +165,7 @@ def create_playlist_from_liked_tracks(self, spotify_auth_dict: dict, new_playlis
     
     spotify_client = create_spotify_client(current_app, spotify_auth_dict)
 
-    all_tracks = util.get_tracks_from_playlist(self, spotify_client, LIKED_TRACKS_PLAYLIST_ID)
+    all_tracks = util.get_tracks_from_playlist(self, spotify_client, LIKED_TRACKS_PLAYLIST_ID, max_tracks=util.PLAYLIST_MAX_TRACKS)
     if not all_tracks:
         return {"error": "No tracks found for user's liked songs"}
 

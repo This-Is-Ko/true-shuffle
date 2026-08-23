@@ -6,7 +6,7 @@ from database import database
 
 from tests.functional.helpers.mock_requests import *
 from tests.functional.helpers.mock_responses import *
-from utils.util import get_tracks_from_playlist, create_new_playlist_with_tracks
+from utils.util import get_tracks_from_playlist, create_new_playlist_with_tracks, add_tracks_with_retry
 
 SPOTIFY_PLAYLIST_URL = "open.spotify.com/playlist/spotifyPlaylistUrl"
 
@@ -103,7 +103,82 @@ def test_get_tracks_from_playlist_error_getting_liked_songs_failure(mocker, env_
 
 
 
+def test_get_tracks_from_playlist_stops_at_max_tracks_success(mocker, env_patch):
+    with app.app_context():
+        # Prepare mocks
+        mocker.patch("utils.util.update_task_progress", return_value=None)
+        page = {"items": [
+            {"track": {"uri": "spotify:track:track" + str(i), "name": "track" + str(i), "id": "id" + str(i), "artists": [], "is_local": False}}
+            for i in range(50)
+        ]}
+        mocker.patch.object(Spotify, "playlist_items", side_effect=[page, page])
+
+        all_tracks = get_tracks_from_playlist(None, Spotify(), "playlist_id", max_tracks=100)
+
+        assert len(all_tracks) == 100
+
+
 ############ create_new_playlist_with_tracks ################
+
+
+def test_create_new_playlist_with_tracks_trims_over_spotify_limit_success(mocker, env_patch):
+    with app.app_context():
+        # Prepare mocks
+        mocker.patch("utils.util.update_task_progress", return_value=None)
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch.object(Spotify, "user_playlist_create", return_value=create_user_playlist_response)
+        mocker.patch.object(Spotify, "playlist_add_items", return_value=playlist_add_items_response)
+
+        large_tracks_list = ["spotify:track:sometrack" + str(i) for i in range(10001)]
+
+        response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", large_tracks_list)
+
+        assert response["status"] == "success"
+        assert response["num_of_tracks"] == 10000
+        assert response["playlist_trimmed"] is True
+
+
+def test_create_new_playlist_with_tracks_exactly_max_tracks_not_trimmed_success(mocker, env_patch):
+    with app.app_context():
+        # Prepare mocks
+        mocker.patch("utils.util.update_task_progress", return_value=None)
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch.object(Spotify, "user_playlist_create", return_value=create_user_playlist_response)
+        mocker.patch.object(Spotify, "playlist_add_items", return_value=playlist_add_items_response)
+
+        exact_max_tracks_list = ["spotify:track:sometrack" + str(i) for i in range(10000)]
+
+        response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", exact_max_tracks_list)
+
+        assert response["status"] == "success"
+        assert response["num_of_tracks"] == 10000
+        assert response["playlist_trimmed"] is False
+
+
+def test_add_tracks_with_retry_retries_then_succeeds(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.time.sleep", return_value=None)
+        mock_spotify = mocker.Mock()
+        mock_spotify.playlist_add_items.side_effect = [Exception("timeout"), {"snapshot_id": "snapshot_0"}]
+
+        response = add_tracks_with_retry(mock_spotify, "playlist_id", ["spotify:track:sometrack0"])
+
+        assert response == {"snapshot_id": "snapshot_0"}
+        assert mock_spotify.playlist_add_items.call_count == 2
+
+
+def test_add_tracks_with_retry_raises_after_max_attempts(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.time.sleep", return_value=None)
+        mock_spotify = mocker.Mock()
+        mock_spotify.playlist_add_items.side_effect = Exception("persistent error")
+
+        try:
+            add_tracks_with_retry(mock_spotify, "playlist_id", ["spotify:track:sometrack0"], max_attempts=3)
+            assert False, "Expected exception to be raised"
+        except Exception as e:
+            assert str(e) == "persistent error"
+        assert mock_spotify.playlist_add_items.call_count == 3
 
 
 def test_create_new_playlist_with_tracks_success(mocker, env_patch):
@@ -152,7 +227,7 @@ def test_create_new_playlist_with_tracks_track_list_contains_all_invalid_values_
 
         response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", tracks_list_with_invalid)
         
-        assert response["error"] == "Unable to create new playlist / add tracks to playlist"
+        assert response["error"] == "Unable to create new playlist / add tracks to playlist: No tracks to add"
 
         
 def test_create_new_playlist_with_tracks_empty_track_list_failure(mocker, env_patch):
@@ -160,7 +235,7 @@ def test_create_new_playlist_with_tracks_empty_track_list_failure(mocker, env_pa
 
         response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", [])
 
-        assert response["error"] == "Unable to create new playlist / add tracks to playlist"
+        assert response["error"] == "Unable to create new playlist / add tracks to playlist: No tracks to add"
 
 
 def test_create_new_playlist_with_tracks_error_getting_spotify_user_failure(mocker, env_patch):
@@ -171,7 +246,7 @@ def test_create_new_playlist_with_tracks_error_getting_spotify_user_failure(mock
 
         response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", sample_tracks_list)
 
-        assert response["error"] == "Unable to create new playlist / add tracks to playlist"
+        assert response["error"] == "Unable to create new playlist / add tracks to playlist: mocked error"
 
 
 def test_create_new_playlist_with_tracks_error_initialising_playlist_failure(mocker, env_patch):
@@ -183,7 +258,7 @@ def test_create_new_playlist_with_tracks_error_initialising_playlist_failure(moc
 
         response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", sample_tracks_list)
 
-        assert response["error"] == "Unable to create new playlist / add tracks to playlist"
+        assert response["error"] == "Unable to create new playlist / add tracks to playlist: mocked error"
 
 
 def test_create_new_playlist_with_tracks_error_adding_items_failure(mocker, env_patch):
@@ -196,6 +271,6 @@ def test_create_new_playlist_with_tracks_error_adding_items_failure(mocker, env_
 
         response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", sample_tracks_list)
 
-        assert response["error"] == "Unable to create new playlist / add tracks to playlist"
+        assert response["error"] == "Unable to add tracks to playlist new_playlist_id: mocked error"
 
 
