@@ -1,13 +1,17 @@
+import time
 from datetime import datetime, timezone
 from typing import List
 from flask import current_app
 import spotipy
+from spotipy.exceptions import SpotifyException
 from utils.logger_utils import logError, logInfo, logWarning
 
 LIKED_TRACKS_PLAYLIST_ID = "likedTracks"
 required_fields = ["uri", "name", "id"]
-# Spotify offically indicates 10k however API call was able to hit 11k
-PLAYLIST_MAX_TRACKS = 10900
+# Spotify's hard limit for playlist length is 10,000 tracks
+PLAYLIST_MAX_TRACKS = 10000
+
+ADD_TRACKS_MAX_RETRY_ATTEMPTS = 3
 
 CELERY_PROGRESS_STATE_CLEAN_UP_EXISTING_PLAYLIST_TEMPLATE = "Cleaning up existing tracks {}/{} ..."
 CELERY_PROGRESS_STATE_CREATE_PLAYLIST_TEMPLATE = "Adding {}/{} tracks..."
@@ -61,10 +65,11 @@ def update_task_progress(task, state, meta, correlation_id=None):
         task.update_state(state=state, meta=meta)
 
 
-def get_tracks_from_playlist(task, spotify: spotipy.Spotify, playlist_id: str) -> List[dict]:
+def get_tracks_from_playlist(task, spotify: spotipy.Spotify, playlist_id: str, max_tracks: int = None) -> List[dict]:
     """
     Get tracks from a playlist based on playlist_id.
     Uses a separate Spotify call for retrieving Liked Tracks.
+    If max_tracks is provided, stops retrieving once that many tracks have been collected.
     """
     offset = 0
     all_tracks = []
@@ -115,6 +120,9 @@ def get_tracks_from_playlist(task, spotify: spotipy.Spotify, playlist_id: str) -
         update_task_progress(task=task, state='PROGRESS', meta={'progress': {
             'state': f"Retrieved {len(all_tracks)} tracks so far..."
         }})
+
+        if max_tracks is not None and len(all_tracks) >= max_tracks:
+            break
 
     return all_tracks
 
@@ -246,7 +254,7 @@ def create_new_playlist_with_tracks(
         logError("Error while creating new playlist / adding tracks: " + str(e))
         return {
             "status": "error",
-            "error": "Unable to create new playlist / add tracks to playlist"
+            "error": "Unable to create new playlist / add tracks to playlist: " + str(e)
         }
 
 
@@ -317,7 +325,7 @@ def reuse_existing_playlist_with_updated_tracks(
         logError("Error while reusing existing playlist / adding tracks: " + str(e))
         return {
             "status": "error",
-            "error": "Unable to reuse existing playlist / add tracks to playlist"
+            "error": "Unable to reuse existing playlist / add tracks to playlist: " + str(e)
         }
 
 
@@ -335,6 +343,37 @@ def validate_tracks(track_list: List[str]) -> List[str]:
     return valid_tracks
 
 
+def add_tracks_with_retry(
+        spotify: spotipy.Spotify,
+        playlist_id: str,
+        tracks: List[str],
+        max_attempts: int = ADD_TRACKS_MAX_RETRY_ATTEMPTS):
+    """
+    Add tracks to a playlist with retry/backoff to handle transient Spotify API errors and rate limits.
+    Respects the Retry-After header for rate limited responses.
+    """
+    for attempt in range(max_attempts):
+        try:
+            return spotify.playlist_add_items(playlist_id, tracks)
+        except Exception as e:
+            wait_seconds = 2 ** attempt
+            if isinstance(e, SpotifyException) and e.headers:
+                retry_after = e.headers.get("Retry-After")
+                if retry_after:
+                    try:
+                        wait_seconds = float(retry_after)
+                    except (TypeError, ValueError):
+                        pass
+            if attempt < max_attempts - 1:
+                logWarning(
+                    f"Failed to add {len(tracks)} tracks to playlist {playlist_id} "
+                    f"(attempt {attempt + 1}/{max_attempts}): {str(e)}. Retrying in {wait_seconds}s..."
+                )
+                time.sleep(wait_seconds)
+            else:
+                raise
+
+
 def add_all_tracks_to_playlist(
         task,
         spotify: spotipy.Spotify,
@@ -344,22 +383,35 @@ def add_all_tracks_to_playlist(
         new_playlist_id: str,
         playlist_trimmed: bool):
     # Add 100 tracks per call
-    if len(tracks_to_add) <= 100:
-        calls_required = 1
-    else:
-        calls_required = len(tracks_to_add) // 100 + 1
-    left_over = len(tracks_to_add) % 100
+    calls_required = (len(tracks_to_add) + 99) // 100
     for i in range(calls_required):
+        batch = tracks_to_add[i * 100: i * 100 + 100]
+        if not batch:
+            continue
+
+        try:
+            add_items_response = add_tracks_with_retry(spotify, new_playlist_id, batch)
+        except Exception as e:
+            logError("Error while adding tracks to playlist " + new_playlist_id + ": " + str(e))
+            return {
+                "status": "error",
+                "error": "Unable to add tracks to playlist " + new_playlist_id + ": " + str(e)
+            }
+        if "snapshot_id" not in add_items_response:
+            logError("Error while adding tracks. Response: " + str(add_items_response))
+            return {
+                "status": "error",
+                "error": "Unable to add tracks to playlist " + new_playlist_id
+            }
+
         if i == calls_required - 1:
-            add_items_response = spotify.playlist_add_items(
-                new_playlist_id, tracks_to_add[i * 100: i * 100 + left_over])
             update_task_progress(
                 task,
                 state="PROGRESS",
                 meta={
                     "progress": {
                         "state": CELERY_PROGRESS_STATE_CREATE_PLAYLIST_TEMPLATE.format(
-                            i * 100 + left_over,
+                            i * 100 + len(batch),
                             len(tracks_to_add)
                         ),
                         "playlist_uri": playlist_uri
@@ -367,26 +419,19 @@ def add_all_tracks_to_playlist(
                 }
             )
         else:
-            add_items_response = spotify.playlist_add_items(new_playlist_id, tracks_to_add[i * 100: i * 100 + 100])
             update_task_progress(
                 task,
                 state="PROGRESS",
                 meta={
                     "progress": {
                         "state": CELERY_PROGRESS_STATE_CREATE_PLAYLIST_LAST_TEMPLATE.format(
-                            i * 100 + 100,
+                            i * 100 + len(batch),
                             len(tracks_to_add)
                         ),
                         "playlist_uri": playlist_uri
                     }
                 }
             )
-        if "snapshot_id" not in add_items_response:
-            logError("Error while adding tracks. Response: " + str(add_items_response))
-            return {
-                "status": "error",
-                "error": "Unable to add tracks to playlist " + new_playlist_id
-            }
 
     create_playlist_with_tracks_success_log = (
         "User: {user_id}"
