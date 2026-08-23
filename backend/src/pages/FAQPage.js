@@ -38,7 +38,7 @@ const faqs = [
     },
     {
         "question": "What is the maximum playlist length?",
-        "answer": "Spotify officially limits playlists to 10,000 tracks, but in some cases, playlists can hold up to 11,000 tracks. True Shuffle will fully shuffle your entire playlist, but only the first 10,000 tracks will be saved in the new shuffled playlist.",
+        "answer": "Spotify limits playlists to 10,000 tracks. If your playlist has more than 10,000 tracks, True Shuffle will shuffle it as usual, but only the first 10,000 tracks will be added to the new shuffled playlist due to this Spotify restriction.",
         "id": "q7"
     },
     {

@@ -43,6 +43,7 @@ const PlaylistList = ({
     shuffleStateMessage, 
     shuffleError, 
     playlistUri, 
+    playlistTrimmed, 
     loading, 
     onHowToClick, 
     onRefreshData 
@@ -516,6 +517,19 @@ const PlaylistList = ({
                                     >
                                         When you want a new order, just come back and shuffle again.
                                     </Typography>
+                                    {playlistTrimmed && (
+                                        <Typography
+                                            variant="subtitle1"
+                                            component="div"
+                                            sx={{
+                                                paddingTop: "10px",
+                                                color: "#b3b3b3",
+                                                textAlign: "center"
+                                            }}
+                                        >
+                                            Your playlist has more than 10,000 tracks. Due to Spotify's 10,000-track limit, only the first 10,000 were added to the shuffled playlist.
+                                        </Typography>
+                                    )}
                                 </Box>
                             )}
                         </>
