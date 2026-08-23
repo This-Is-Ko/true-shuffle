@@ -7,6 +7,8 @@ admin_controller = Blueprint('admin_controller', __name__, url_prefix='/api/admi
 
 DEFAULT_LIMIT = 20
 MAX_LIMIT = 100
+DEFAULT_MONTHS = 6
+MAX_MONTHS = 120
 
 
 @admin_controller.route('/overview', methods=['GET'])
@@ -27,6 +29,17 @@ def get_monthly_active_users(spotify_auth):
     except Exception as e:
         current_app.logger.error("Unable to retrieve monthly active users: " + str(e))
         return {"error": "Unable to retrieve monthly active users"}, 400
+
+
+@admin_controller.route('/users/created', methods=['GET'])
+@admin_auth_validator
+def get_created_users(spotify_auth):
+    try:
+        months = _parse_months(request.args.get("months"))
+        return {"created_users_monthly": admin_service.get_created_users_monthly(months)}
+    except Exception as e:
+        current_app.logger.error("Unable to retrieve created users: " + str(e))
+        return {"error": "Unable to retrieve created users"}, 400
 
 
 @admin_controller.route('/shuffles/recent', methods=['GET'])
@@ -70,3 +83,13 @@ def _parse_limit(value):
     except (TypeError, ValueError):
         return DEFAULT_LIMIT
     return max(1, min(parsed, MAX_LIMIT))
+
+
+def _parse_months(value):
+    if value is None:
+        return DEFAULT_MONTHS
+    try:
+        parsed = int(value)
+    except (TypeError, ValueError):
+        return DEFAULT_MONTHS
+    return max(1, min(parsed, MAX_MONTHS))

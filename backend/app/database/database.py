@@ -277,3 +277,47 @@ def get_shuffle_failure_rate(group_by):
         },
     ]
     return list(mongo.db.shuffle_events.aggregate(pipeline))
+
+
+def get_monthly_created_users(months):
+    """
+    Returns the number of users created per month for the last `months` months
+    (including the current month). Months with no new users are included with 0.
+    """
+    today = datetime.now(timezone.utc)
+    current_month_index = today.year * 12 + (today.month - 1)
+    start_index = current_month_index - (months - 1)
+
+    start_year, start_month_0based = divmod(start_index, 12)
+    start = datetime(start_year, start_month_0based + 1, 1, tzinfo=timezone.utc)
+
+    pipeline = [
+        {
+            "$match": {
+                CREATED_AT_KEY: {"$gte": start, "$type": "date"},
+            }
+        },
+        {
+            "$group": {
+                "_id": {"$dateToString": {"format": "%Y-%m", "date": "$" + CREATED_AT_KEY}},
+                "created_users": {"$sum": 1},
+            }
+        },
+        {"$sort": {"_id": 1}},
+        {"$project": {"_id": 0, "month": "$_id", "created_users": 1}},
+    ]
+    counts = {
+        entry["month"]: entry["created_users"]
+        for entry in mongo.db.users.aggregate(pipeline)
+    }
+
+    result = []
+    for offset in range(months):
+        index = start_index + offset
+        year, month_0based = divmod(index, 12)
+        month_str = "%04d-%02d" % (year, month_0based + 1)
+        result.append({
+            "month": month_str,
+            "created_users": counts.get(month_str, 0),
+        })
+    return result

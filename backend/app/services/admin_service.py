@@ -33,6 +33,10 @@ def get_monthly_active_users():
     return database.get_monthly_active_users()
 
 
+def get_created_users_monthly(months):
+    return database.get_monthly_created_users(months)
+
+
 def get_recent_shuffles(limit):
     return serialize_shuffle_events(database.get_recent_shuffle_events(limit))
 
