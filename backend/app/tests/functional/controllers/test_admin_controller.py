@@ -78,6 +78,23 @@ def test_get_monthly_active_users_success(mocker, client, env_patch):  # noqa: F
     assert response_json["monthly_active_users"][0]["month"] == "2026-01"
 
 
+def test_get_created_users_success(mocker, client, env_patch):  # noqa: F811
+    _mock_admin_session(mocker, True)
+    mocker.patch.object(
+        admin_service,
+        "get_created_users_monthly",
+        return_value=[{"month": "2026-03", "created_users": 2}]
+    )
+    _set_cookies(client)
+
+    response = client.get('/api/admin/users/created?months=6')
+    response_json = response.get_json()
+
+    assert response.status_code == 200
+    assert response_json["created_users_monthly"][0]["month"] == "2026-03"
+    assert response_json["created_users_monthly"][0]["created_users"] == 2
+
+
 def test_get_recent_shuffles_success(mocker, client, env_patch):  # noqa: F811
     _mock_admin_session(mocker, True)
     mocker.patch.object(
