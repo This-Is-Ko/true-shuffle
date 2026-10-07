@@ -1,0 +1,173 @@
+.globalMessage {
+    /* height: 25px; */
+}
+
+body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #292e2f;
+}
+
+code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+h1, h2, h3, p {
+    color: white;
+    margin: 0;
+}
+
+.header {
+    background-color: #161817;
+}
+
+.footer-links {
+    text-decoration: none;
+    color: lightgrey;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+}
+
+.headerButton {
+    background-color: #33ff3d;
+}
+
+.playlistItem {
+    background: #3399ff;
+    margin-bottom: 3px;
+}
+
+.mainTopContainer {
+    background: #181a1b;
+    padding-bottom: 20px;
+}
+
+.mainPageStatsContainer {
+    background: #333;
+    padding-bottom: 10px;
+}
+
+.titleContainer {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.normalTitle {
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.largeButton {
+    width: 250px;
+    font-size: 24px!important;
+}
+
+.normalButton {
+    width: 250px;
+    justify-content: center;
+}
+
+.centerSpacingContainer{
+    /* padding-top: 32px; */
+    /* padding-bottom: 32px; */
+    text-align: center;
+    display: flex;
+    justify-content: center;
+}
+
+.homepageIcon {
+    width: 130px;
+    height: 130px;
+}
+
+.spotifyLogo {
+    padding-top: 23px;
+    padding-right: 10px;
+    height: 60px;
+}
+
+.spotifyNameLogo {
+    height: 70px;
+}
+
+.spotifyNameLogoSubtitle {
+    padding-top: 13px;
+    padding-left: 10px;
+    height: 50px;
+}
+
+.featureIcon {
+    width: 80px;
+    height: 80px;
+}
+
+.homepageIconText {
+    color: white;
+}
+
+.featureTitle {
+    font-size: 45px!important;
+    color: white;
+    padding-top: 20px;
+    padding-bottom: 10px;
+}
+
+.featureSubtitle {
+    padding-top: 5px;
+}
+
+
+.about-image {
+    max-width: 450px;
+    width: 80%;
+}
+
+.accordionIcon {
+    color: white;
+}
+
+.imgBlurPreview {
+        max-width:100%;
+}
+
+
+@media (min-width: 1020px) {
+    .homepageIconHolder {
+        width: 90%;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-gap: 20px;
+        padding: 30px;
+        max-width: 980px
+    }
+}
+
+@media (max-width: 700px) {
+    .homepageIconHolder {
+        width: 70%;
+        margin: 0 auto;
+    }
+
+    .iconSet {
+        padding-bottom: 10px;
+    }
+
+    .homepageGif {
+        padding-top: 10px;
+        width: 90%;
+    }
+
+    .titleContainer {
+        display: block;
+    }
+}

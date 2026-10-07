@@ -1,0 +1,78 @@
+import apiClient from "../../../utils/apiClient";
+import { OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
+
+/**
+ * API service for playlist and shuffle operations
+ */
+
+const API_BASE_PATH = process.env.REACT_APP_BACKEND_PATH;
+
+/**
+ * Fetches all playlists for the current user, including statistics.
+ * @returns {Promise} Promise that resolves with playlists data
+ */
+export const fetchUserPlaylists = () => {
+    return apiClient.get(
+        `${API_BASE_PATH}/api/playlist/me?include-stats=true`,
+        { operationType: OPERATION_TYPES.GENERAL }
+    );
+};
+
+/**
+ * Fetches recent shuffle operations for the current user.
+ * @returns {Promise} Promise that resolves with recent shuffles data
+ */
+export const fetchRecentShuffles = () => {
+    return apiClient.get(
+        `${API_BASE_PATH}/api/user/shuffle/recent`,
+        { operationType: OPERATION_TYPES.GENERAL }
+    );
+};
+
+/**
+ * Initiates a shuffle operation for the specified playlist.
+ * @param {Object} playlistData - The playlist data to shuffle
+ * @param {string} playlistData.playlist_id - The ID of the playlist to shuffle
+ * @param {string} playlistData.playlist_name - The name of the playlist
+ * @param {string} playlistData.shuffle_type - The shuffle type (e.g., "REUSE_EXISTING_PLAYLIST", "CLASSIC_NEW_PLAYLIST")
+ * @returns {Promise} Promise that resolves with shuffle task ID
+ */
+export const queueShufflePlaylist = (playlistData) => {
+    return apiClient.post(
+        `${API_BASE_PATH}/api/playlist/shuffle`,
+        {
+            playlist_id: playlistData.playlist_id,
+            playlist_name: playlistData.playlist_name,
+            shuffle_type: playlistData.shuffle_type
+        },
+        {
+            headers: { "Content-Type": "application/json" },
+            operationType: OPERATION_TYPES.SHUFFLE
+        }
+    );
+};
+
+/**
+ * Fetches the current state of a shuffle operation.
+ * @param {string} shuffleTaskId - The task ID of the shuffle operation
+ * @returns {Promise} Promise that resolves with shuffle state data
+ */
+export const fetchShuffleState = (shuffleTaskId) => {
+    return apiClient.get(
+        `${API_BASE_PATH}/api/playlist/shuffle/state/${shuffleTaskId}`,
+        { operationType: OPERATION_TYPES.SHUFFLE }
+    );
+};
+
+/**
+ * Creates an error object from an API error response.
+ * @param {Object} error - The error response from axios
+ * @returns {Object} Error object with appropriate message
+ */
+export const createErrorFromResponse = (error) => {
+    if (error && error.response && error.response.status === 401) {
+        return { message: "Unable to authenticate your account, please logout and try again" };
+    }
+    return { message: "Unable to connect to Spotify, please try again later" };
+};
+
