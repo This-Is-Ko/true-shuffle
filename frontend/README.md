@@ -1,18 +1,8 @@
 # Spotify True Shuffle - Frontend
 
-Spotify's built-in shuffle can sometimes feel repetitive and predictable, pushing certain tracks more frequently than others. **True Shuffle** aims to provide a better shuffle experience by creating custom playlists with a truly randomised order of tracks.
+This package is the React frontend for **True Shuffle**. It provides the user interface for shuffling Spotify playlists and exploring your music library.
 
-This repository contains the frontend for the **Spotify True Shuffle** project, built with React. It allows users to shuffle their playlists on Spotify in a way that enhances the randomness of track order, providing a more enjoyable listening experience.
-
-For the backend of the project, check out the [backend repository here](https://github.com/This-Is-Ko/spotify-true-shuffle).
-
-## Features
-
-- **Truly Random Shuffle**: Generate custom playlists with a fully randomised track order. Select any of your Spotify playlists or your Liked Songs to create a shuffled copy that preserves your original playlist.
-- **Custom Playlist Management**: Keep your original playlist intact while creating a shuffled copy that you can delete anytime. Previous shuffled playlists are automatically replaced to prevent duplicates.
-- **Library Analysis**: Analyse your Liked Songs library to discover insights about your music taste. View statistics including top artists, top albums, track length distributions, and audio features analysis with interactive visualisations.
-- **Share Liked Songs**: Create a shareable playlist from your Liked Songs collection, making it easy to share your music library with others.
-- **User-Friendly Interface**: A simple and intuitive React app built with Material-UI components to manage your shuffle experience and explore your music library.
+For an overview of the project, its features and the full technology stack, see the [root README](../README.md). For the API, see the [backend README](../backend/README.md).
 
 ## Technology Stack
 
@@ -36,27 +26,15 @@ Ensure you have the following installed:
 
 ## Getting Started
 
-To get the project up and running locally:
+To get the frontend up and running locally:
 
-1. Clone the repository:
-
-    ```bash
-    git clone https://github.com/This-Is-Ko/spotify-true-shuffle-frontend.git
-    ```
-
-2. Navigate to the project folder:
-
-    ```bash
-    cd spotify-true-shuffle-frontend
-    ```
-
-3. Install the dependencies:
+1. Install the dependencies:
 
     ```bash
     npm install
     ```
 
-4. Set up environment variables:
+2. Set up environment variables:
 
     Create a `.env` file in the root directory based on `sampleEnv.txt`. You'll need to configure:
     - `REACT_APP_BACKEND_PATH` - Backend API endpoint
@@ -66,7 +44,7 @@ To get the project up and running locally:
     - `REACT_APP_GLOBAL_MESSAGE_CONTENT` - Content for global message
     - `REACT_APP_ENABLE_FILTER_SHUFFLE` - Feature flag for filtered shuffle
 
-5. Run the development server:
+3. Run the development server:
 
     ```bash
     npm start
@@ -77,7 +55,7 @@ To get the project up and running locally:
 ## Available Scripts
 
 - `npm start` - Runs the app in development mode
-- `npm build` - Builds the app for production
+- `npm run build` - Builds the app for production
 - `npm test` - Launches the test runner
 
 ## Project Structure
@@ -86,10 +64,7 @@ The application is organised into the following main directories:
 
 - `src/pages/` - Main page components (ShufflePage, AnalysisPage, ShareLikedTracksPage, FAQPage, AboutPage)
 - `src/components/` - Reusable UI components and page-specific component containers
-- `src/features/` - Feature-specific modules (shuffle, analysis) with components, services, and state management
+- `src/features/` - Feature-specific modules (shuffle, analysis, admin, common) with components, services, and state management
+- `src/contexts/` - React context providers
 - `src/utils/` - Utility functions for authentication, formatting, and API services
 - `public/` - Static assets including images, icons, and the HTML template
-
-## Deployment
-
-This project is set up for automatic deployment of commits to the main branch using Vercel. 

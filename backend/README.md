@@ -1,12 +1,10 @@
 # Spotify True Shuffle - Backend
 
-True Shuffle attempts to allow random shuffling by creating shuffled playlists with randomised order of tracks for a better shuffle experience.
+This package is the backend API and services for **True Shuffle**. It provides the Flask API that powers playlist shuffling, library statistics and analysis, and playlist sharing.
 
-Also has functionality to generate statistics and analysis from Spotify library, create playlists to share Liked Songs and delete all shuffled playlists.
+For an overview of the project, its features and the full technology stack, see the [root README](../README.md). The frontend lives in the [`frontend/`](../frontend/README.md) package.
 
-Backend built on Flask in Python (Migrated from Spring Boot), deployed using Docker with containers for Flask (Gunicorn), Celery, Redis and Nginx.
-
-Frontend can be found in [this](https://github.com/This-Is-Ko/spotify-true-shuffle-react) repository.
+Backend built on Flask in Python (migrated from Spring Boot), deployed using Docker with containers for Flask (Gunicorn), Celery, Redis and Nginx. Data is stored in MongoDB.
 
 ## Configure
 
@@ -18,7 +16,6 @@ The following env variables are required to run. Add them into a .env file
     COOKIE_DOMAIN # cookie domain value (Leave empty for localhost)
     CORS_ORIGIN # cors origin value(s), comma-separated (e.g. http://localhost:3000,http://127.0.0.1:3000)
     MONGO_URI # database uri
-    ENV=local
     CELERY_BROKER_URL # celery url
     CELERY_RESULT_BACKEND_URL # celery url
     REDIS_PASSWORD # auth to access celery
@@ -49,16 +46,16 @@ Example config
         CRON_API_KEY=******
         CONFIG_TYPE=config.DevelopmentConfig
         MONGO_URI=mongodb+srv://username:password@cluster0.abcd.mongodb.net
-        ENV=local
+
 ## Run
 
-Install dependancies:
+Install dependencies:
     
-    pip install -r requirements.txt
+    pip install -r app/requirements.txt
 
 Run flask app:
 
-    flask --app main.py run
+    flask --app app/main.py run
 
 Start redis instance (e.g. docker) then run celery worker:
 
@@ -71,7 +68,7 @@ Alternatively run all via docker locally
 
 ## Deployment
 
-Current set up to automatically deploy commits to the "main" branch using Railway
+Backend is deployed with Docker. See the [Docker](#docker) section below for building, pushing and hosting the containers.
 
 ## Tests
 
@@ -91,23 +88,43 @@ Use pytest to run tests on the app:
 
 `POST /api/playlist/shuffle`: Shuffle selected playlist
 
+`GET /api/playlist/shuffle/state/<id>`: Get shuffle job state
+
 `DELETE /api/playlist/delete`: Delete all shuffled playlists
 
 `POST /api/playlist/share/liked-tracks`: Create playlist from Liked Songs to share
 
-`GET /api/user/`: Get user info
+`GET /api/playlist/share/liked-tracks/<id>`: Get share job state
 
-`GET /api/user/save`: Create/update user entry
+`POST /api/user/save`: Create/update user entry
+
+`GET /api/user/`: Get user info
 
 `GET /api/user/tracker`: Get user tracker datapoints
 
-`GET /api/user/analysis`: Get analysis of user's Liked Songs
-
 `GET /api/user/aggregate`: Get analysis of user's Liked Songs and tracker datapoints in one call
+
+`GET /api/user/aggregate/state/<id>`: Get aggregate job state
+
+`GET /api/user/shuffle/recent`: Get recent shuffle history
 
 `GET /api/statistics/overall`: Get shuffle statistics
 
 `GET /api/trackers/update`: Update trackers for all enabled users
+
+`GET /api/session/cleanup`: Remove expired sessions (cron, requires `X-Cron-Key`)
+
+`GET /api/admin/overview`: Get admin overview
+
+`GET /api/admin/users/monthly`: Get monthly active users
+
+`GET /api/admin/users/created`: Get newly created users by month
+
+`GET /api/admin/shuffles/recent`: Get recent shuffles
+
+`GET /api/admin/shuffles/failures`: Get recent shuffle failures
+
+`GET /api/admin/shuffles/failure-rate`: Get shuffle failure rate
 
 ## Authentication
 
@@ -138,7 +155,7 @@ Run
 On machine running the server
 
     docker pull [repository]:true_shuffle_flask_web
-    docker push [repository]:true_shuffle_celery_worker
+    docker pull [repository]:true_shuffle_celery_worker
     docker compose up -d
 
 Docker reference
