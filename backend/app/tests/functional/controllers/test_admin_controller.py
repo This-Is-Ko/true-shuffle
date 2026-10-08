@@ -24,8 +24,8 @@ def _mock_admin_session(mocker, is_admin):
 
 
 def _set_cookies(client):
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
 
 def test_get_admin_overview_success(mocker, client, env_patch):  # noqa: F811

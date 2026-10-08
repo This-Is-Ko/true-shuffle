@@ -1,2 +1,11 @@
 .env
 .env-prod
+
+# Dev / cache artifacts not needed in build context
+.git
+.venv
+venv
+__pycache__
+.pytest_cache
+.idea
+.vscode

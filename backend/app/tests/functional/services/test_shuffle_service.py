@@ -122,8 +122,8 @@ def test_queue_shuffle_playlist_success(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.post('/api/playlist/shuffle', json=shuffle_request)
     response_json = response.get_json()
@@ -144,8 +144,8 @@ def test_queue_shuffle_playlist_playlist_name_missing_failure(mocker, client, en
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     invalid_shuffle_request = {
         "playlist_id": "playlist_id0"
@@ -171,8 +171,8 @@ def test_queue_shuffle_playlist_playlist_id_missing_failure(mocker, client, env_
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     invalid_shuffle_request = {
         "playlist_name": "playlist_name0"
@@ -229,8 +229,8 @@ def test_delete_shuffled_playlists_success(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.delete('/api/playlist/delete')
     response_json = response.get_json()
@@ -259,8 +259,8 @@ def test_delete_shuffled_spotify_auth_error_failure(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.delete('/api/playlist/delete')
     response_json = response.get_json()

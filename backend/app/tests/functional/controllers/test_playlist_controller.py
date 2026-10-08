@@ -59,8 +59,8 @@ def test_queue_shuffle_playlist_success(mocker, client, env_patch):  # noqa: F81
     request_body = {"playlist_id": "playlist_id", "playlist_name": "Test Playlist", "shuffle_type": "CLASSIC_NEW_PLAYLIST"}
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform POST request
     response = client.post('/api/playlist/shuffle', json=request_body)
@@ -97,8 +97,8 @@ def test_queue_shuffle_playlist_failure_invalid_schema_empty(mocker, client, env
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform POST request with invalid schema
     response = client.post('/api/playlist/shuffle', json={})
@@ -129,8 +129,8 @@ def test_queue_shuffle_playlist_failure_invalid_schema_playlist_id_missing(mocke
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {"playlist_name": "Test Playlist"}
 
@@ -163,8 +163,8 @@ def test_queue_shuffle_playlist_failure_invalid_schema_playlist_name_missing(moc
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {"playlist_id": "playlist_id"}
 
@@ -201,8 +201,8 @@ def test_queue_shuffle_playlist_failure_exception(mocker, client, env_patch):  #
                         side_effect=Exception("Internal server error"))
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {"playlist_id": "playlist_id", "playlist_name": "Test Playlist"}
 
@@ -227,8 +227,8 @@ def test_queue_shuffle_playlist_failure_invalid_auth(mocker, client, env_patch):
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {"playlist_id": "playlist_id", "playlist_name": "Test Playlist"}
 
@@ -278,8 +278,8 @@ def test_get_shuffle_state_progress_success(mocker, client, env_patch):  # noqa:
     mocker.patch("tasks.task_state.AsyncResult", return_value=mock_result)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/shuffle/state/task_id_123')
@@ -324,8 +324,8 @@ def test_get_shuffle_state_success_success(mocker, client, env_patch):  # noqa: 
     mocker.patch("tasks.task_state.AsyncResult", return_value=mock_result)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/shuffle/state/task_id_123')
@@ -370,8 +370,8 @@ def test_get_shuffle_state_pending_success(mocker, client, env_patch):  # noqa: 
     mocker.patch("tasks.task_state.AsyncResult", return_value=mock_result)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/shuffle/state/task_id_123')
@@ -400,8 +400,8 @@ def test_get_shuffle_state_failure_invalid_auth(mocker, client, env_patch):  # n
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/shuffle/state/task_id_123')
@@ -487,8 +487,8 @@ def test_delete_shuffled_playlists_success(mocker, client, env_patch):  # noqa: 
     mocker.patch.object(auth_utils, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform DELETE request
     response = client.delete('/api/playlist/delete')
@@ -533,8 +533,8 @@ def test_delete_shuffled_playlists_no_shuffled_success(mocker, client, env_patch
     mocker.patch.object(playlist_controller, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform DELETE request
     response = client.delete('/api/playlist/delete')
@@ -563,8 +563,8 @@ def test_delete_shuffled_playlists_failure_invalid_auth(mocker, client, env_patc
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform DELETE request
     response = client.delete('/api/playlist/delete')
@@ -610,8 +610,8 @@ def test_delete_shuffled_playlists_failure_exception(mocker, client, env_patch):
     mocker.patch.object(playlist_service, "delete_all_shuffled_playlists", side_effect=Exception("Service error"))
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform DELETE request
     response = client.delete('/api/playlist/delete')
@@ -667,8 +667,8 @@ def test_queue_liked_tracks_playlist_with_name_success(mocker, client, env_patch
     request_body = {"playlist_name": "My Liked Tracks Playlist"}
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform POST request
     response = client.post('/api/playlist/share/liked-tracks', json=request_body)
@@ -720,8 +720,8 @@ def test_queue_liked_tracks_playlist_without_name_success(mocker, client, env_pa
     request_body = {}
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform POST request
     response = client.post('/api/playlist/share/liked-tracks', json=request_body)
@@ -750,8 +750,8 @@ def test_queue_liked_tracks_playlist_failure_invalid_auth(mocker, client, env_pa
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {"playlist_name": "My Liked Tracks"}
 
@@ -801,8 +801,8 @@ def test_queue_liked_tracks_playlist_failure_exception(mocker, client, env_patch
     mocker.patch.object(playlist_service, "queue_create_playlist_from_liked_tracks", side_effect=Exception("Service error"))
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {"playlist_name": "My Liked Tracks"}
 
@@ -854,8 +854,8 @@ def test_get_liked_tracks_playlist_state_progress_success(mocker, client, env_pa
     mocker.patch.object(playlist_controller, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/share/liked-tracks/task_id_123')
@@ -902,8 +902,8 @@ def test_get_liked_tracks_playlist_state_success_success(mocker, client, env_pat
     mocker.patch.object(playlist_controller, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/share/liked-tracks/task_id_123')
@@ -932,8 +932,8 @@ def test_get_liked_tracks_playlist_state_failure_invalid_auth(mocker, client, en
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/playlist/share/liked-tracks/task_id_123')

@@ -73,8 +73,8 @@ def test_save_user_success(mocker, client, env_patch):  # noqa: F811
     }
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform POST request
     response = client.post('/api/user/save', json=request_body)
@@ -110,8 +110,8 @@ def test_save_user_failure_invalid_schema(mocker, client, env_patch):  # noqa: F
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform POST request with invalid schema
     # Empty JSON {} will pass schema validation (user_attributes not marked required)
@@ -140,8 +140,8 @@ def test_save_user_failure_invalid_auth(mocker, client, env_patch):  # noqa: F81
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     request_body = {
         "user_attributes": {
@@ -235,8 +235,8 @@ def test_get_user_success(mocker, client, env_patch):  # noqa: F811
     mocker.patch.object(auth_utils, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/')
@@ -284,8 +284,8 @@ def test_get_user_failure_user_not_found(mocker, client, env_patch):  # noqa: F8
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/')
@@ -311,8 +311,8 @@ def test_get_user_failure_invalid_auth(mocker, client, env_patch):  # noqa: F811
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/')
@@ -401,8 +401,8 @@ def test_get_user_tracker_success(mocker, client, env_patch):  # noqa: F811
     mocker.patch.object(auth_utils, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/tracker?tracker-name=track_liked_tracks')
@@ -454,8 +454,8 @@ def test_get_user_tracker_trackers_disabled_success(mocker, client, env_patch): 
     mocker.patch("services.user_service.get_user_tracker_data", side_effect=Exception("Trackers not enabled"))
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/tracker?tracker-name=track_liked_tracks')
@@ -492,8 +492,8 @@ def test_get_user_tracker_failure_missing_tracker_name(mocker, client, env_patch
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request without tracker-name
     response = client.get('/api/user/tracker')
@@ -516,8 +516,8 @@ def test_get_user_tracker_failure_invalid_auth(mocker, client, env_patch):  # no
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/tracker?tracker-name=track_liked_tracks')
@@ -579,8 +579,8 @@ def test_queue_user_aggregate_success(mocker, client, env_patch):  # noqa: F811
     mocker.patch.object(auth_utils, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/aggregate')
@@ -609,8 +609,8 @@ def test_queue_user_aggregate_failure_invalid_auth(mocker, client, env_patch):  
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/aggregate')
@@ -673,8 +673,8 @@ def test_get_user_aggregate_state_progress_success(mocker, client, env_patch):  
     mocker.patch.object(auth_utils, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/aggregate/state/task_id_123')
@@ -721,8 +721,8 @@ def test_get_user_aggregate_state_success_success(mocker, client, env_patch):  #
     mocker.patch.object(user_controller, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/aggregate/state/task_id_123')
@@ -769,8 +769,8 @@ def test_get_user_aggregate_state_pending_success(mocker, client, env_patch):  #
     mocker.patch.object(user_controller, "extend_session_expiry", return_value=None)
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/aggregate/state/task_id_123')
@@ -799,8 +799,8 @@ def test_get_user_aggregate_state_failure_invalid_auth(mocker, client, env_patch
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/aggregate/state/task_id_123')
@@ -851,8 +851,8 @@ def test_get_recent_shuffles_success(mocker, client, env_patch):  # noqa: F811
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/shuffle/recent')
@@ -897,8 +897,8 @@ def test_get_recent_shuffles_empty_success(mocker, client, env_patch):  # noqa: 
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/shuffle/recent')
@@ -927,8 +927,8 @@ def test_get_recent_shuffles_failure_invalid_auth(mocker, client, env_patch):  #
     )
 
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     # Perform GET request
     response = client.get('/api/user/shuffle/recent')

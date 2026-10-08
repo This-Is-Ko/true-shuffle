@@ -50,8 +50,8 @@ def test_session_cookie_valid_success(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     assert response.status_code == 200
@@ -78,9 +78,9 @@ def test_session_cookie_invalid_failure(mocker, client, env_patch):
                         return_value=None
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId',
+    client.set_cookie('trueshuffle-sessionId',
                       'invalidSessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth',
+    client.set_cookie('trueshuffle-auth',
                       'true')
 
     response = client.get('/api/playlist/me')
@@ -104,7 +104,7 @@ def test_session_cookie_missing_failure(mocker, client, env_patch):
                         )
     mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-auth',
+    client.set_cookie('trueshuffle-auth',
                       'true')
 
     response = client.get('/api/playlist/me')
@@ -144,8 +144,8 @@ def test_session_expired_expired_failure(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     assert response.status_code == 401
@@ -172,8 +172,8 @@ def test_session_database_connection_error_failure(mocker, client, env_patch):
                         return_value=pymongo.errors.ConnectionFailure
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     assert response.status_code == 400

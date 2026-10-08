@@ -53,8 +53,8 @@ def test_get_playlists_success(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     response_json = response.get_json()
@@ -121,8 +121,8 @@ def test_get_playlists_with_stats_user_tracker_enabled_success(mocker, client, e
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me?include-stats=true')
     response_json = response.get_json()
@@ -184,8 +184,8 @@ def test_get_playlists_with_stats_user_tracker_disabled_success(mocker, client, 
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me?include-stats=true')
     response_json = response.get_json()
@@ -365,8 +365,8 @@ def test_get_playlists_with_shuffled_playlists_success(mocker, client, env_patch
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     response_json = response.get_json()
@@ -428,8 +428,8 @@ def test_get_playlists_no_playlists_success(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     response_json = response.get_json()
@@ -473,8 +473,8 @@ def test_get_playlists_failure_cookies_invalid(mocker, client, env_patch):
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     response_json = response.get_json()
@@ -535,8 +535,8 @@ def test_get_playlists_failure_upstream_spotify_error(mocker, client, env_patch)
                         }
                         )
     # Init cookies
-    client.set_cookie('localhost', 'trueshuffle-sessionId', 'sessionId')
-    client.set_cookie('localhost', 'trueshuffle-auth', 'true')
+    client.set_cookie('trueshuffle-sessionId', 'sessionId')
+    client.set_cookie('trueshuffle-auth', 'true')
 
     response = client.get('/api/playlist/me')
     response_json = response.get_json()
