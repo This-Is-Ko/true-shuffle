@@ -1,14 +1,7 @@
-FROM python:3.10-slim-bookworm
+FROM python:3.14-slim-bookworm
 
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
-
-RUN apt-get update \
-  # dependencies for building Python packages
-  && apt-get install -y build-essential \
-  # cleaning up unused files
-  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
-  && rm -rf /var/lib/apt/lists/*
 
 # Requirements are installed here to ensure they will be cached.
 COPY ./app/requirements.txt /requirements.txt

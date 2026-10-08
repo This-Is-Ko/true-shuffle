@@ -34,7 +34,7 @@ Flask in Python (migrated from Spring Boot), deployed with Docker using containe
 ## Prerequisites
 
 - **Frontend** — [Node.js](https://nodejs.org/) (22 or higher) and [npm](https://www.npmjs.com/) (v7 or higher)
-- **Backend** — Python 3.10+, and optionally Docker to run all services locally
+- **Backend** — Python 3.14+, and optionally Docker to run all services locally
 
 ## Getting Started
 
