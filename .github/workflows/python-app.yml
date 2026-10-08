@@ -6,8 +6,14 @@ name: Commit Validation
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/python-app.yml'
   pull_request:
     branches: [ "main" ]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/python-app.yml'
 
 permissions:
   contents: read
@@ -17,13 +23,17 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    defaults:
+      run:
+        working-directory: backend
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python 3.10
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v5
       with:
         python-version: "3.10"
-    - uses: actions/cache@v3
+    - uses: actions/cache@v4
       id: cache
       with:
         path: ~/.cache/pip
