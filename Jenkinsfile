@@ -67,7 +67,7 @@ EOF
         stage('Docker availability check') {
             steps {
                 sh 'docker --version'
-                sh 'docker-compose --version'
+                sh 'docker compose version'
             }
         }
 
@@ -75,7 +75,7 @@ EOF
             steps {
                 dir('backend') {
                     sh '''
-                        docker-compose -f docker-compose-prod.yml build --no-cache --pull
+                        docker compose -f docker-compose-prod.yml build --no-cache --pull
                     '''
                 }
             }
