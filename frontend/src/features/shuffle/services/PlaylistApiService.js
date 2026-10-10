@@ -34,7 +34,7 @@ export const fetchRecentShuffles = () => {
  * @param {Object} playlistData - The playlist data to shuffle
  * @param {string} playlistData.playlist_id - The ID of the playlist to shuffle
  * @param {string} playlistData.playlist_name - The name of the playlist
- * @param {string} playlistData.shuffle_type - The shuffle type (e.g., "REUSE_EXISTING_PLAYLIST", "CLASSIC_NEW_PLAYLIST")
+ * @param {string} playlistData.shuffle_type - The shuffle type (e.g., "REUSE_EXISTING_PLAYLIST")
  * @returns {Promise} Promise that resolves with shuffle task ID
  */
 export const queueShufflePlaylist = (playlistData) => {

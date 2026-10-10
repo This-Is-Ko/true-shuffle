@@ -19,7 +19,7 @@ TRACK_SHUFFLES_ATTRIBUTE_NAME = "track_shuffles"
 
 @shared_task(bind=True, ignore_result=False, expires=60)
 def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, correlation_id=None, 
-        shuffle_type: str = Shuffle_Type.CLASSIC_NEW_PLAYLIST.value
+        shuffle_type: str = Shuffle_Type.REUSE_EXISTING_PLAYLIST.value
     ):
     # Store correlation_id in task metadata and request context for logging
     if correlation_id:

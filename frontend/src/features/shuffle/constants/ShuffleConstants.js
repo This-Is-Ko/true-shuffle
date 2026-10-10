@@ -2,6 +2,12 @@
  * Constants for shuffle functionality
  */
 
+// Shuffle types supported by the backend. All shuffles reuse an existing
+// shuffled playlist when one is present (previously the "Clutter free" mode).
+export const SHUFFLE_TYPE = {
+    REUSE_EXISTING_PLAYLIST: "REUSE_EXISTING_PLAYLIST"
+};
+
 // Maximum retry attempts for different shuffle states
 export const MAX_RETRY_ATTEMPTS = {
     PROGRESS_STATE: 70,
