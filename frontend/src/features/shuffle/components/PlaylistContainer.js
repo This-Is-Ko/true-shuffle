@@ -15,7 +15,8 @@ import {
 import {
     MAX_RETRY_ATTEMPTS,
     POLLING_CONFIG,
-    ERROR_MESSAGES
+    ERROR_MESSAGES,
+    SHUFFLE_TYPE
 } from "../constants/ShuffleConstants";
 import { CorrelationIdProvider, useCorrelationId, OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
 import { setCorrelationIdGetter } from "../../../utils/apiClient";
@@ -161,11 +162,12 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
         // Reset state before starting new shuffle
         resetShuffleState();
         
-        // Queue shuffle operation
+        // Queue shuffle operation. All shuffles reuse an existing shuffled
+        // playlist when present (the former "Clutter free" behavior).
         queueShufflePlaylist({
             playlist_id: selectedPlaylist.id,
             playlist_name: selectedPlaylist.name,
-            shuffle_type: selectedPlaylist.shuffleMode
+            shuffle_type: SHUFFLE_TYPE.REUSE_EXISTING_PLAYLIST
         })
             .then(result => {
                 setShuffleTaskId(result.data.shuffle_task_id);
