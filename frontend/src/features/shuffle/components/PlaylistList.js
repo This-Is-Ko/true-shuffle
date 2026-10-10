@@ -1,5 +1,6 @@
 import React from "react";
-import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button, TextField, InputAdornment, Divider } from "@mui/material";
+import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button, TextField, InputAdornment, Divider, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/system";
 import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
@@ -10,6 +11,8 @@ import PlaylistItem from "./PlaylistItem";
 import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
 import LoadingMessage from "../../../components/LoadingMessage";
+import ShuffleStatsPills from "./ShuffleStatsPills";
+import DeleteShuffledPlaylistsButton from "./DeleteShuffledPlaylists";
 
 /**
  * PlaylistList component - Displays the list of playlists or the selected playlist with shuffle status.
@@ -34,6 +37,9 @@ import LoadingMessage from "../../../components/LoadingMessage";
 const PlaylistList = ({ 
     playlists, 
     allPlaylistsCount,
+    userShuffleCounter,
+    existingShuffledPlaylistCount,
+    onDeleteSuccess,
     searchTerm,
     setSearchTerm,
     selectPlaylist, 
@@ -48,6 +54,8 @@ const PlaylistList = ({
     onHowToClick, 
     onRefreshData 
 }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     // Determine if shuffle operation is currently in progress
     const isShuffling = selectedPlaylist !== null && 
                        shuffleState !== "" && 
@@ -145,8 +153,8 @@ const PlaylistList = ({
     };
 
     return (
-        <Card sx={{
-            backgroundColor: "#181818",
+        <Card elevation={0} sx={{
+            backgroundColor: { xs: "transparent", md: "#181818" },
             borderRadius: "5px",
             width: "100%",
             minHeight: "100%",
@@ -155,8 +163,8 @@ const PlaylistList = ({
             flexDirection: "column"
         }}>
             <CardContent sx={{ 
-                py: { xs: 1, sm: 2 }, 
-                px: { xs: 1.5, sm: 2, md: 2 },
+                py: { xs: 0.5, sm: 2 }, 
+                px: { xs: 0.5, sm: 2, md: 2 },
                 display: "flex",
                 flexDirection: "column",
                 flex: 1,
@@ -168,11 +176,17 @@ const PlaylistList = ({
                     flexDirection: 'column',
                     gap: 2,
                     paddingTop: { xs: "10px", sm: "20px" },
-                    paddingBottom: { xs: "8px", sm: "16px" },
+                    paddingBottom: { xs: "2px", sm: "16px" },
                     marginBottom: 0,
                     flexShrink: 0
                 }}>
-                    {/* Title and How To Button Row */}
+                    {/* Stats pills - mobile only, all playlists view */}
+                    {isMobile && showAllPlaylists && (
+                        <ShuffleStatsPills userShuffleCounter={userShuffleCounter} />
+                    )}
+
+                    {/* Title and How To Button Row - hidden on mobile in the all-playlists view */}
+                    {!(isMobile && showAllPlaylists) && (
                     <Box sx={{ 
                         display: 'flex', 
                         alignItems: 'center', 
@@ -222,6 +236,7 @@ const PlaylistList = ({
                             <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
                         </IconButton>
                     </Box>
+                    )}
 
                     {/* Search Bar and Count Row - Only show when viewing all playlists */}
                     {showAllPlaylists && (
@@ -232,6 +247,7 @@ const PlaylistList = ({
                             gap: 1,
                             width: '100%'
                         }}>
+                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
                             <TextField
                                 placeholder="Search playlists..."
                                 value={searchTerm || ""}
@@ -239,7 +255,8 @@ const PlaylistList = ({
                                 variant="outlined"
                                 size="small"
                                 sx={{
-                                    width: '100%',
+                                    flex: 1,
+                                    minWidth: 0,
                                     '& .MuiOutlinedInput-root': {
                                         color: 'white',
                                         backgroundColor: '#282828',
@@ -284,6 +301,15 @@ const PlaylistList = ({
                                     )
                                 }}
                             />
+                            {isMobile && (
+                                <DeleteShuffledPlaylistsButton
+                                    variant="icon"
+                                    playlistCount={existingShuffledPlaylistCount || 0}
+                                    disabled={!existingShuffledPlaylistCount || existingShuffledPlaylistCount <= 0}
+                                    onDeleteSuccess={onDeleteSuccess}
+                                />
+                            )}
+                            </Box>
                             <Typography
                                 variant="body2"
                                 sx={{
@@ -306,7 +332,7 @@ const PlaylistList = ({
                 <Box
                     sx={{
                         width: "100%",
-                        paddingTop: { xs: "5px", sm: "10px", md: "0px" },
+                        paddingTop: { xs: "0px", sm: "10px", md: "0px" },
                         paddingBottom: { xs: "10px", sm: "20px" },
                         // Grid layout for all playlists, flex for selected playlist
                         display: (showAllPlaylists || loading) ? "grid" : "flex",
@@ -317,12 +343,12 @@ const PlaylistList = ({
                         minHeight: shouldCenterContent ? 0 : "auto",
                         // Responsive grid columns for playlist grid view
                         gridTemplateColumns: (showAllPlaylists || loading) ? {
-                            xs: "repeat(2, 1fr)",
+                            xs: "repeat(3, 1fr)",
                             sm: "repeat(auto-fit, minmax(150px, 200px))",
                             md: "repeat(auto-fit, minmax(150px, 200px))"
                         } : "none",
-                        gap: { xs: 1.5, sm: 2, md: 2 },
-                        rowGap: { xs: 1.5, sm: 2, md: 2 }
+                        gap: { xs: 1, sm: 2, md: 2 },
+                        rowGap: { xs: 1, sm: 2, md: 2 }
                     }}
                     className="contentHolder"
                 >
