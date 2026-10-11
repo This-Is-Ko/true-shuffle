@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Box, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/system";
+import ShuffleIcon from '@mui/icons-material/Shuffle';
+import HistoryIcon from '@mui/icons-material/History';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 
 import PlaylistList from "./PlaylistList";
 import ErrorMessage from "../../../components/ErrorMessage";
 import ShufflePageSidebar from "./ShufflePageSidebar";
-import MobileBottomNav from "./MobileBottomNav";
+import MobileBottomNav from "../../common/MobileBottomNav";
 import MobileHistoryView from "./MobileHistoryView";
 import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
 import {
@@ -403,9 +406,23 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
 
             {isMobile && (
                 <MobileBottomNav
-                    activeTab={activeTab}
-                    onTabChange={setActiveTab}
-                    onHowToClick={onHowToClick}
+                    value={activeTab}
+                    onChange={(value) => {
+                        if (value === "howto") {
+                            if (onHowToClick) {
+                                onHowToClick();
+                            }
+                            return;
+                        }
+                        if (setActiveTab) {
+                            setActiveTab(value);
+                        }
+                    }}
+                    items={[
+                        { label: "Shuffle", value: "shuffle", icon: <ShuffleIcon /> },
+                        { label: "History", value: "history", icon: <HistoryIcon /> },
+                        { label: "How To", value: "howto", icon: <HelpOutlineIcon /> }
+                    ]}
                 />
             )}
         </Box>

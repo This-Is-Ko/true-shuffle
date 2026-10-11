@@ -9,3 +9,9 @@ export const HowToShareLikedTracksEntry = [
     "Enter a playlist name or leave as default",
     "A new playlist will be created with all the tracks currently in your Liked Songs"
 ]
+
+export const HowToAnalyseEntry = [
+    "Click \"Start Analysis\"",
+    "We'll analyse your Liked Songs to build a breakdown of your library",
+    "See your top artists, top albums, track length statistics, audio features and more"
+]

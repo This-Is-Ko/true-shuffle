@@ -21,7 +21,7 @@ const pages = [
         "special": ""
     },
     {
-        "title": "Anaylse My Music",
+        "title": "Spotify Library Analyzer",
         "link": "/analysis",
         "special": ""
     },

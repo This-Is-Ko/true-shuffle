@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/system";
 
 import { checkPageAccessAndRedirect } from "../utils/SpotifyAuthService";
 import { isAuthenticated } from "../utils/AuthUtils";
@@ -17,6 +18,8 @@ import Footer from "../components/Footer";
  * @param {string} props.loginUri - Spotify login URI for authentication
  */
 const ShufflePage = ({ isAuth, loginUri }) => {
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
     const [isUserAuthenticated, setIsUserAuthenticated] = useState(isAuthenticated());
     const [isHowToModalOpen, setIsHowToModalOpen] = useState(false);
     const [selectedPlaylist, setSelectedPlaylist] = useState(null);
@@ -71,7 +74,8 @@ const ShufflePage = ({ isAuth, loginUri }) => {
                     />
                 </Box>
             </Box>
-            <Footer />
+            {/* Hide the footer on mobile when the user is logged in */}
+            {(!isMobile || !isUserAuthenticated) && <Footer />}
         </Box>
     );
 };

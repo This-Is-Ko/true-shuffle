@@ -1,9 +1,9 @@
 import React, { useEffect } from "react";
-import { Typography, Box, Accordion, AccordionSummary, AccordionDetails, Card } from "@mui/material";
+import { Typography, Box } from "@mui/material";
 import MuiLink from "@mui/material/Link";
 import { Helmet } from "react-helmet";
 import Footer from "../components/Footer";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FAQAccordion from "../features/faq/components/FAQAccordion";
 
 const faqs = [
     {
@@ -68,12 +68,6 @@ const faqs = [
     }
 ];
 
-
-const renderAnswer = (answer) => {
-  return answer.split('\n').map((line, index) => <p key={index}>{line}</p>);
-};
-
-
 const FAQPage = () => {
     useEffect(() => {
     }, []);
@@ -91,67 +85,62 @@ const FAQPage = () => {
                 <meta property="og:type" content="website" />
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Helmet>
-    
-            <Typography variant='h2' component="div" sx={{ paddingTop: "20px", color: "white", textAlign: "center" }}>
-                FAQ
-            </Typography>
 
-            <Box sx={{ 
-                paddingBottom: "20px",
-                paddingTop: "20px",
+            <Box sx={{
+                width: "90%",
+                maxWidth: "760px",
+                margin: "auto",
                 display: "flex",
-                justifyContent: "center",
-                width: "100%",
                 flexDirection: "column",
                 alignItems: "center"
             }}>
-                <Typography variant='body1' component="div" sx={{ color: "lightgrey", marginBottom: "20px", textAlign: "center", width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" } }}>
-                    Have a suggestion or idea? Share your feedback on our <MuiLink href="https://trueshuffle.featurebase.app/" target="_blank" rel="noopener noreferrer" sx={{ color: "#1DB954", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}>feedback board</MuiLink>.
-                </Typography>
-                <Card
+                <Typography
+                    variant='h2'
+                    component="h1"
                     sx={{
-                        width: { xs: "90%", sm: '90%', md: "70%", lg: "60%", xl: "50%" },
-                        backgroundColor: '#181818',
-                        borderRadius: '5px',
-                        p: 2,
-                        display: 'flex',
-                        flexDirection: 'column',
-                        boxSizing: 'border-box',
-                        gap: 1
+                        paddingTop: "20px",
+                        color: "white",
+                        textAlign: "center",
+                        fontFamily: "'Questrial', sans-serif",
+                        fontWeight: 600,
+                        letterSpacing: "-0.02em",
+                        fontSize: { xs: "2rem", sm: "2.5rem", md: "2.75rem" }
                     }}
                 >
+                    FAQ
+                </Typography>
+
+                <Typography
+                    variant='body1'
+                    component="div"
+                    sx={{
+                        color: "lightgrey",
+                        textAlign: "center",
+                        fontSize: { xs: "0.9rem", sm: "1rem" },
+                        marginTop: "12px",
+                        maxWidth: "480px"
+                    }}
+                >
+                    Have a suggestion or idea? Share your feedback on our{" "}
+                    <MuiLink
+                        href="https://trueshuffle.featurebase.app/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        sx={{ color: "#1DB954", textDecoration: "none", "&:hover": { textDecoration: "underline" } }}
+                    >
+                        feedback board
+                    </MuiLink>.
+                </Typography>
+
+                <Box sx={{ width: "100%", marginTop: "24px", marginBottom: "40px" }}>
                     {faqs.map((faqItem) => (
-                        <Accordion 
+                        <FAQAccordion
                             key={faqItem.id}
-                            disableGutters 
-                            sx={{
-                                backgroundColor: "#181818",
-                                margin: 0,
-                                '&:before': {
-                                    display: 'none',
-                                },
-                                '&.Mui-expanded': {
-                                    margin: 0,
-                                }
-                            }} 
-                            elevation={0}
-                        >
-                            <AccordionSummary
-                                expandIcon={<ExpandMoreIcon sx={{ color: "white" }} />}
-                                aria-controls="panel1a-content"
-                                id={faqItem.id}
-                                sx={{ textAlign: "left" }}
-                            >
-                                <Typography variant='h6' component="div" sx={{ color: "white", fontWeight: 'bold' }}>{faqItem.question}</Typography>
-                            </AccordionSummary>
-                            <AccordionDetails sx={{ textAlign: "left", backgroundColor: "#181818" }}>
-                                <Typography sx={{ color: "white" }}>
-                                    {renderAnswer(faqItem.answer)}
-                                </Typography>
-                            </AccordionDetails>
-                        </Accordion>
+                            question={faqItem.question}
+                            answer={faqItem.answer}
+                        />
                     ))}
-                </Card>
+                </Box>
             </Box>
             <Footer></Footer>
         </Box>
