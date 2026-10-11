@@ -2,11 +2,18 @@ from flask import Flask
 from tests import env_patch
 
 from spotipy import Spotify
+from spotipy.exceptions import SpotifyException
 from database import database
 
 from tests.functional.helpers.mock_requests import *
 from tests.functional.helpers.mock_responses import *
-from utils.util import get_tracks_from_playlist, create_new_playlist_with_tracks, add_tracks_with_retry
+from utils.util import (
+    get_tracks_from_playlist,
+    create_new_playlist_with_tracks,
+    reuse_existing_playlist_with_updated_tracks,
+    add_all_tracks_to_playlist,
+    add_tracks_with_retry,
+)
 
 SPOTIFY_PLAYLIST_URL = "open.spotify.com/playlist/spotifyPlaylistUrl"
 
@@ -272,5 +279,89 @@ def test_create_new_playlist_with_tracks_error_adding_items_failure(mocker, env_
         response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", sample_tracks_list)
 
         assert response["error"] == "Unable to add tracks to playlist new_playlist_id: mocked error"
+
+
+############ structured failure logging ################
+
+
+def test_create_new_playlist_validation_failure_logs_validate_operation(mocker, env_patch):
+    with app.app_context():
+        mock_log = mocker.patch("utils.util.logOperationFailure")
+
+        response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", [])
+
+        assert response["error"] == "Unable to create new playlist / add tracks to playlist: No tracks to add"
+        assert mock_log.call_args[0][0] == "validate_tracks"
+
+
+def test_create_new_playlist_create_failure_logs_create_operation(mocker, env_patch):
+    with app.app_context():
+        mock_log = mocker.patch("utils.util.logOperationFailure")
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch.object(Spotify, "user_playlist_create", side_effect=SpotifyException(500, -1, "server error"))
+
+        response = create_new_playlist_with_tracks(None, Spotify(), "new_playlist_name", False, "playlist_description", sample_tracks_list)
+
+        assert response["error"].startswith("Unable to create new playlist / add tracks to playlist: ")
+        assert mock_log.call_args[0][0] == "create_playlist"
+        assert mock_log.call_args[1]["user_id"] == mock_user_details_response["id"]
+        assert mock_log.call_args[1]["track_count"] == 3
+
+
+def test_reuse_existing_playlist_get_tracks_failure_logs_operation(mocker, env_patch):
+    with app.app_context():
+        mock_log = mocker.patch("utils.util.logOperationFailure")
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch("utils.util.get_tracks_from_playlist", side_effect=Exception("get tracks boom"))
+
+        response = reuse_existing_playlist_with_updated_tracks(None, Spotify(), "shuffled_playlist_id", SPOTIFY_PLAYLIST_URL, sample_tracks_list)
+
+        assert response["error"] == "Unable to reuse existing playlist / add tracks to playlist: get tracks boom"
+        assert mock_log.call_args[0][0] == "get_existing_tracks"
+        assert mock_log.call_args[1]["playlist_id"] == "shuffled_playlist_id"
+
+
+def test_reuse_existing_playlist_clear_failure_logs_clear_operation(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.update_task_progress", return_value=None)
+        mock_log = mocker.patch("utils.util.logOperationFailure")
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch("utils.util.get_tracks_from_playlist", return_value=[{"uri": "spotify:track:sometrack0"}])
+        mocker.patch.object(Spotify, "playlist_remove_all_occurrences_of_items", side_effect=SpotifyException(403, -1, "forbidden"))
+
+        response = reuse_existing_playlist_with_updated_tracks(None, Spotify(), "shuffled_playlist_id", SPOTIFY_PLAYLIST_URL, sample_tracks_list)
+
+        assert response["error"] == "Unable to clear existing playlist before adding new tracks"
+        assert mock_log.call_args[0][0] == "clear_existing_playlist"
+        assert mock_log.call_args[1]["playlist_id"] == "shuffled_playlist_id"
+        assert mock_log.call_args[1]["batch_index"] == 0
+        assert mock_log.call_args[1]["batch_size"] == 1
+
+
+def test_add_all_tracks_to_playlist_batch_failure_logs_operation(mocker, env_patch):
+    with app.app_context():
+        mock_log = mocker.patch("utils.util.logOperationFailure")
+        mocker.patch("utils.util.add_tracks_with_retry", side_effect=SpotifyException(429, -1, "rate limited"))
+
+        response = add_all_tracks_to_playlist(None, Spotify(), sample_tracks_list, "user_id", SPOTIFY_PLAYLIST_URL, "new_playlist_id", False)
+
+        assert response["error"].startswith("Unable to add tracks to playlist new_playlist_id: ")
+        assert mock_log.call_args[0][0] == "add_tracks_batch"
+        assert mock_log.call_args[1]["playlist_id"] == "new_playlist_id"
+        assert mock_log.call_args[1]["batch_index"] == 0
+        assert mock_log.call_args[1]["batch_size"] == 3
+        assert mock_log.call_args[1]["total_tracks"] == 3
+
+
+def test_add_all_tracks_to_playlist_missing_snapshot_logs_operation(mocker, env_patch):
+    with app.app_context():
+        mock_log = mocker.patch("utils.util.logOperationFailure")
+        mocker.patch("utils.util.add_tracks_with_retry", return_value={"unexpected": "response"})
+
+        response = add_all_tracks_to_playlist(None, Spotify(), sample_tracks_list, "user_id", SPOTIFY_PLAYLIST_URL, "new_playlist_id", False)
+
+        assert response["error"] == "Unable to add tracks to playlist new_playlist_id"
+        assert mock_log.call_args[0][0] == "add_tracks_missing_snapshot_id"
+        assert mock_log.call_args[1]["batch_index"] == 0
 
 
