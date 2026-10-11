@@ -32,7 +32,7 @@ const FEATURES = [
 ];
 
 /**
- * WhatYoullSee - Intro section for the Spotify Library Analyzer listing the
+ * WhatYoullSee - Intro section for the Library Analyzer listing the
  * insights available once the analysis has run.
  */
 const WhatYoullSee = () => {

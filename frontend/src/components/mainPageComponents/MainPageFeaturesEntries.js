@@ -7,7 +7,7 @@ export const features = [
         "icon": "shuffle-120x120.png"
     },
     {
-        "name": "Spotify Library Analyzer",
+        "name": "Library Analyzer",
         "description": "See what your most liked artists and albums are in your Liked Songs on Spotify",
         "uri": "/analysis",
         "special": " ",

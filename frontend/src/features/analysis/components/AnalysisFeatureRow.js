@@ -2,8 +2,8 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 
 /**
- * AnalysisFeatureRow - A single "what you'll see" row for the Spotify Library
- * Analyzer intro, made up of a circular green icon badge, a title and a subtitle.
+ * AnalysisFeatureRow - A single "what you'll see" row for the Library Analyzer
+ * intro, made up of a circular green icon badge, a title and a subtitle.
  *
  * @param {Object} props
  * @param {React.ReactNode} props.icon - Icon rendered inside the circular badge

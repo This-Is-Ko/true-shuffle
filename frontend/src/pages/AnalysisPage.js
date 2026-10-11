@@ -166,11 +166,11 @@ const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
                 minHeight: { xs: "auto", md: "calc(100vh - 64px)" }
             }}>
                 <Helmet>
-                    <title>Spotify Library Analyzer | True Shuffle for Spotify</title>
+                    <title>Library Analyzer | True Shuffle for Spotify</title>
                     <meta name="description" content="Analyze your Spotify music library with True Shuffle's and see statistics about your Liked Songs." />
                     <meta name="robots" content="index, follow" />
                     <link rel="canonical" href="https://www.trueshuffle.top/analyse-my-music" />
-                    <meta property="og:title" content="Spotify Library Analyzer | True Shuffle for Spotify" />
+                    <meta property="og:title" content="Library Analyzer | True Shuffle for Spotify" />
                     <meta property="og:description" content="Analyze your Spotify music library with True Shuffle's and see statistics about your Liked Songs." />
                     <meta property="og:url" content="https://www.trueshuffle.top/analyse-my-music" />
                     <meta property="og:type" content="website" />
@@ -208,7 +208,7 @@ const AnalysisPage = ({ isAuth: _isAuth, loginUri }) => {
                             minWidth: "200px", maxWidth: "600px", paddingTop: "10px", color: "lightgrey",
                             fontSize: { xs: "0.9rem", sm: "1rem" }
                         }}>
-                        The Spotify Library Analyzer shows you what’s in your saved music. See your top artists, top albums, and key stats about your library, all in one place.
+                        The Library Analyzer shows you what’s in your saved music. See your top artists, top albums, and key stats about your library, all in one place.
                     </Typography>
                 </Box>
                 {error !== null && error.message !== null && <ErrorMessage error={error} isGeneric={false} />}

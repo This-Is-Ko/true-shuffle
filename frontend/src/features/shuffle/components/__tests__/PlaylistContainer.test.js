@@ -114,7 +114,7 @@ describe("AllPlaylistsContainer (shuffle page body)", () => {
 
         expect(await screen.findByText("Something else went wrong")).toBeInTheDocument();
         expect(
-            screen.getByRole("link", { name: /analyse library/i })
+            screen.getByRole("link", { name: /library analyzer/i })
         ).toBeInTheDocument();
     });
 

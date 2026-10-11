@@ -19,7 +19,7 @@ describe("ShufflePageSidebar Component", () => {
 
         expect(screen.getByText("Overview")).toBeInTheDocument();
         expect(
-            screen.getByRole("link", { name: /analyse library/i })
+            screen.getByRole("link", { name: /library analyzer/i })
         ).toBeInTheDocument();
         expect(
             screen.getByRole("link", { name: /share library/i })

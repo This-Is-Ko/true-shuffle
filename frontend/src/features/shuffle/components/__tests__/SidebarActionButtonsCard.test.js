@@ -15,11 +15,11 @@ const renderCard = (existingShuffledPlaylistCount) =>
     );
 
 describe("SidebarActionButtonsCard Component", () => {
-    test("renders the analyse and share links", () => {
+    test("renders the analyzer and share links", () => {
         renderCard(0);
 
         expect(
-            screen.getByRole("link", { name: /analyse library/i })
+            screen.getByRole("link", { name: /library analyzer/i })
         ).toHaveAttribute("href", "/analysis");
         expect(
             screen.getByRole("link", { name: /share library/i })

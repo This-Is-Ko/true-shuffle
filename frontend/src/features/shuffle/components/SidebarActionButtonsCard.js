@@ -28,7 +28,7 @@ const SidebarActionButtonsCard = ({
                 height: 'auto'
             }}
         >
-            {/* Analyse Library Button */}
+            {/* Library Analyzer Button */}
             <Button
                 component={Link}
                 to="/analysis"
@@ -43,7 +43,7 @@ const SidebarActionButtonsCard = ({
                     }
                 }}
             >
-                Analyse Library
+                Library Analyzer
             </Button>
 
             {/* Share Library Button */}
