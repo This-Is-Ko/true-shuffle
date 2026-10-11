@@ -19,3 +19,10 @@ if (typeof window !== 'undefined' && !window.matchMedia) {
         dispatchEvent: jest.fn(),
     });
 }
+
+// react-router v7 relies on TextEncoder/TextDecoder, which jsdom 27 does not
+// provide. Browsers expose them natively, so only tests need this polyfill.
+import { TextEncoder, TextDecoder } from 'util';
+
+global.TextEncoder = global.TextEncoder || TextEncoder;
+global.TextDecoder = global.TextDecoder || TextDecoder;
