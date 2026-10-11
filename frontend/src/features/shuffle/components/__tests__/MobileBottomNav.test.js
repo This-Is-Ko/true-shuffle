@@ -49,4 +49,30 @@ describe("MobileBottomNav Component", () => {
         expect(onHowToClick).toHaveBeenCalledTimes(1);
         expect(onTabChange).not.toHaveBeenCalled();
     });
+
+    test("does not throw when selecting History without an onTabChange handler", () => {
+        render(
+            <MobileBottomNav
+                activeTab="shuffle"
+                onHowToClick={jest.fn()}
+            />
+        );
+
+        expect(() =>
+            fireEvent.click(screen.getByRole("button", { name: /history/i }))
+        ).not.toThrow();
+    });
+
+    test("does not throw when selecting How To without an onHowToClick handler", () => {
+        render(
+            <MobileBottomNav
+                activeTab="shuffle"
+                onTabChange={jest.fn()}
+            />
+        );
+
+        expect(() =>
+            fireEvent.click(screen.getByRole("button", { name: /how to/i }))
+        ).not.toThrow();
+    });
 });

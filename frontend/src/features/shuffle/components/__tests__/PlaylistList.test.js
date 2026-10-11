@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import PlaylistList from "../PlaylistList";
 import "@testing-library/jest-dom";
 
@@ -158,5 +158,91 @@ describe("PlaylistList Component", () => {
         );
 
         expect(screen.queryByRole("button", { name: /back to playlists/i })).not.toBeInTheDocument();
+    });
+
+    test("shows an Open link with the playlist URI in the shuffled state", () => {
+        render(<PlaylistList {...baseProps} />);
+
+        const openLink = screen.getByRole("link", { name: /open/i });
+        expect(openLink).toHaveAttribute("href", "https://open.spotify.com/playlist/123");
+        expect(openLink).toHaveAttribute("target", "_blank");
+    });
+
+    test("calls setSearchTerm when the search field changes", () => {
+        const setSearchTerm = jest.fn();
+        render(<PlaylistList {...gridProps} setSearchTerm={setSearchTerm} />);
+
+        fireEvent.change(screen.getByPlaceholderText("Search playlists..."), {
+            target: { value: "jazz" }
+        });
+
+        expect(setSearchTerm).toHaveBeenCalledWith("jazz");
+    });
+
+    test("clears the search term when the clear button is clicked", () => {
+        const setSearchTerm = jest.fn();
+        render(<PlaylistList {...gridProps} searchTerm="my" setSearchTerm={setSearchTerm} />);
+
+        fireEvent.click(screen.getByRole("button", { name: /clear search/i }));
+
+        expect(setSearchTerm).toHaveBeenCalledWith("");
+    });
+
+    test("shows 'No playlists found' when there are no playlists", () => {
+        render(
+            <PlaylistList
+                {...gridProps}
+                playlists={[]}
+                allPlaylistsCount={0}
+            />
+        );
+
+        expect(screen.getByText("No playlists found")).toBeInTheDocument();
+    });
+
+    test("uses the singular 'playlist' for a single playlist", () => {
+        render(
+            <PlaylistList
+                {...gridProps}
+                playlists={[gridProps.playlists[0]]}
+                allPlaylistsCount={1}
+            />
+        );
+
+        expect(screen.getByText("1 playlist")).toBeInTheDocument();
+    });
+
+    test("shows loading skeletons while playlists are loading", () => {
+        render(<PlaylistList loading={true} onHowToClick={jest.fn()} />);
+
+        expect(screen.getAllByTestId("playlist-skeleton").length).toBeGreaterThan(0);
+    });
+
+    test("selects a playlist when its tile is clicked", () => {
+        const setSelectedPlaylist = jest.fn();
+        render(
+            <PlaylistList {...gridProps} setSelectedPlaylist={setSelectedPlaylist} />
+        );
+
+        fireEvent.click(screen.getByRole("img"));
+
+        expect(setSelectedPlaylist).toHaveBeenCalledWith(gridProps.playlists[0]);
+    });
+
+    test("returns to the grid when 'Back to playlists' is clicked", () => {
+        const onRefreshData = jest.fn();
+        const setSelectedPlaylist = jest.fn();
+        render(
+            <PlaylistList
+                {...baseProps}
+                onRefreshData={onRefreshData}
+                setSelectedPlaylist={setSelectedPlaylist}
+            />
+        );
+
+        fireEvent.click(screen.getByRole("button", { name: /back to playlists/i }));
+
+        expect(setSelectedPlaylist).toHaveBeenCalledWith(null);
+        expect(onRefreshData).toHaveBeenCalledTimes(1);
     });
 });
