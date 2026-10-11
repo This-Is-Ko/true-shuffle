@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import CounterTooltipChip from "../CounterTooltipChip";
 import "@testing-library/jest-dom";
 
@@ -37,7 +37,7 @@ describe("CounterTooltipChip Component", () => {
         expect(await screen.findByRole("tooltip")).toHaveTextContent("Tracks");
     });
 
-    test("handles mouse and touch interactions without errors", () => {
+    test("handles mouse and touch interactions without errors", async () => {
         window.matchMedia = createMatchMedia(true);
 
         render(
@@ -48,9 +48,16 @@ describe("CounterTooltipChip Component", () => {
         expect(() => {
             fireEvent.mouseEnter(chip);
             fireEvent.mouseLeave(chip);
-            fireEvent.touchStart(chip);
-            fireEvent.touchEnd(chip);
+            // Provide touch coordinates so MUI can compute a finite ripple size.
+            fireEvent.touchStart(chip, { touches: [{ clientX: 12, clientY: 12 }] });
+            fireEvent.touchEnd(chip, { touches: [{ clientX: 12, clientY: 12 }] });
         }).not.toThrow();
+
+        // MUI's touch ripple schedules follow-up state updates on a timer; flush
+        // them inside act(...) so they don't leak outside the test.
+        await act(async () => {
+            await new Promise((resolve) => setTimeout(resolve, 0));
+        });
     });
 
     test("shows the tooltip on hover on desktop", async () => {

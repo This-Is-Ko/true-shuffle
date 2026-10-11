@@ -20,7 +20,7 @@ const FilteredLikedSongsShuffle = () => {
     const handleShuffle = () => {
         // TODO: Implement API call when backend supports filter parameters
         // This is a placeholder for future implementation
-        console.log("Filtered shuffle:", {
+        console.debug("Filtered shuffle:", {
             artist,
             genre,
             yearReleasedMin,

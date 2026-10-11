@@ -51,7 +51,7 @@ const defaultProps = {
 
 const renderContainer = (props, { selectedPlaylist = null } = {}) =>
     render(
-        <MemoryRouter>
+        <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
             <AllPlaylistsContainer {...defaultProps} {...props} selectedPlaylist={selectedPlaylist} />
         </MemoryRouter>
     );

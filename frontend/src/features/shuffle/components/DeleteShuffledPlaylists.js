@@ -100,13 +100,13 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount, variant
                 <DialogContent>
                     {isSuccess ? (
                         <DialogContentText id="delete-dialog-description" sx={{ color: "white" }}>
-                            <Typography variant="body1" sx={{ color: "white", fontWeight: 'bold' }}>
+                            <Typography component="span" variant="body1" sx={{ color: "white", fontWeight: 'bold' }}>
                                 Successfully deleted {playlistCount} shuffled playlist{playlistCount !== 1 ? 's' : ''}!
                             </Typography>
                         </DialogContentText>
                     ) : error ? (
                         <DialogContentText id="delete-dialog-description" sx={{ color: "white" }}>
-                            <Typography variant="body1" sx={{ color: "#d32f2f" }}>
+                            <Typography component="span" variant="body1" sx={{ color: "#d32f2f" }}>
                                 Unable to connect to Spotify, please try again later.
                             </Typography>
                         </DialogContentText>

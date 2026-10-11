@@ -7,7 +7,7 @@ import "@testing-library/jest-dom";
 describe("ShufflePageSidebar Component", () => {
     test("renders the stats card and action buttons", () => {
         render(
-            <MemoryRouter>
+            <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <ShufflePageSidebar
                     userShuffleCounter={{ playlist_count: 2, track_count: 3 }}
                     recentShuffles={[]}
@@ -28,7 +28,7 @@ describe("ShufflePageSidebar Component", () => {
 
     test("shows the delete action when shuffled playlists exist", () => {
         render(
-            <MemoryRouter>
+            <MemoryRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
                 <ShufflePageSidebar
                     userShuffleCounter={false}
                     recentShuffles={[]}
