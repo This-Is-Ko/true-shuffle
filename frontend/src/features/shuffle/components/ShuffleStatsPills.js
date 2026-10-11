@@ -1,6 +1,6 @@
 import React from "react";
-import { Box, Stack, Typography } from "@mui/material";
-import ListIcon from '@mui/icons-material/List';
+import { Box, Stack, Typography, Tooltip } from "@mui/material";
+import ShuffleIcon from '@mui/icons-material/Shuffle';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import { formatNumberWithCommas } from "../../../utils/NumberFormatter";
 
@@ -11,26 +11,29 @@ import { formatNumberWithCommas } from "../../../utils/NumberFormatter";
  * @param {React.ReactNode} props.icon - Icon rendered before the count
  * @param {number|string} props.count - The value to display
  * @param {string} props.noun - Word shown after the count (e.g. "playlists")
+ * @param {string} props.tooltipTitle - Tooltip text shown on hover/long-press
  */
-const StatPill = ({ icon, count, noun }) => (
-    <Box
-        sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.75,
-            px: 1.5,
-            py: 0.5,
-            borderRadius: '999px',
-            border: '1px solid #4d4d4d',
-            bgcolor: 'transparent',
-            whiteSpace: 'nowrap'
-        }}
-    >
-        {icon}
-        <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
-            {formatNumberWithCommas(count)} {noun}
-        </Typography>
-    </Box>
+const StatPill = ({ icon, count, noun, tooltipTitle }) => (
+    <Tooltip title={tooltipTitle} arrow>
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 0.75,
+                px: 1.5,
+                py: 0.5,
+                borderRadius: '999px',
+                border: '1px solid #4d4d4d',
+                bgcolor: 'transparent',
+                whiteSpace: 'nowrap'
+            }}
+        >
+            {icon}
+            <Typography variant="body2" sx={{ color: 'white', fontWeight: 500 }}>
+                {formatNumberWithCommas(count)} {noun}
+            </Typography>
+        </Box>
+    </Tooltip>
 );
 
 /**
@@ -61,9 +64,10 @@ const ShuffleStatsPills = ({ userShuffleCounter }) => {
         >
             {playlistCount != null && (
                 <StatPill
-                    icon={<ListIcon sx={{ color: "#1DB954", fontSize: "1.1rem" }} />}
+                    icon={<ShuffleIcon sx={{ color: "#1DB954", fontSize: "1.1rem" }} />}
                     count={playlistCount}
-                    noun={playlistCount === 1 ? 'playlist' : 'playlists'}
+                    noun={playlistCount === 1 ? 'shuffle' : 'shuffles'}
+                    tooltipTitle="Total count of playlists shuffled"
                 />
             )}
             {trackCount != null && (
@@ -71,6 +75,7 @@ const ShuffleStatsPills = ({ userShuffleCounter }) => {
                     icon={<AudiotrackIcon sx={{ color: "#1DB954", fontSize: "1.1rem" }} />}
                     count={trackCount}
                     noun={trackCount === 1 ? 'track' : 'tracks'}
+                    tooltipTitle="Tracks shuffled"
                 />
             )}
         </Stack>

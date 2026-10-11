@@ -307,6 +307,8 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     useEffect(() => {
         if (selectedPlaylist !== null) {
             initiateShuffleOperation();
+            // Jump the page back to the top so the selected playlist is visible
+            window.scrollTo(0, 0);
         } else {
             // Reset shuffle state when no playlist is selected
             resetShuffleState();
@@ -359,14 +361,18 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
             <Box sx={{ 
                 flex: { md: '1 1 0%' },
                 minWidth: { md: '400px' },
-                paddingTop: { xs: 2, md: 0 },
+                paddingTop: { xs: 0.5, md: 0 },
                 boxSizing: 'border-box',
                 width: { xs: '100%', md: 'auto' },
                 display: 'flex',
                 alignItems: { md: 'stretch' }
             }}>
                 {isMobile && activeTab === "history" ? (
-                    <MobileHistoryView recentShuffles={recentShuffles} />
+                    <MobileHistoryView
+                        recentShuffles={recentShuffles}
+                        existingShuffledPlaylistCount={existingShuffledPlaylistCount}
+                        onDeleteSuccess={handleDeleteSuccess}
+                    />
                 ) : error !== false ? (
                     <ErrorMessage error={error} isGeneric={false} />
                 ) : playlists.length > 0 ? (
@@ -374,8 +380,6 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                         playlists={filteredPlaylists}
                         allPlaylistsCount={playlists.length}
                         userShuffleCounter={userShuffleCounter}
-                        existingShuffledPlaylistCount={existingShuffledPlaylistCount}
-                        onDeleteSuccess={handleDeleteSuccess}
                         searchTerm={searchTerm}
                         setSearchTerm={setSearchTerm}
                         selectPlaylist={selectPlaylist} 

@@ -41,7 +41,7 @@ const MobileBottomNav = ({ activeTab, onTabChange, onHowToClick }) => {
                 left: 0,
                 right: 0,
                 zIndex: 1300,
-                bgcolor: '#161817',
+                bgcolor: '#181818',
                 pb: 'env(safe-area-inset-bottom)'
             }}
         >
@@ -50,7 +50,7 @@ const MobileBottomNav = ({ activeTab, onTabChange, onHowToClick }) => {
                 onChange={handleChange}
                 showLabels
                 sx={{
-                    bgcolor: '#161817',
+                    bgcolor: '#181818',
                     '& .MuiBottomNavigationAction-root': { color: '#b3b3b3' },
                     '& .Mui-selected': { color: '#1DB954' }
                 }}

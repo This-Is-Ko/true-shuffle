@@ -157,7 +157,7 @@ const PlaylistItem = (props) => {
                         component="div"
                         sx={{
                             color: "#b3b3b3",
-                            fontSize: "0.85rem",
+                            fontSize: "0.7rem",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             width: "100%",

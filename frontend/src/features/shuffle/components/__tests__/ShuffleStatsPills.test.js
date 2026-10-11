@@ -4,14 +4,14 @@ import ShuffleStatsPills from "../ShuffleStatsPills";
 import "@testing-library/jest-dom";
 
 describe("ShuffleStatsPills Component", () => {
-    test("renders playlist and track counts with words and comma formatting", () => {
+    test("renders shuffle and track counts with words and comma formatting", () => {
         render(
             <ShuffleStatsPills
                 userShuffleCounter={{ playlist_count: 396, track_count: 644477 }}
             />
         );
 
-        expect(screen.getByText("396 playlists")).toBeInTheDocument();
+        expect(screen.getByText("396 shuffles")).toBeInTheDocument();
         expect(screen.getByText("644,477 tracks")).toBeInTheDocument();
     });
 
@@ -22,7 +22,7 @@ describe("ShuffleStatsPills Component", () => {
             />
         );
 
-        expect(screen.getByText("1 playlist")).toBeInTheDocument();
+        expect(screen.getByText("1 shuffle")).toBeInTheDocument();
         expect(screen.getByText("1 track")).toBeInTheDocument();
     });
 
@@ -47,7 +47,7 @@ describe("ShuffleStatsPills Component", () => {
             <ShuffleStatsPills userShuffleCounter={{ playlist_count: 5 }} />
         );
 
-        expect(screen.getByText("5 playlists")).toBeInTheDocument();
+        expect(screen.getByText("5 shuffles")).toBeInTheDocument();
         expect(screen.queryByText(/tracks?$/)).not.toBeInTheDocument();
     });
 });

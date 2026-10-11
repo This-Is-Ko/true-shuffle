@@ -58,10 +58,6 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount, variant
                     aria-label="Delete shuffled playlists"
                     sx={{
                         color: disabled ? '#666666' : '#d32f2f',
-                        border: '1px solid',
-                        borderColor: disabled ? '#333333' : '#404040',
-                        borderRadius: '5px',
-                        p: 1,
                         '&:hover': {
                             bgcolor: disabled ? 'transparent' : 'rgba(211, 47, 47, 0.1)'
                         }
@@ -94,7 +90,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount, variant
                 aria-describedby="delete-dialog-description"
                 PaperProps={{
                     sx: {
-                        bgcolor: '#292e2f',
+                        bgcolor: '#181818',
                     }
                 }}
             >

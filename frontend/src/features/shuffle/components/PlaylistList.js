@@ -1,7 +1,6 @@
 import React from "react";
 import { Card, CardContent, Box, Typography, IconButton, CircularProgress, Button, TextField, InputAdornment, Divider, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/system";
-import QueueMusicIcon from '@mui/icons-material/QueueMusic';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import AudiotrackIcon from '@mui/icons-material/Audiotrack';
 import SearchIcon from '@mui/icons-material/Search';
@@ -12,7 +11,6 @@ import PLAYLIST_ITEM_DISPLAY_STATES from "../state/PlaylistItemDisplayStates";
 import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
 import LoadingMessage from "../../../components/LoadingMessage";
 import ShuffleStatsPills from "./ShuffleStatsPills";
-import DeleteShuffledPlaylistsButton from "./DeleteShuffledPlaylists";
 
 /**
  * PlaylistList component - Displays the list of playlists or the selected playlist with shuffle status.
@@ -38,8 +36,6 @@ const PlaylistList = ({
     playlists, 
     allPlaylistsCount,
     userShuffleCounter,
-    existingShuffledPlaylistCount,
-    onDeleteSuccess,
     searchTerm,
     setSearchTerm,
     selectPlaylist, 
@@ -83,21 +79,6 @@ const PlaylistList = ({
     const handleSelectPlaylist = (playlist) => {
         if (setSelectedPlaylist && playlist) {
             setSelectedPlaylist(playlist);
-        }
-    };
-
-    /**
-     * Gets the appropriate title based on the current shuffle state.
-     * 
-     * @returns {string} Title text to display
-     */
-    const getTitle = () => {
-        if (isShuffled) {
-            return "Playlist shuffled!";
-        } else if (isShuffling) {
-            return "Shuffling playlist";
-        } else {
-            return "Select a playlist";
         }
     };
 
@@ -152,9 +133,30 @@ const PlaylistList = ({
         return `${totalCount} playlist${totalCount !== 1 ? 's' : ''}`;
     };
 
+    // Open button - available early in the shuffle process once a playlist URI exists
+    const openPlaylistButton = playlistUri != null ? (
+        <Button
+            variant="contained"
+            href={playlistUri}
+            target="_blank"
+            sx={{
+                color: 'white',
+                bgcolor: "#1DB954",
+                width: "100%",
+                maxWidth: "300px",
+                '&:hover': {
+                    bgcolor: "#1ed760"
+                }
+            }}
+            startIcon={<AudiotrackIcon />}
+        >
+            Open
+        </Button>
+    ) : null;
+
     return (
         <Card elevation={0} sx={{
-            backgroundColor: { xs: "transparent", md: "#181818" },
+            backgroundColor: "#181818",
             borderRadius: "5px",
             width: "100%",
             minHeight: "100%",
@@ -164,7 +166,7 @@ const PlaylistList = ({
         }}>
             <CardContent sx={{ 
                 py: { xs: 0.5, sm: 2 }, 
-                px: { xs: 0.5, sm: 2, md: 2 },
+                px: { xs: 1, sm: 2, md: 2 },
                 display: "flex",
                 flexDirection: "column",
                 flex: 1,
@@ -175,7 +177,7 @@ const PlaylistList = ({
                     display: 'flex', 
                     flexDirection: 'column',
                     gap: 2,
-                    paddingTop: { xs: "10px", sm: "20px" },
+                    paddingTop: { xs: "10px", sm: "20px", md: 0 },
                     paddingBottom: { xs: "2px", sm: "16px" },
                     marginBottom: 0,
                     flexShrink: 0
@@ -185,60 +187,7 @@ const PlaylistList = ({
                         <ShuffleStatsPills userShuffleCounter={userShuffleCounter} />
                     )}
 
-                    {/* Title and How To Button Row - hidden on mobile in the all-playlists view */}
-                    {!(isMobile && showAllPlaylists) && (
-                    <Box sx={{ 
-                        display: 'flex', 
-                        alignItems: 'center', 
-                        justifyContent: 'space-between',
-                        gap: 1.5
-                    }}>
-                        <Box sx={{ 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            gap: 1.5,
-                            flex: 1
-                        }}>
-                            <QueueMusicIcon 
-                                sx={{ 
-                                    color: "#1DB954", 
-                                    fontSize: { xs: "28px", sm: "32px" },
-                                    flexShrink: 0
-                                }} 
-                            />
-                            <Typography 
-                                variant='h4' 
-                                component="div" 
-                                sx={{ 
-                                    color: "white",
-                                    fontSize: { xs: "1.5rem", sm: "2rem" },
-                                    fontWeight: 600,
-                                    fontFamily: "'Questrial', sans-serif",
-                                    letterSpacing: "-0.02em",
-                                    margin: 0
-                                }}
-                            >
-                                {getTitle()}
-                            </Typography>
-                        </Box>
-                        <IconButton
-                            onClick={onHowToClick}
-                            sx={{
-                                color: "#1DB954",
-                                '&:hover': {
-                                    color: "#1ed760",
-                                    bgcolor: 'rgba(29, 185, 84, 0.1)'
-                                },
-                                padding: { xs: "8px", sm: "10px" }
-                            }}
-                            aria-label="How to use"
-                        >
-                            <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
-                        </IconButton>
-                    </Box>
-                    )}
-
-                    {/* Search Bar and Count Row - Only show when viewing all playlists */}
+                    {/* Search Bar with How To button, Count and Divider - Only show when viewing all playlists */}
                     {showAllPlaylists && (
                         <Box sx={{ 
                             display: 'flex', 
@@ -258,10 +207,10 @@ const PlaylistList = ({
                                     flex: 1,
                                     minWidth: 0,
                                     '& .MuiOutlinedInput-root': {
-                                        color: 'white',
-                                        backgroundColor: '#282828',
+                                        color: '#181818',
+                                        backgroundColor: '#ffffff',
                                         '& fieldset': {
-                                            borderColor: '#404040',
+                                            borderColor: '#d9d9d9',
                                         },
                                         '&:hover fieldset': {
                                             borderColor: '#1DB954',
@@ -271,14 +220,14 @@ const PlaylistList = ({
                                         },
                                     },
                                     '& .MuiInputBase-input::placeholder': {
-                                        color: '#b3b3b3',
+                                        color: '#666666',
                                         opacity: 1
                                     }
                                 }}
                                 InputProps={{
                                     startAdornment: (
                                         <InputAdornment position="start">
-                                            <SearchIcon sx={{ color: '#b3b3b3' }} />
+                                            <SearchIcon sx={{ color: '#666666' }} />
                                         </InputAdornment>
                                     ),
                                     endAdornment: searchTerm && searchTerm.trim() !== "" && (
@@ -289,7 +238,7 @@ const PlaylistList = ({
                                                 edge="end"
                                                 size="small"
                                                 sx={{
-                                                    color: '#b3b3b3',
+                                                    color: '#666666',
                                                     '&:hover': {
                                                         color: '#1DB954'
                                                     }
@@ -301,13 +250,22 @@ const PlaylistList = ({
                                     )
                                 }}
                             />
-                            {isMobile && (
-                                <DeleteShuffledPlaylistsButton
-                                    variant="icon"
-                                    playlistCount={existingShuffledPlaylistCount || 0}
-                                    disabled={!existingShuffledPlaylistCount || existingShuffledPlaylistCount <= 0}
-                                    onDeleteSuccess={onDeleteSuccess}
-                                />
+                            {!isMobile && (
+                                <IconButton
+                                    onClick={onHowToClick}
+                                    sx={{
+                                        color: "#1DB954",
+                                        '&:hover': {
+                                            color: "#1ed760",
+                                            bgcolor: 'rgba(29, 185, 84, 0.1)'
+                                        },
+                                        padding: { xs: "8px", sm: "10px" },
+                                        flexShrink: 0
+                                    }}
+                                    aria-label="How to use"
+                                >
+                                    <HelpOutlineIcon sx={{ fontSize: { xs: "24px", sm: "28px" } }} />
+                                </IconButton>
                             )}
                             </Box>
                             <Typography
@@ -340,7 +298,7 @@ const PlaylistList = ({
                         alignItems: (showAllPlaylists || loading) ? "stretch" : "center",
                         justifyContent: shouldCenterContent ? "center" : (showAllPlaylists || loading) ? "center" : "flex-start",
                         flex: shouldCenterContent ? 1 : "none",
-                        minHeight: shouldCenterContent ? 0 : "auto",
+                        minHeight: shouldCenterContent ? { xs: "calc(100vh - 190px)", md: "calc(100vh - 150px)" } : "auto",
                         // Responsive grid columns for playlist grid view
                         gridTemplateColumns: (showAllPlaylists || loading) ? {
                             xs: "repeat(3, 1fr)",
@@ -404,46 +362,36 @@ const PlaylistList = ({
                                 }}>
                                     {/* Show error if present, otherwise show normal shuffle UI */}
                                     {shuffleError && typeof shuffleError === 'object' ? (
-                                        <Typography variant="subtitle1" sx={{ paddingTop: "10px", color: "white" }}>
-                                            {shuffleError.message || "Error while checking shuffle state. Please try again later."}
-                                        </Typography>
+                                        <>
+                                            <Typography variant="subtitle1" sx={{ paddingTop: "10px", color: "white" }}>
+                                                {shuffleError.message || "Error while checking shuffle state. Please try again later."}
+                                            </Typography>
+                                            <Button
+                                                variant="outlined"
+                                                disableElevation
+                                                onClick={handleShuffleAnother}
+                                                sx={{
+                                                    color: "#1DB954",
+                                                    borderColor: "#1DB954",
+                                                    width: "100%",
+                                                    maxWidth: "300px",
+                                                    '&:hover': {
+                                                        borderColor: "#1ed760",
+                                                        bgcolor: "rgba(29, 185, 84, 0.1)"
+                                                    }
+                                                }}
+                                            >
+                                                Back to playlists
+                                            </Button>
+                                        </>
                                     ) : (
                                         <>
-                                            {/* Open button - available early in shuffle process */}
+                                            <CircularProgress />
+                                            <LoadingMessage message={isInitializing ? "Starting shuffle..." : (shuffleStateMessage || "Shuffling...")} />
+                                            {openPlaylistButton}
+                                            {/* Inform user they can start listening early */}
                                             {playlistUri != null && (
-                                                <Button
-                                                    variant="contained"
-                                                    href={playlistUri}
-                                                    target="_blank"
-                                                    sx={{
-                                                        color: 'white', 
-                                                        bgcolor: "#1DB954",
-                                                        width: "100%",
-                                                        maxWidth: "300px",
-                                                        '&:hover': {
-                                                            bgcolor: "#1ed760"
-                                                        },
-                                                        marginBottom: 1,
-                                                    }}
-                                                    startIcon={<AudiotrackIcon />}
-                                                >
-                                                    Open
-                                                </Button>
-                                            )}
-                                            {!isInitializing && <CircularProgress />}
-                                            {isInitializing ? (
-                                                <>
-                                                    <CircularProgress />
-                                                    <LoadingMessage message="Starting shuffle..." />
-                                                </>
-                                            ) : (
-                                                <>
-                                                    <LoadingMessage message={shuffleStateMessage || "Shuffling..."} />
-                                                    {/* Inform user they can start listening early */}
-                                                    {playlistUri != null && (
-                                                        <LoadingMessage message="You can start listening while the rest of the tracks are being added" />
-                                                    )}
-                                                </>
+                                                <LoadingMessage message="You can start listening while the rest of the tracks are being added" />
                                             )}
                                         </>
                                     )}
@@ -480,20 +428,21 @@ const PlaylistList = ({
                                         </Button>
                                     )}
                                     <Button
-                                        variant="contained"
+                                        variant="outlined"
                                         disableElevation
                                         onClick={handleShuffleAnother}
                                         sx={{
-                                            color: 'white', 
-                                            bgcolor: "#1DB954",
+                                            color: "#1DB954",
+                                            borderColor: "#1DB954",
                                             width: "100%",
                                             maxWidth: "300px",
                                             '&:hover': {
-                                                bgcolor: "#1ed760"
+                                                borderColor: "#1ed760",
+                                                bgcolor: "rgba(29, 185, 84, 0.1)"
                                             }
                                         }}
                                     >
-                                        Shuffle another playlist
+                                        Back to playlists
                                     </Button>
                                     <Typography 
                                         variant='subtitle1' 

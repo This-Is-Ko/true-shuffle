@@ -34,7 +34,7 @@ function App() {
                     <meta name="viewport" content="width=device-width, initial-scale=1" />
                 </Helmet>
 
-                <Typography variant='h2' component="div" sx={{ paddingTop:{ xs:"10px", sm:"10px", md:"20px", }, paddingBottom: {  sm:"0px", md:"10px" }, color: "white" }}>Shuffle</Typography>
+                {/* <Typography variant='h2' component="div" sx={{ paddingTop:{ xs:"10px", sm:"10px", md:"20px", }, paddingBottom: {  sm:"0px", md:"10px" }, color: "white" }}>Shuffle</Typography> */}
                 <Routes>
                     <Route path="/" element={<ShufflePage isAuth={isAuth} setIsAuth={setIsAuth} loginUri={loginUri}/>} />
                 </Routes>

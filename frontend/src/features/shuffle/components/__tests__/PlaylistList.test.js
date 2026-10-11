@@ -89,34 +89,74 @@ describe("PlaylistList Component", () => {
         expect(screen.getByText("Showing 1 of 27")).toBeInTheDocument();
     });
 
-    test("hides the 'Select a playlist' title on mobile in the grid view", () => {
+    test("hides the 'Select a playlist' title in the grid view", () => {
+        render(<PlaylistList {...gridProps} />);
+
+        expect(screen.queryByText("Select a playlist")).not.toBeInTheDocument();
+    });
+
+    test("hides the 'Select a playlist' title in the grid view on mobile", () => {
         window.matchMedia = createMatchMedia(true);
         render(<PlaylistList {...gridProps} />);
 
         expect(screen.queryByText("Select a playlist")).not.toBeInTheDocument();
     });
 
-    test("shows the 'Select a playlist' title on desktop", () => {
+    test("shows the How To button next to the search bar on desktop", () => {
         render(<PlaylistList {...gridProps} />);
 
-        expect(screen.getByText("Select a playlist")).toBeInTheDocument();
+        expect(screen.getByRole("button", { name: /how to use/i })).toBeInTheDocument();
     });
 
-    test("disables the delete button on mobile when there are no shuffled playlists", () => {
+    test("does not show the How To button on mobile (it lives in the bottom nav)", () => {
         window.matchMedia = createMatchMedia(true);
-        render(<PlaylistList {...gridProps} existingShuffledPlaylistCount={0} />);
+        render(<PlaylistList {...gridProps} />);
 
-        expect(
-            screen.getByRole("button", { name: /delete shuffled playlists/i })
-        ).toBeDisabled();
+        expect(screen.queryByRole("button", { name: /how to use/i })).not.toBeInTheDocument();
     });
 
-    test("enables the delete button on mobile when shuffled playlists exist", () => {
+    test("shows the shuffle status message and spinner while shuffling on mobile", () => {
         window.matchMedia = createMatchMedia(true);
-        render(<PlaylistList {...gridProps} existingShuffledPlaylistCount={3} />);
+        render(
+            <PlaylistList
+                {...baseProps}
+                shuffleState="PROGRESS"
+                shuffleStateMessage="Shuffling 3545 tracks..."
+                playlistUri={null}
+            />
+        );
 
-        expect(
-            screen.getByRole("button", { name: /delete shuffled playlists/i })
-        ).toBeEnabled();
+        expect(screen.getByText("Shuffling 3545 tracks...")).toBeInTheDocument();
+        expect(screen.getByRole("progressbar")).toBeInTheDocument();
+    });
+
+    test("shows a 'Back to playlists' button when the shuffle has finished", () => {
+        render(<PlaylistList {...baseProps} />);
+
+        expect(screen.getByRole("button", { name: /back to playlists/i })).toBeInTheDocument();
+    });
+
+    test("shows a 'Back to playlists' button when the shuffle has errored", () => {
+        render(
+            <PlaylistList
+                {...baseProps}
+                shuffleState="FAILURE"
+                shuffleError={{ message: "Something went wrong" }}
+            />
+        );
+
+        expect(screen.getByRole("button", { name: /back to playlists/i })).toBeInTheDocument();
+    });
+
+    test("does not show a 'Back to playlists' button while shuffling", () => {
+        render(
+            <PlaylistList
+                {...baseProps}
+                shuffleState="PROGRESS"
+                shuffleStateMessage="Shuffling 3545 tracks..."
+            />
+        );
+
+        expect(screen.queryByRole("button", { name: /back to playlists/i })).not.toBeInTheDocument();
     });
 });
