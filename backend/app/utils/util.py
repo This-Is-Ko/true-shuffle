@@ -4,7 +4,7 @@ from typing import List
 from flask import current_app
 import spotipy
 from spotipy.exceptions import SpotifyException
-from utils.logger_utils import logError, logInfo, logWarning
+from utils.logger_utils import logError, logInfo, logWarning, logOperationFailure
 
 LIKED_TRACKS_PLAYLIST_ID = "likedTracks"
 required_fields = ["uri", "name", "id"]
@@ -213,13 +213,17 @@ def create_new_playlist_with_tracks(
         public_status: bool,
         playlist_description: str,
         tracks_to_add: List[str]):
+    operation = "create_new_playlist"
+    context: dict = {"playlist_name": new_playlist_name}
     try:
         if tracks_to_add is None:
+            operation = "validate_tracks"
             raise Exception("No tracks to add")
 
         # Remove any invalid uris which have a whitespace
         tracks_to_add = validate_tracks(tracks_to_add)
         if not tracks_to_add:
+            operation = "validate_tracks"
             raise Exception("No tracks to add")
         
         
@@ -229,8 +233,14 @@ def create_new_playlist_with_tracks(
             tracks_to_add = tracks_to_add[:PLAYLIST_MAX_TRACKS]
             playlist_trimmed = True
 
+        context["track_count"] = len(tracks_to_add)
+        context["playlist_trimmed"] = playlist_trimmed
+
         # Create new playlist
+        operation = "get_spotify_user"
         user_id = spotify.me()["id"]
+        context["user_id"] = user_id
+        operation = "create_playlist"
         new_playlist = spotify.user_playlist_create(
             user=user_id,
             name=new_playlist_name,
@@ -238,6 +248,7 @@ def create_new_playlist_with_tracks(
             description=playlist_description)
         new_playlist_id = new_playlist["id"]
         if new_playlist_id is None:
+            operation = "create_playlist_missing_id"
             raise Exception("Created playlist id is missing")
         logInfo(
             "User: {user_id} -- Initialised playlist: {playlist_id}".format(
@@ -251,7 +262,7 @@ def create_new_playlist_with_tracks(
 
         return add_all_tracks_to_playlist(task, spotify, tracks_to_add, user_id, playlist_uri, new_playlist_id, playlist_trimmed)
     except Exception as e:
-        logError("Error while creating new playlist / adding tracks: " + str(e))
+        logOperationFailure(operation, e, **context)
         return {
             "status": "error",
             "error": "Unable to create new playlist / add tracks to playlist: " + str(e)
@@ -264,13 +275,20 @@ def reuse_existing_playlist_with_updated_tracks(
         shuffled_playlist_id: str,
         shuffled_playlist_uri: str,
         tracks_to_add: List[str]):
+    operation = "reuse_existing_playlist"
+    context: dict = {
+        "playlist_id": shuffled_playlist_id,
+        "playlist_uri": shuffled_playlist_uri,
+    }
     try:
         if tracks_to_add is None:
+            operation = "validate_tracks"
             raise Exception("No tracks to add")
 
         # Remove any invalid uris which have a whitespace
         tracks_to_add = validate_tracks(tracks_to_add)
         if not tracks_to_add:
+            operation = "validate_tracks"
             raise Exception("No tracks to add")
         
         # Limit the number of tracks to Spotify's max
@@ -279,7 +297,12 @@ def reuse_existing_playlist_with_updated_tracks(
             tracks_to_add = tracks_to_add[:PLAYLIST_MAX_TRACKS]
             playlist_trimmed = True
 
+        context["track_count"] = len(tracks_to_add)
+        context["playlist_trimmed"] = playlist_trimmed
+
+        operation = "get_spotify_user"
         user_id = spotify.me()["id"]
+        context["user_id"] = user_id
         logInfo(
             "User: {user_id} -- Reusing playlist: {playlist_id}".format(
                 user_id=user_id,
@@ -288,41 +311,51 @@ def reuse_existing_playlist_with_updated_tracks(
         )
 
         # Retrieve all items in the existing playlist
+        operation = "get_existing_tracks"
         all_tracks = get_tracks_from_playlist(task, spotify, shuffled_playlist_id)
         existing_track_uris = [track["uri"] for track in all_tracks if "uri" in track]
 
         # Remove all tracks from existing playlist
-        try:
-            if existing_track_uris:
-                logInfo(
-                    "User: {user_id} -- Cleaning up playlist: {playlist_id}".format(
-                        user_id=user_id,
-                        playlist_id=shuffled_playlist_id
-                    )
+        if existing_track_uris:
+            logInfo(
+                "User: {user_id} -- Cleaning up playlist: {playlist_id}".format(
+                    user_id=user_id,
+                    playlist_id=shuffled_playlist_id
                 )
-                for i in range(0, len(existing_track_uris), 100):
-                    batch = existing_track_uris[i:i + 100]
+            )
+            total_batches = (len(existing_track_uris) + 99) // 100
+            for i in range(0, len(existing_track_uris), 100):
+                batch = existing_track_uris[i:i + 100]
+                try:
                     spotify.playlist_remove_all_occurrences_of_items(shuffled_playlist_id, batch)
-                    # Don't provide playlist uri in progress update until tracks are completely removed
-                    update_task_progress(
-                        task,
-                        state="PROGRESS",
-                        meta={
-                            "progress": {
-                                "state": CELERY_PROGRESS_STATE_CLEAN_UP_EXISTING_PLAYLIST_TEMPLATE.format(i, len(existing_track_uris)),
-                            }
-                        }
+                except Exception as e:
+                    logOperationFailure(
+                        "clear_existing_playlist",
+                        e,
+                        **context,
+                        batch_index=i // 100,
+                        batch_size=len(batch),
+                        total_batches=total_batches,
+                        existing_track_count=len(existing_track_uris),
                     )
-        except Exception as e:
-            logWarning(f"Could not clear tracks from existing shuffled playlist: {str(e)}")
-            return {
-                "status": "error",
-                "error": "Unable to clear existing playlist before adding new tracks"
-            }
+                    return {
+                        "status": "error",
+                        "error": "Unable to clear existing playlist before adding new tracks"
+                    }
+                # Don't provide playlist uri in progress update until tracks are completely removed
+                update_task_progress(
+                    task,
+                    state="PROGRESS",
+                    meta={
+                        "progress": {
+                            "state": CELERY_PROGRESS_STATE_CLEAN_UP_EXISTING_PLAYLIST_TEMPLATE.format(i, len(existing_track_uris)),
+                        }
+                    }
+                )
 
         return add_all_tracks_to_playlist(task, spotify, tracks_to_add, user_id, shuffled_playlist_uri, shuffled_playlist_id, playlist_trimmed)
     except Exception as e:
-        logError("Error while reusing existing playlist / adding tracks: " + str(e))
+        logOperationFailure(operation, e, **context)
         return {
             "status": "error",
             "error": "Unable to reuse existing playlist / add tracks to playlist: " + str(e)
@@ -392,13 +425,32 @@ def add_all_tracks_to_playlist(
         try:
             add_items_response = add_tracks_with_retry(spotify, new_playlist_id, batch)
         except Exception as e:
-            logError("Error while adding tracks to playlist " + new_playlist_id + ": " + str(e))
+            logOperationFailure(
+                "add_tracks_batch",
+                e,
+                user_id=user_id,
+                playlist_id=new_playlist_id,
+                playlist_uri=playlist_uri,
+                batch_index=i,
+                batch_size=len(batch),
+                total_tracks=len(tracks_to_add),
+                calls_required=calls_required,
+            )
             return {
                 "status": "error",
                 "error": "Unable to add tracks to playlist " + new_playlist_id + ": " + str(e)
             }
         if "snapshot_id" not in add_items_response:
-            logError("Error while adding tracks. Response: " + str(add_items_response))
+            logOperationFailure(
+                "add_tracks_missing_snapshot_id",
+                user_id=user_id,
+                playlist_id=new_playlist_id,
+                playlist_uri=playlist_uri,
+                batch_index=i,
+                batch_size=len(batch),
+                total_tracks=len(tracks_to_add),
+                add_items_response=add_items_response,
+            )
             return {
                 "status": "error",
                 "error": "Unable to add tracks to playlist " + new_playlist_id
