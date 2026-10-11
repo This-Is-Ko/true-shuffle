@@ -94,9 +94,22 @@ def test_shuffle_playlist_shuffled_playlist_exists_success(mocker, env_patch):
     mocker.patch("utils.tracker_utils.update_overall_trackers", return_value=None)
     mocker.patch("tasks.playlist_tasks.update_track_statistics.delay", return_value=None)
     mocker.patch.object(Spotify, "current_user_saved_tracks", return_value=mock_tracks_response)
-    mocker.patch.object(Spotify, "playlist_items", side_effect=[mock_tracks_response, empty_all_user_playlists_response_sample])
+    # The task fetches tracks for the source playlist, then the reuse path fetches
+    # the tracks of the existing shuffled playlist. Each fetch pages until it hits
+    # an empty page, so provide a populated page followed by an empty one per fetch.
+    mocker.patch.object(
+        Spotify,
+        "playlist_items",
+        side_effect=[
+            mock_tracks_response,
+            empty_all_user_playlists_response_sample,
+            mock_tracks_response,
+            empty_all_user_playlists_response_sample,
+        ],
+    )
     mocker.patch.object(Spotify, "current_user_playlists", return_value=all_user_playlists_response_sample)
     mocker.patch.object(Spotify, "current_user_unfollow_playlist", return_value=True)
+    mocker.patch.object(Spotify, "playlist_remove_all_occurrences_of_items", return_value=None)
     mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
     mocker.patch.object(Spotify, "user_playlist_create", return_value=create_user_playlist_response)
     mocker.patch.object(Spotify, "playlist_add_items", return_value=playlist_add_items_response)
