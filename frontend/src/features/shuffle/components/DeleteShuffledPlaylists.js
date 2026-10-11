@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Box, CircularProgress, Typography } from "@mui/material";
+import { Button, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Box, CircularProgress, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import apiClient from "../../../utils/apiClient";
 import { OPERATION_TYPES } from "../../../contexts/CorrelationIdContext";
 
-const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount }) => {
+const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount, variant = "button", disabled = false }) => {
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -50,22 +50,38 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount }) => {
     };
 
     return (
-        <Box sx={{ width: '100%', mt: 1 }}>
-            <Button
-                variant="contained"
-                fullWidth
-                startIcon={<DeleteIcon />}
-                onClick={handleClickOpen}
-                sx={{
-                    color: "white",
-                    bgcolor: "#d32f2f",
-                    '&:hover': {
-                        bgcolor: "#c62828",
-                    }
-                }}
-            >
-                Delete {playlistCount} shuffled playlist{playlistCount !== 1 ? 's' : ''}
-            </Button>
+        <Box sx={variant === "icon" ? { display: 'inline-flex' } : { width: '100%', mt: 1 }}>
+            {variant === "icon" ? (
+                <IconButton
+                    onClick={handleClickOpen}
+                    disabled={disabled}
+                    aria-label="Delete shuffled playlists"
+                    sx={{
+                        color: disabled ? '#666666' : '#d32f2f',
+                        '&:hover': {
+                            bgcolor: disabled ? 'transparent' : 'rgba(211, 47, 47, 0.1)'
+                        }
+                    }}
+                >
+                    <DeleteIcon />
+                </IconButton>
+            ) : (
+                <Button
+                    variant="contained"
+                    fullWidth
+                    startIcon={<DeleteIcon />}
+                    onClick={handleClickOpen}
+                    sx={{
+                        color: "white",
+                        bgcolor: "#d32f2f",
+                        '&:hover': {
+                            bgcolor: "#c62828",
+                        }
+                    }}
+                >
+                    Delete {playlistCount} shuffled playlist{playlistCount !== 1 ? 's' : ''}
+                </Button>
+            )}
 
             <Dialog
                 open={open}
@@ -74,7 +90,7 @@ const DeleteShuffledPlaylistsButton = ({ onDeleteSuccess, playlistCount }) => {
                 aria-describedby="delete-dialog-description"
                 PaperProps={{
                     sx: {
-                        bgcolor: '#292e2f',
+                        bgcolor: '#181818',
                     }
                 }}
             >

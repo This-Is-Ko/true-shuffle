@@ -15,7 +15,7 @@ const SpotifyMenuLogin = ({ loginUri }) => {
             href={localLoginUri}
             key={"logout"}
             sx={{
-                color: 'white', display: 'block', bgcolor: "#161817"
+                color: 'white', display: 'block', bgcolor: "#181818"
             }}>
             <Typography textAlign="center">Spotify Login</Typography>
 

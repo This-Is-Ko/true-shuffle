@@ -154,10 +154,10 @@ const PlaylistItem = (props) => {
                     </Typography>
                     <Typography
                         variant="subtitle1"
-                        color="common.white"
                         component="div"
                         sx={{
-                            fontSize: "0.85rem",
+                            color: "#b3b3b3",
+                            fontSize: "0.7rem",
                             overflow: "hidden",
                             textOverflow: "ellipsis",
                             width: "100%",

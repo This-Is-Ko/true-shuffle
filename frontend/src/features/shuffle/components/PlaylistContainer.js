@@ -1,9 +1,12 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
+import { useTheme } from "@mui/system";
 
 import PlaylistList from "./PlaylistList";
 import ErrorMessage from "../../../components/ErrorMessage";
 import ShufflePageSidebar from "./ShufflePageSidebar";
+import MobileBottomNav from "./MobileBottomNav";
+import MobileHistoryView from "./MobileHistoryView";
 import PLAYLIST_SHUFFLE_STATE from "../state/PlaylistShuffleState";
 import {
     fetchUserPlaylists,
@@ -37,6 +40,9 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     // Correlation ID management
     const { getCorrelationId, resetCorrelationId, resetAll } = useCorrelationId();
     
+    const theme = useTheme();
+    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
     // Playlist data state
     const [playlists, setPlaylists] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
@@ -44,6 +50,9 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     const [recentShuffles, setRecentShuffles] = useState([]);
     const [existingShuffledPlaylistCount, setExistingShuffledPlaylistCount] = useState(null);
     const [error, setError] = useState(false);
+    
+    // Mobile tab state ("shuffle" | "history")
+    const [activeTab, setActiveTab] = useState("shuffle");
     
     // Shuffle operation state
     const [shuffledPlaylistUri, setShuffledPlaylistUri] = useState(null);
@@ -298,6 +307,8 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
     useEffect(() => {
         if (selectedPlaylist !== null) {
             initiateShuffleOperation();
+            // Jump the page back to the top so the selected playlist is visible
+            window.scrollTo(0, 0);
         } else {
             // Reset shuffle state when no playlist is selected
             resetShuffleState();
@@ -326,7 +337,7 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
 
     return (
         <Box sx={{ 
-            width: "90%", 
+            width: { xs: "100%", md: "90%" }, 
             maxWidth: "1400px",
             margin: "auto", 
             paddingBottom: "10px", 
@@ -341,7 +352,6 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                 <ShufflePageSidebar
                     userShuffleCounter={userShuffleCounter}
                     recentShuffles={recentShuffles}
-                    onHowToClick={onHowToClick}
                     onDeleteSuccess={handleDeleteSuccess}
                     existingShuffledPlaylistCount={existingShuffledPlaylistCount}
                 />
@@ -351,18 +361,25 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
             <Box sx={{ 
                 flex: { md: '1 1 0%' },
                 minWidth: { md: '400px' },
-                paddingTop: { xs: 2, md: 0 },
+                paddingTop: { xs: 0.5, md: 0 },
                 boxSizing: 'border-box',
                 width: { xs: '100%', md: 'auto' },
                 display: 'flex',
                 alignItems: { md: 'stretch' }
             }}>
-                {error !== false ? (
+                {isMobile && activeTab === "history" ? (
+                    <MobileHistoryView
+                        recentShuffles={recentShuffles}
+                        existingShuffledPlaylistCount={existingShuffledPlaylistCount}
+                        onDeleteSuccess={handleDeleteSuccess}
+                    />
+                ) : error !== false ? (
                     <ErrorMessage error={error} isGeneric={false} />
                 ) : playlists.length > 0 ? (
                     <PlaylistList 
                         playlists={filteredPlaylists}
                         allPlaylistsCount={playlists.length}
+                        userShuffleCounter={userShuffleCounter}
                         searchTerm={searchTerm}
                         setSearchTerm={setSearchTerm}
                         selectPlaylist={selectPlaylist} 
@@ -383,6 +400,14 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                     />
                 )}
             </Box>
+
+            {isMobile && (
+                <MobileBottomNav
+                    activeTab={activeTab}
+                    onTabChange={setActiveTab}
+                    onHowToClick={onHowToClick}
+                />
+            )}
         </Box>
     );
 };

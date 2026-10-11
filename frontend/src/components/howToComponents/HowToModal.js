@@ -19,7 +19,7 @@ const HowToModal = ({ isModalOpen, handleClose, steps }) => {
                     width: { xs: "70%", sm: '70%', md: "50%", lg: "40%" },
                     maxWidth: 600,
                     maxHeight: { xs: "80%", sm: '80%', md: "50%", lg: "40%" },
-                    bgcolor: '#292e2f',
+                    bgcolor: '#181818',
                     borderRadius: 2,
                     boxShadow: 24,
                     p: 4,

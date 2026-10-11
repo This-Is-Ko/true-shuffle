@@ -55,7 +55,7 @@ const ShufflePage = ({ isAuth, loginUri }) => {
     }
 
     return (
-        <main>
+        <Box component="main" sx={{ pb: { xs: '72px', md: 0 } }}>
             <Box>
                 <HowToModal 
                     isModalOpen={isHowToModalOpen} 
@@ -72,7 +72,7 @@ const ShufflePage = ({ isAuth, loginUri }) => {
                 </Box>
             </Box>
             <Footer />
-        </main>
+        </Box>
     );
 };
 

@@ -55,7 +55,7 @@ describe("PlaylistItem Component", () => {
         expect(screen.queryByText(/open/i)).not.toBeInTheDocument();
     });
 
-    test("displays open button when playlistUri is provided and not in shuffled/shuffling state", () => {
+    test("does not render an Open button (it is rendered by the parent)", () => {
         render(
             <PlaylistItem
                 displayState={PLAYLIST_ITEM_DISPLAY_STATES.SELECTION}
@@ -65,9 +65,7 @@ describe("PlaylistItem Component", () => {
             />
         );
 
-        const openButton = screen.getByText(/open/i);
-        expect(openButton).toBeInTheDocument();
-        expect(openButton.closest("a") || openButton).toHaveAttribute("href", "https://open.spotify.com/playlist/123");
+        expect(screen.queryByText(/open/i)).not.toBeInTheDocument();
     });
 
     test("does not display open button when playlistUri is not provided", () => {
@@ -254,21 +252,6 @@ describe("PlaylistItem Component", () => {
         expect(screen.getByRole("img")).toHaveAttribute("src", "https://example.com/image.jpg");
     });
 
-    test("open button has correct attributes", () => {
-        render(
-            <PlaylistItem
-                displayState={PLAYLIST_ITEM_DISPLAY_STATES.SELECTION}
-                playlistUri="https://open.spotify.com/playlist/123"
-                playlist={mockPlaylist}
-                setSelectedPlaylist={mockSetSelectedPlaylist}
-            />
-        );
-
-        const openButton = screen.getByText(/open/i).closest("a");
-        expect(openButton).toHaveAttribute("href", "https://open.spotify.com/playlist/123");
-        expect(openButton).toHaveAttribute("target", "_blank");
-    });
-
     test("image has correct alt text", () => {
         render(
             <PlaylistItem
@@ -319,6 +302,10 @@ describe("PlaylistItem Component", () => {
         // Simulate touch start
         fireEvent.touchStart(card);
         // Style should not change in SHUFFLED state
+        expect(card.style.background).toBe(initialBackground);
+
+        // Simulate touch end
+        fireEvent.touchEnd(card);
         expect(card.style.background).toBe(initialBackground);
     });
 

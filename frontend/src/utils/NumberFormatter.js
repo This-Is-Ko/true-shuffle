@@ -29,3 +29,27 @@ export function formatNumberWithSpaces(number) {
     return num;
 }
 
+/**
+ * Formats a number with commas as thousand separators.
+ * Example: 1000 -> "1,000", 644477 -> "644,477"
+ *
+ * @param {number|string} number - The number to format
+ * @returns {string|number} - Formatted number string, or the original value if invalid
+ */
+export function formatNumberWithCommas(number) {
+    // Handle null, undefined, or empty values
+    if (number == null || number === '') {
+        return number;
+    }
+
+    // Convert to number if it's a string
+    const num = typeof number === 'string' ? parseFloat(number) : number;
+
+    // Check if it's a valid number
+    if (isNaN(num)) {
+        return number; // Return original if not a valid number
+    }
+
+    return num.toLocaleString('en-US');
+}
+

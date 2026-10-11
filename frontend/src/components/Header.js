@@ -59,7 +59,7 @@ const Header = ({ loginUri, isAuth }) => {
     }, [loginUri, isAuth]);
 
     return (
-        <AppBar position="static" sx={{ bgcolor: "#161817", zIndex: 1400 }}>
+        <AppBar position="static" sx={{ bgcolor: "#181818", zIndex: 1400 }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box
@@ -122,7 +122,7 @@ const Header = ({ loginUri, isAuth }) => {
                             PaperProps={{
                                 elevation: 0,
                                 sx: {
-                                    bgcolor: "#161817",
+                                    bgcolor: "#181818",
                                 }
                             }}
                         >
@@ -133,7 +133,7 @@ const Header = ({ loginUri, isAuth }) => {
                                     href={page.link}
                                     onClick={handleCloseNavMenu}
                                     sx={{
-                                        color: 'white', display: 'block', bgcolor: "#161817",
+                                        color: 'white', display: 'block', bgcolor: "#181818",
                                         '&:hover': { backgroundColor: '#1DB954' }
                                     }}>
                                     <Typography textAlign="center">{page.title}</Typography>
@@ -184,7 +184,7 @@ const Header = ({ loginUri, isAuth }) => {
                                 variant="contained"
                                 disableElevation
                                 sx={{
-                                    my: 2, color: 'white', display: 'block', bgcolor: "#161817",
+                                    my: 2, color: 'white', display: 'block', bgcolor: "#181818",
                                     '&:hover': { backgroundColor: '#1DB954' }
                                 }}
                                 href={page.link}
