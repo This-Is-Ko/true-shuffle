@@ -1,0 +1,43 @@
+// Minimal Grafana Alloy pipeline for True Shuffle.
+// Reads container logs from the local Docker daemon and writes them to
+// Grafana Cloud Logs.
+
+discovery.docker "containers" {
+  host = "unix:///var/run/docker.sock"
+}
+
+// Keep only the application containers, and turn Docker's container name
+// (which is prefixed with "/") into a queryable "container" label.
+discovery.relabel "apps" {
+  targets = discovery.docker.containers.targets
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/true_shuffle_(flask|celery_worker)"
+    action        = "keep"
+  }
+
+  rule {
+    source_labels = ["__meta_docker_container_name"]
+    regex         = "/(.*)"
+    target_label  = "container"
+  }
+}
+
+loki.source.docker "apps" {
+  host       = "unix:///var/run/docker.sock"
+  targets    = discovery.relabel.apps.output
+  labels     = { job = "true_shuffle" }
+  forward_to = [loki.write.gcl.receiver]
+}
+
+loki.write "gcl" {
+  endpoint {
+    url = sys.env("GCL_LOKI_URL")
+
+    basic_auth {
+      username = sys.env("GCL_INSTANCE_ID")
+      password = sys.env("GCL_TOKEN")
+    }
+  }
+}
