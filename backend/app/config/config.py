@@ -50,6 +50,12 @@ class Config:
     CELERY_RESULT_BACKEND_URL = os.getenv(
         'CELERY_RESULT_BACKEND_URL', default='redis://localhost')
 
+    # Logging
+    # LOG_FORMAT=json emits single-line JSON suitable for Grafana/Loki.
+    # Set LOG_FORMAT=text for human-readable local logs.
+    LOG_LEVEL = os.getenv('LOG_LEVEL', default='INFO')
+    LOG_FORMAT = os.getenv('LOG_FORMAT', default='json')
+
 
 class DevelopmentConfig(Config):
     FLASK_ENV = 'development'

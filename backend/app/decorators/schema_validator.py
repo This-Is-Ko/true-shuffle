@@ -26,7 +26,7 @@ def request_schema_validator(schema_class):
                 current_app.logger.error("Invalid request: " + str(e.messages))
                 return {"error": "Invalid request"}, 400
             except Exception as e:
-                current_app.logger.error("Invalid request: " + str(e))
+                current_app.logger.error("Invalid request: " + str(e), exc_info=True)
                 return {"error": "Invalid request"}, 400
 
             # Pass validated data to the decorated function

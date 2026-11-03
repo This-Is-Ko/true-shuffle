@@ -16,7 +16,7 @@ def update_trackers():
         current_app.logger.error("Invalid cron API key: " + str(e))
         return {"error": "Invalid credentials"}, 403
     except Exception as e:
-        current_app.logger.error("Error validating cron API key: " + str(e))
+        current_app.logger.error("Error validating cron API key: " + str(e), exc_info=True)
         return {"error": "Invalid credentials"}, 403
 
     current_app.logger.debug("Valid credentials")

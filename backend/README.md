@@ -21,6 +21,8 @@ The following env variables are required to run. Add them into a .env file
     REDIS_PASSWORD # auth to access celery
     CRON_API_KEY # static API key for cron job endpoints (generate with: openssl rand -hex 32)
     CONFIG_TYPE
+    LOG_LEVEL # optional, defaults to INFO
+    LOG_FORMAT # optional, json (default) or text
 
 To set the environment to the specific environment, set the following variable.
 
@@ -69,6 +71,26 @@ Alternatively run all via docker locally
 ## Deployment
 
 Backend is deployed with Docker. See the [Docker](#docker) section below for building, pushing and hosting the containers.
+
+## Logging
+
+Flask and Celery write single-line JSON logs to stdout, which Docker and Grafana
+Alloy forward to Grafana Cloud Logs. JSON is the default; set `LOG_FORMAT=text`
+for human-readable local logs.
+
+Every log record includes the `service` (`flask` or `celery`), `level`, and
+`logger` fields. When available, the log context filter also adds:
+
+- `correlation_id`: taken from the `X-Correlation-ID` request header (or generated)
+  and propagated to Celery tasks. It is also returned in the response header.
+- `user_id`: set after the Spotify session is validated.
+- `task_id`: the Celery task id.
+- `method`, `path`, `status_code`, `duration_ms`: request completion logs.
+- `exception.type`, `exception.message`, `exception.stacktrace`: unexpected errors.
+
+Handled errors preserve their traceback via `exc_info`, so a failed request or
+playlist operation can be traced from the API log line to the Celery task that
+failed, using the correlation id.
 
 ## Tests
 

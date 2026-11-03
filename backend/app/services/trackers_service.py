@@ -62,8 +62,9 @@ def update_trackers(current_app):
         except Exception as e:
             tracker_logger(current_app, USER_LIKED_TRACKS_TRACKER_LOG, TRACK_SHUFFLES_ATTRIBUTE_NAME,
                            user[USER_ID_KEY],
-                           "Error while searching for previous tracker entry" + str(e),
-                           level="error")
+                           f"Error while searching for previous tracker entry: {e}",
+                           level="error",
+                           exc_info=True)
             continue
 
         tracker_entry = {
@@ -81,7 +82,9 @@ def update_trackers(current_app):
             success_counter += 1
         except Exception as e:
             tracker_logger(current_app, USER_LIKED_TRACKS_TRACKER_LOG, TRACK_SHUFFLES_ATTRIBUTE_NAME,
-                           user[USER_ID_KEY], "Error while added new tracker entry" + str(e), level="error")
+                           user[USER_ID_KEY], f"Error while adding new tracker entry: {e}",
+                           level="error",
+                           exc_info=True)
             continue
     current_app.logger.info(SUCCESSFUL_UPDATES_LOG.format(
         tracker=TRACK_SHUFFLES_ATTRIBUTE_NAME, success_counter=success_counter, total_enabled_users=total_users))
@@ -107,10 +110,11 @@ def is_user_entry_valid(user):
     return True
 
 
-def tracker_logger(current_app, log_string, tracker_name, user_id, status_message, level="info"):
+def tracker_logger(current_app, log_string, tracker_name, user_id, status_message, level="info", exc_info=False):
+    message = log_string.format(
+        tracker=tracker_name, user_id=user_id, status=status_message)
+    extra = {"tracker": tracker_name, "tracker_user_id": user_id}
     if level == "info":
-        current_app.logger.info(log_string.format(
-            tracker=tracker_name, user_id=user_id, status=status_message))
+        current_app.logger.info(message, extra=extra)
     elif level == "error":
-        current_app.logger.error(log_string.format(
-            tracker=tracker_name, user_id=user_id, status=status_message))
+        current_app.logger.error(message, exc_info=exc_info, extra=extra)

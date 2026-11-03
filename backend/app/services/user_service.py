@@ -9,6 +9,7 @@ from flask import current_app, g
 from exceptions.custom_exceptions import SpotifyAuthInvalid
 from services.spotify_client import create_auth_manager_with_token
 from tasks.task_state import get_celery_task_state
+from utils.logger_utils import logErrorWithUser, logInfoWithUser
 from utils.util import serialize_shuffle_events
 
 LIKED_TRACKS_PLAYLIST_ID = "likedTracks"
@@ -81,7 +82,7 @@ def queue_get_aggregate_user_data(spotify_auth: SpotifyAuth):
     """
     correlation_id = g.correlation_id if hasattr(g, 'correlation_id') else None
     result = aggregate_user_data.delay(spotify_auth.to_dict(), correlation_id)
-    current_app.logger.info(f"Aggregate data id: {result.id}")
+    logInfoWithUser(f"Aggregate data task id: {result.id}", spotify_auth)
     return {"aggregate_task_id": result.id}
 
 
@@ -105,7 +106,7 @@ def handle_get_user_tracker_data(spotify_auth: SpotifyAuth, tracker_name):
     try:
         return get_user_tracker_data(user_id, user_json, tracker_name)
     except Exception as e:
-        current_app.logger.error("Error in handle_get_user_tracker_data: " + str(e))
+        logErrorWithUser("Error in handle_get_user_tracker_data: " + str(e), spotify_auth, exc_info=True)
         return {
             "status": "error"
         }, 400
@@ -127,7 +128,7 @@ def handle_get_user_analysis(spotify_auth: SpotifyAuth):
         # Passing None for task since this is not a Celery task context
         return get_user_analysis(None, current_app, spotify, correlation_id)
     except Exception as e:
-        current_app.logger.error("Error in handle_get_user_analysis: " + str(e))
+        logErrorWithUser("Error in handle_get_user_analysis: " + str(e), spotify_auth, exc_info=True)
         return {
             "status": "error"
         }, 400

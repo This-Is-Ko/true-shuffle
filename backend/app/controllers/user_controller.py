@@ -1,4 +1,4 @@
-from flask import current_app, make_response, request, Blueprint
+from flask import make_response, request, Blueprint
 
 from utils.logger_utils import logErrorWithUser
 from schemas.SaveUserRequestSchema import SaveUserRequestSchema
@@ -35,7 +35,7 @@ def get_user(spotify_auth):
         extend_session_expiry(response, request.cookies)
         return response
     except Exception as e:
-        logErrorWithUser("Unable to retrieve user: " + str(e), spotify_auth)
+        logErrorWithUser("Unable to retrieve user: " + str(e), spotify_auth, exc_info=True)
         return {"error": "Unable to retrieve user"}, 400
 
 
@@ -52,7 +52,7 @@ def get_user_tracker_data(spotify_auth):
         if (tracker_name is None):
             raise Exception("Missing tracker-name")
     except Exception as e:
-        current_app.logger.error("Invalid request: " + str(e))
+        logErrorWithUser("Invalid request: " + str(e), user_id=getattr(spotify_auth, 'user_id', None))
         return {"error": "Invalid request"}, 400
 
     try:
@@ -60,7 +60,7 @@ def get_user_tracker_data(spotify_auth):
         extend_session_expiry(response, request.cookies)
         return response
     except Exception as e:
-        logErrorWithUser("Unable to retrieve user tracker data: " + str(e), spotify_auth)
+        logErrorWithUser("Unable to retrieve user tracker data: " + str(e), spotify_auth, exc_info=True)
         return {"error": "Unable to retrieve user tracker data"}, 400
 
 
@@ -75,7 +75,7 @@ def queue_user_aggregated_data(spotify_auth):
         extend_session_expiry(response, request.cookies)
         return response
     except Exception as e:
-        logErrorWithUser("Unable to get user aggregated data state: " + str(e), spotify_auth)
+        logErrorWithUser("Unable to get user aggregated data state: " + str(e), spotify_auth, exc_info=True)
         return {"error": "Unable to get user aggregated data state"}, 400
 
 
@@ -90,7 +90,7 @@ def get_user_aggregated_data_state(id, spotify_auth):
         extend_session_expiry(response, request.cookies)
         return response
     except Exception as e:
-        logErrorWithUser("Unable to retrieve user aggregated data: " + str(e), spotify_auth)
+        logErrorWithUser("Unable to retrieve user aggregated data: " + str(e), spotify_auth, exc_info=True)
         return {"error": "Unable to retrieve user aggregated data"}, 400
 
 
@@ -105,5 +105,5 @@ def get_recent_shuffles(spotify_auth):
         response = make_response(user_service.get_recent_shuffles(spotify_auth))
         return response
     except Exception as e:
-        logErrorWithUser("Unable to retrieve recent shuffles: " + str(e), spotify_auth)
+        logErrorWithUser("Unable to retrieve recent shuffles: " + str(e), spotify_auth, exc_info=True)
         return {"error": "Unable to retrieve recent shuffles"}, 400

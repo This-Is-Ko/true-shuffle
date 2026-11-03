@@ -21,7 +21,7 @@ def handle_auth_code(request_body):
         code = str(request_body["code"])
         return spotify_auth_service.get_spotify_tokens(code)
     except Exception as e:
-        current_app.logger.error("Unable to authenticate with Spotify: " + str(e))
+        current_app.logger.error("Unable to authenticate with Spotify: " + str(e), exc_info=True)
         return {"error": "Unable to authenticate with Spotify"}, 400
 
 

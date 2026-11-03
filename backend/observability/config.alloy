@@ -1,6 +1,6 @@
-// Minimal Grafana Alloy pipeline for True Shuffle.
-// Reads container logs from the local Docker daemon and writes them to
-// Grafana Cloud Logs.
+// Grafana Alloy pipeline for True Shuffle.
+// Reads container logs from the local Docker daemon, parses the backend's
+// JSON log lines, and writes them to Grafana Cloud Logs.
 
 discovery.docker "containers" {
   host = "unix:///var/run/docker.sock"
@@ -28,7 +28,42 @@ loki.source.docker "apps" {
   host       = "unix:///var/run/docker.sock"
   targets    = discovery.relabel.apps.output
   labels     = { job = "true_shuffle" }
+  forward_to = [loki.process.apps.receiver]
+}
+
+loki.process "apps" {
   forward_to = [loki.write.gcl.receiver]
+
+  // The backend emits single-line JSON. Non-JSON lines (Gunicorn lifecycle
+  // logs, crash traces) pass through untouched.
+  stage.json {
+    expressions = {
+      level          = "level",
+      service        = "service",
+      correlation_id = "correlation_id",
+      user_id        = "user_id",
+      task_id        = "task_id",
+    }
+  }
+
+  // Low-cardinality fields become labels so they can be used in stream
+  // selectors and metric queries, e.g. {container="true_shuffle_flask", level="ERROR"}.
+  stage.labels {
+    values = {
+      level   = "level",
+      service = "service",
+    }
+  }
+
+  // High-cardinality trace fields stay out of the label index and are stored
+  // as structured metadata instead.
+  stage.structured_metadata {
+    values = {
+      correlation_id = "correlation_id",
+      user_id        = "user_id",
+      task_id        = "task_id",
+    }
+  }
 }
 
 loki.write "gcl" {

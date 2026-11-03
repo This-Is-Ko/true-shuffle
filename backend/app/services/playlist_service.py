@@ -34,6 +34,7 @@ def get_user_playlists(spotify_auth: SpotifyAuth, include_stats):
                          "url": "https://misc.scdn.co/liked-songs/liked-songs-300.png"}, None))
 
     # Retrieve user's playlists and parse details
+    playlists_resp = None
     try:
         playlists_resp = spotify.current_user_playlists(limit=50, offset=0)
         if playlists_resp is None or "total" not in playlists_resp or "items" not in playlists_resp:
@@ -102,11 +103,19 @@ def get_user_playlists(spotify_auth: SpotifyAuth, include_stats):
                     num_of_tracks
                 ))
     except Exception as e:
-        # Handle playlist logging error
-        try:
-            logErrorWithUser(f"Get current user playlists - Playlist response: {json.dumps(playlists_resp, default=str)}", spotify_auth)
-        except TypeError as ex:
-            logErrorWithUser(f"Get current user playlists - Error serializing playlists: {ex}", spotify_auth)
+        # Log a bounded response summary: the full Spotify payload can be large
+        # and contains user data, which is costly in Loki.
+        response_summary = None
+        if playlists_resp is not None:
+            try:
+                response_summary = json.dumps(playlists_resp, default=str)[:2000]
+            except TypeError as ex:
+                response_summary = f"<unserializable: {ex}>"
+        logErrorWithUser(
+            f"Get current user playlists failed: {e} - Playlist response: {response_summary}",
+            spotify_auth,
+            exc_info=True,
+        )
         raise GetPlaylistsException(f"Failed to parse Spotify playlists: {e}")
     logInfoWithUser(f"After filtering playlists + Liked Songs entry added: {len(all_playlists):d}", spotify_auth)
 
@@ -175,7 +184,7 @@ def delete_all_shuffled_playlists(spotify_auth: SpotifyAuth):
 def queue_create_playlist_from_liked_tracks(spotify_auth: SpotifyAuth, new_playlist_name="My Liked Tracks"):
     correlation_id = g.correlation_id if hasattr(g, 'correlation_id') else None
     result = playlist_tasks.create_playlist_from_liked_tracks.delay(spotify_auth.to_dict(), new_playlist_name, correlation_id)
-    current_app.logger.info(f"Create playlist id: {result.id}")
+    logInfoWithUser(f"Create liked playlist task id: {result.id}", spotify_auth)
     return {"create_liked_playlist_id": result.id}
 
 

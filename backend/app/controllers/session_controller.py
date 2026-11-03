@@ -19,11 +19,11 @@ def clean_up_expired_sessions():
         current_app.logger.error("Invalid cron API key: " + str(e))
         return {"error": "Invalid credentials"}, 403
     except Exception as e:
-        current_app.logger.error("Error validating cron API key: " + str(e))
+        current_app.logger.error("Error validating cron API key: " + str(e), exc_info=True)
         return {"error": "Invalid credentials"}, 403
 
     try:
         return handle_clean_up_expired_sesions(current_app)
     except Exception as e:
-        current_app.logger.error("Unable to clear expired sessions: " + str(e))
+        current_app.logger.error("Unable to clear expired sessions: " + str(e), exc_info=True)
         return {"error": "Unable to clear expired sessions"}, 400

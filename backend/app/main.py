@@ -3,39 +3,40 @@ from flask_cors import CORS
 import os
 from flask_pymongo import PyMongo
 from celery import Celery, Task
-import logging
 import faulthandler
+import time
 import uuid
 from __version__ import __version__
+from utils.logging_config import configure_logging
 
 mongo = PyMongo()
 
+MAX_CORRELATION_ID_LENGTH = 128
+# High-frequency polling endpoints are logged at DEBUG on success so they do
+# not drown out other events. Failures are still logged at WARNING/ERROR.
+NOISY_POLL_PATH_PREFIXES = (
+    '/api/playlist/shuffle/state/',
+    '/api/playlist/share/liked-tracks/',
+    '/api/user/aggregate/state/',
+)
 
-def create_app():
+
+def create_app(service_name="flask"):
     app = Flask(__name__)
-
-    # Configure logging for Gunicorn
-    # When running under Gunicorn, use its logger handlers to avoid duplicate logs
-    gunicorn_error_logger = logging.getLogger('gunicorn.error')
-    if gunicorn_error_logger.handlers:
-        # Running under Gunicorn - use Gunicorn's logger handlers
-        app.logger.handlers = gunicorn_error_logger.handlers
-        app.logger.setLevel(logging.INFO)
-        # Prevent propagation to root logger to avoid duplicates
-        app.logger.propagate = False
-    else:
-        # Not running under Gunicorn (e.g., development), configure basic logging
-        logging.basicConfig(level=logging.INFO, format='%(levelname)s:%(name)s:%(message)s')
-
-    # Log application version at startup (removed print to avoid duplicate logs)
-    app.logger.info(f"True Shuffle Backend - Version {__version__}")
-
-    faulthandler.enable()
 
     # Select env and set up config
     CONFIG_TYPE = os.getenv('CONFIG_TYPE', default='config.DevelopmentConfig')
     app.config.from_object("config." + CONFIG_TYPE)
+
+    # Single JSON logger for Flask, Celery and third-party logs. Docker forwards
+    # stdout to Grafana Alloy, which forwards it to Grafana Cloud Logs.
+    configure_logging(app, service=service_name)
+
+    # Log application version at startup
+    app.logger.info(f"True Shuffle Backend - Version {__version__}")
     app.logger.info("Config set up for " + CONFIG_TYPE)
+
+    faulthandler.enable()
 
     # Enable CORS
     # CORS_ORIGIN supports a comma-separated list of origins, e.g.
@@ -45,22 +46,61 @@ def create_app():
         for origin in app.config["CORS_ORIGIN"].split(",")
         if origin.strip()
     ]
-    CORS(app, supports_credentials=True, origins=cors_origins)
+    CORS(
+        app,
+        supports_credentials=True,
+        origins=cors_origins,
+        expose_headers=["X-Correlation-ID"],
+    )
 
     # Add correlation ID handling
     @app.before_request
     def handle_correlation_id():
         """Extract or generate X-Correlation-ID and store in Flask g object"""
         correlation_id = request.headers.get('X-Correlation-ID')
-        if not correlation_id:
+        if not correlation_id or len(correlation_id) > MAX_CORRELATION_ID_LENGTH:
             correlation_id = str(uuid.uuid4())
         g.correlation_id = correlation_id
+        g.request_start_time = time.perf_counter()
 
     @app.after_request
-    def add_correlation_id_header(response):
-        """Add X-Correlation-ID header to all responses"""
-        if hasattr(g, 'correlation_id'):
-            response.headers['X-Correlation-ID'] = g.correlation_id
+    def log_request_and_add_correlation_id(response):
+        """Log one line per request and return the correlation id to clients"""
+        correlation_id = getattr(g, 'correlation_id', None)
+        if correlation_id:
+            response.headers['X-Correlation-ID'] = correlation_id
+        else:
+            correlation_id = str(uuid.uuid4())
+            response.headers['X-Correlation-ID'] = correlation_id
+
+        start_time = getattr(g, 'request_start_time', None)
+        duration_ms = (
+            round((time.perf_counter() - start_time) * 1000, 2)
+            if start_time is not None
+            else None
+        )
+
+        extra = {
+            'correlation_id': correlation_id,
+            'method': request.method,
+            'path': request.path,
+            'status_code': response.status_code,
+            'duration_ms': duration_ms,
+        }
+        user_id = getattr(g, 'user_id', None)
+        if user_id:
+            extra['user_id'] = user_id
+
+        message = f"{request.method} {request.path} -> {response.status_code}"
+        if response.status_code >= 500:
+            app.logger.error(message, extra=extra)
+        elif response.status_code >= 400:
+            app.logger.warning(message, extra=extra)
+        elif request.path.startswith(NOISY_POLL_PATH_PREFIXES):
+            app.logger.debug(message, extra=extra)
+        else:
+            app.logger.info(message, extra=extra)
+
         return response
 
     # Register blueprints for app
@@ -80,7 +120,9 @@ def create_app():
             result_backend=app.config["CELERY_RESULT_BACKEND_URL"],
             task_ignore_result=True,
             broker_connection_retry_on_startup=True,
-            result_expires=3600
+            result_expires=3600,
+            # Keep our JSON root logger instead of Celery's default handler.
+            worker_hijack_root_logger=False,
         ),
     )
     celery_init_app(app)
@@ -114,10 +156,12 @@ def celery_init_app(app: Flask) -> Celery:
 
     celery_app = Celery(app.name)
     celery_app.config_from_object(app.config["CELERY"])
+    # Keep our configured JSON root handler instead of Celery's default one.
+    celery_app.conf.worker_hijack_root_logger = False
     celery_app.Task = FlaskTask
     celery_app.set_default()
     app.extensions["celery"] = celery_app
     return celery_app
 
 
-app = create_app()
+app = create_app(service_name=os.getenv("SERVICE_NAME", "flask"))

@@ -33,5 +33,5 @@ def get_overall_statistics(current_app, is_full_stats: bool):
             "top_artists": top_artists
         }
     except Exception as e:
-        current_app.logger.error("Unable to retrieve statistics: " + str(e))
+        current_app.logger.error("Unable to retrieve statistics: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve statistics"}, 400

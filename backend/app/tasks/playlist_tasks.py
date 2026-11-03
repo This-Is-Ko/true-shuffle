@@ -9,7 +9,7 @@ from flask import current_app
 from database import database
 from services.spotify_client import create_spotify_client
 from utils import util, tracker_utils
-from utils.logger_utils import logWarning, logInfo
+from utils.logger_utils import logError, logInfo, logWarning, set_task_log_context
 from classes.shuffle_type import Shuffle_Type
 
 SHUFFLED_PLAYLIST_PREFIX = "[Shuffled] "
@@ -21,21 +21,25 @@ TRACK_SHUFFLES_ATTRIBUTE_NAME = "track_shuffles"
 def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, correlation_id=None, 
         shuffle_type: str = Shuffle_Type.REUSE_EXISTING_PLAYLIST.value
     ):
-    # Store correlation_id in task metadata and request context for logging
+    # Store correlation/user ids in task metadata so every log record can be
+    # traced back to the originating request.
+    user_id = spotify_auth_dict.get("user_id") if isinstance(spotify_auth_dict, dict) else None
     if correlation_id:
         self.update_state(state='PROGRESS', meta={'correlation_id': correlation_id})
-        # Store in request context for logger_utils access
-        if not hasattr(self.request, 'meta'):
-            self.request.meta = {}
-        self.request.meta['correlation_id'] = correlation_id
+    set_task_log_context(self, correlation_id=correlation_id, user_id=user_id)
 
     start_time = time.time()
     celery_task_id = self.request.id if self.request else None
-    user_id = spotify_auth_dict.get("user_id") if isinstance(spotify_auth_dict, dict) else None
     response = None
     error_message = None
     tracks_shuffled = 0
     playlist_image_url = None
+
+    logInfo(
+        "shuffle_playlist started "
+        f"playlist_id={playlist_id} playlist_name={playlist_name!r} "
+        f"shuffle_type={shuffle_type} user_id={user_id}"
+    )
 
     try:
         spotify_client = create_spotify_client(current_app, spotify_auth_dict)
@@ -64,6 +68,7 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
         # Check if user exists
         me = spotify_client.me()
         user_id = me["id"] if me and me.get("id") else user_id
+        set_task_log_context(self, user_id=user_id)
         user = database.find_user(user_id) if user_id else None
         if user is None:
             error_message = "No user found"
@@ -150,37 +155,85 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
                 "shuffled_at": datetime.now(timezone.utc)
             })
         except Exception as e:
-            current_app.logger.error("Unable to record shuffle event: " + str(e))
+            logError("Unable to record shuffle event: " + str(e), exc_info=True)
+
+        log_message = (
+            f"shuffle_playlist {status} "
+            f"playlist_id={playlist_id} playlist_name={playlist_name!r} "
+            f"user_id={user_id} tracks={tracks_shuffled} "
+            f"duration_s={duration_seconds} celery_task_id={celery_task_id}"
+        )
+        if status == "success":
+            logInfo(log_message)
+        else:
+            logError(
+                f"{log_message} error={error_message}",
+                exc_info=active_exception is not None,
+            )
 
 
 @shared_task(bind=True, ignore_result=False, expires=60)
 def create_playlist_from_liked_tracks(self, spotify_auth_dict: dict, new_playlist_name, correlation_id=None):
-    # Store correlation_id in task metadata and request context for logging
+    user_id = spotify_auth_dict.get("user_id") if isinstance(spotify_auth_dict, dict) else None
+    # Store correlation/user ids in task metadata so every log record can be
+    # traced back to the originating request.
     if correlation_id:
         self.update_state(state='PROGRESS', meta={'correlation_id': correlation_id})
-        # Store in request context for logger_utils access
-        if not hasattr(self.request, 'meta'):
-            self.request.meta = {}
-        self.request.meta['correlation_id'] = correlation_id
-    
-    spotify_client = create_spotify_client(current_app, spotify_auth_dict)
+    set_task_log_context(self, correlation_id=correlation_id, user_id=user_id)
 
-    all_tracks = util.get_tracks_from_playlist(self, spotify_client, LIKED_TRACKS_PLAYLIST_ID, max_tracks=util.PLAYLIST_MAX_TRACKS)
-    if not all_tracks:
-        return {"error": "No tracks found for user's liked songs"}
-
-    today = date.today()
-
-    all_tracks_uri = [track['uri'] for track in all_tracks]
-
-    return util.create_new_playlist_with_tracks(
-        self,
-        spotify_client,
-        new_playlist_name,
-        True,
-        "True Shuffle | My Liked Tracks from " + today.strftime("%d/%m/%Y"),
-        all_tracks_uri
+    start_time = time.time()
+    logInfo(
+        "create_playlist_from_liked_tracks started "
+        f"playlist_name={new_playlist_name!r} user_id={user_id}"
     )
+
+    try:
+        spotify_client = create_spotify_client(current_app, spotify_auth_dict)
+
+        all_tracks = util.get_tracks_from_playlist(
+            self, spotify_client, LIKED_TRACKS_PLAYLIST_ID, max_tracks=util.PLAYLIST_MAX_TRACKS
+        )
+        if not all_tracks:
+            logError(
+                "create_playlist_from_liked_tracks failed "
+                f"playlist_name={new_playlist_name!r} user_id={user_id} error='No tracks found for user's liked songs'"
+            )
+            return {"error": "No tracks found for user's liked songs"}
+
+        today = date.today()
+        all_tracks_uri = [track['uri'] for track in all_tracks]
+
+        response = util.create_new_playlist_with_tracks(
+            self,
+            spotify_client,
+            new_playlist_name,
+            True,
+            "True Shuffle | My Liked Tracks from " + today.strftime("%d/%m/%Y"),
+            all_tracks_uri
+        )
+
+        duration_seconds = int(time.time() - start_time)
+        if isinstance(response, dict) and response.get("status") == "success":
+            logInfo(
+                "create_playlist_from_liked_tracks success "
+                f"playlist_name={new_playlist_name!r} user_id={user_id} "
+                f"tracks={len(all_tracks_uri)} duration_s={duration_seconds}"
+            )
+        else:
+            logError(
+                "create_playlist_from_liked_tracks failed "
+                f"playlist_name={new_playlist_name!r} user_id={user_id} "
+                f"duration_s={duration_seconds} error={response!r}"
+            )
+        return response
+    except Exception as e:
+        logError(
+            "create_playlist_from_liked_tracks failed "
+            f"playlist_name={new_playlist_name!r} user_id={user_id} "
+            f"duration_s={int(time.time() - start_time)} error={e}",
+            exc_info=True,
+        )
+        raise
 
 
 @shared_task(bind=True, ignore_result=True, autoretry_for=(Exception,), retry_backoff=True, max_retries=2)
@@ -189,13 +242,11 @@ def update_track_statistics(self, user_id: str, tracks: List[str], correlation_i
     Updates database with track statistics.
     Increments shuffle counts or inserts new tracks if missing.
     """
-    # Store correlation_id in task metadata and request context for logging
+    # Store correlation/user ids in task metadata so every log record can be
+    # traced back to the originating request.
     if correlation_id:
         self.update_state(state='PROGRESS', meta={'correlation_id': correlation_id})
-        # Store in request context for logger_utils access
-        if not hasattr(self.request, 'meta'):
-            self.request.meta = {}
-        self.request.meta['correlation_id'] = correlation_id
+    set_task_log_context(self, correlation_id=correlation_id, user_id=user_id)
 
     if not tracks or not user_id:
         return 0
@@ -206,7 +257,14 @@ def update_track_statistics(self, user_id: str, tracks: List[str], correlation_i
     if not filtered_tracks:
         return 0
 
-    database.update_track_statistics(filtered_tracks)
+    try:
+        database.update_track_statistics(filtered_tracks)
+    except Exception as e:
+        logError(
+            f"update_track_statistics failed user_id={user_id} error={e}",
+            exc_info=True,
+        )
+        raise
     num_tracks_updated = len(filtered_tracks)
     logInfo("User: " + user_id + "; Successfully stored tracks: " + str(num_tracks_updated))
     return num_tracks_updated

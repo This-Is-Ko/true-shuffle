@@ -19,7 +19,10 @@ def update_user_trackers(user, track_count):
                         TRACK_COUNT_KEY: 0,
                         LAST_UPDATED_KEY: datetime.now(timezone.utc)
                     }
-                    current_app.logger.info("Creating shuffle history entry for user: " + user[USER_ID_KEY])
+                    current_app.logger.info(
+                        "Creating shuffle history entry for user: " + user[USER_ID_KEY],
+                        extra={"user_id": user[USER_ID_KEY]},
+                    )
 
                 user_shuffle_counter[PLAYLIST_COUNT_KEY] += 1
                 user_shuffle_counter[TRACK_COUNT_KEY] += track_count
@@ -27,7 +30,11 @@ def update_user_trackers(user, track_count):
 
                 database.find_and_update_shuffle_counter(user[USER_ID_KEY], user_shuffle_counter)
             except Exception as e:
-                current_app.logger.error("Error updating user shuffle count: " + str(e))
+                current_app.logger.error(
+                    "Error updating user shuffle count: " + str(e),
+                    exc_info=True,
+                    extra={"user_id": user.get(USER_ID_KEY), "track_count": track_count},
+                )
 
 
 def update_overall_trackers(track_count):
@@ -42,4 +49,8 @@ def update_overall_trackers(track_count):
 
             database.find_and_update_shuffle_counter(OVERALL_COUNTER_KEY, total_shuffle_counter)
         except Exception as e:
-            current_app.logger.error("Error updating overall shuffle count: " + str(e))
+            current_app.logger.error(
+                "Error updating overall shuffle count: " + str(e),
+                exc_info=True,
+                extra={"track_count": track_count},
+            )

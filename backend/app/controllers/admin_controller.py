@@ -17,7 +17,7 @@ def get_admin_overview(spotify_auth):
     try:
         return admin_service.get_admin_overview()
     except Exception as e:
-        current_app.logger.error("Unable to retrieve admin overview: " + str(e))
+        current_app.logger.error("Unable to retrieve admin overview: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve admin overview"}, 400
 
 
@@ -27,7 +27,7 @@ def get_monthly_active_users(spotify_auth):
     try:
         return {"monthly_active_users": admin_service.get_monthly_active_users()}
     except Exception as e:
-        current_app.logger.error("Unable to retrieve monthly active users: " + str(e))
+        current_app.logger.error("Unable to retrieve monthly active users: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve monthly active users"}, 400
 
 
@@ -38,7 +38,7 @@ def get_created_users(spotify_auth):
         months = _parse_months(request.args.get("months"))
         return {"created_users_monthly": admin_service.get_created_users_monthly(months)}
     except Exception as e:
-        current_app.logger.error("Unable to retrieve created users: " + str(e))
+        current_app.logger.error("Unable to retrieve created users: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve created users"}, 400
 
 
@@ -49,7 +49,7 @@ def get_recent_shuffles(spotify_auth):
         limit = _parse_limit(request.args.get("limit"))
         return {"recent_shuffles": admin_service.get_recent_shuffles(limit)}
     except Exception as e:
-        current_app.logger.error("Unable to retrieve recent shuffles: " + str(e))
+        current_app.logger.error("Unable to retrieve recent shuffles: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve recent shuffles"}, 400
 
 
@@ -60,7 +60,7 @@ def get_recent_failures(spotify_auth):
         limit = _parse_limit(request.args.get("limit"))
         return {"recent_failures": admin_service.get_recent_failures(limit)}
     except Exception as e:
-        current_app.logger.error("Unable to retrieve recent shuffle failures: " + str(e))
+        current_app.logger.error("Unable to retrieve recent shuffle failures: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve recent shuffle failures"}, 400
 
 
@@ -71,7 +71,7 @@ def get_failure_rate(spotify_auth):
         group_by = request.args.get("group_by", "day")
         return {"failure_rate": admin_service.get_failure_rate(group_by)}
     except Exception as e:
-        current_app.logger.error("Unable to retrieve shuffle failure rate: " + str(e))
+        current_app.logger.error("Unable to retrieve shuffle failure rate: " + str(e), exc_info=True)
         return {"error": "Unable to retrieve shuffle failure rate"}, 400
 
 

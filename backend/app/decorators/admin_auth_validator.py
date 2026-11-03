@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import current_app, request
+from flask import current_app, g, request
 from exceptions.custom_exceptions import SessionExpired, SessionIdNone, SessionIdNotFound
 from utils.auth_utils import validate_session
 
@@ -18,11 +18,16 @@ def admin_auth_validator(f):
             current_app.logger.error("Invalid credentials: " + str(e))
             return {"error": "Invalid credentials"}, 401
         except Exception as e:
-            current_app.logger.error("Invalid request: " + str(e))
+            current_app.logger.error("Invalid request: " + str(e), exc_info=True)
             return {"error": "Invalid request"}, 400
 
+        # Make the user id available to every log record for this request.
+        g.user_id = spotify_auth.user_id
+
         if spotify_auth.is_admin is not True:
-            current_app.logger.error("Unauthorized admin access by user: " + str(spotify_auth.user_id))
+            current_app.logger.error(
+                "Unauthorized admin access by user: " + str(spotify_auth.user_id)
+            )
             return {"error": "Forbidden"}, 403
 
         return f(*args, spotify_auth=spotify_auth, **kwargs)

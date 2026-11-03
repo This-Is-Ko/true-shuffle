@@ -87,13 +87,13 @@ def get_tracks_from_playlist(task, spotify: spotipy.Spotify, playlist_id: str, m
             track = track_entry.get("track")
 
             if not track:
-                logInfo(f"Track object missing: {track_entry}")
+                logInfo(f"Track object missing: {str(track_entry)[:500]}")
                 continue
 
             # Extract track data
             missing_fields = [field for field in required_fields if not track.get(field)]
             if missing_fields:
-                logInfo(f"Track missing fields {missing_fields}: {track}")
+                logInfo(f"Track missing fields {missing_fields}: {str(track)[:500]}")
                 continue
 
             # Extract artist data
@@ -371,8 +371,10 @@ def validate_tracks(track_list: List[str]) -> List[str]:
         else:
             invalid_tracks.append(track)
     if invalid_tracks:
-        logWarning("Tracks without the correct uri format were removed")
-        logWarning(str(invalid_tracks))
+        logWarning(
+            f"{len(invalid_tracks)} track(s) without the correct uri format were removed: "
+            f"{str(invalid_tracks)[:1000]}"
+        )
     return valid_tracks
 
 
@@ -400,7 +402,8 @@ def add_tracks_with_retry(
             if attempt < max_attempts - 1:
                 logWarning(
                     f"Failed to add {len(tracks)} tracks to playlist {playlist_id} "
-                    f"(attempt {attempt + 1}/{max_attempts}): {str(e)}. Retrying in {wait_seconds}s..."
+                    f"(attempt {attempt + 1}/{max_attempts}): {type(e).__name__}: {str(e)}. "
+                    f"Retrying in {wait_seconds}s..."
                 )
                 time.sleep(wait_seconds)
             else:

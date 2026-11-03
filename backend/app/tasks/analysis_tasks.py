@@ -8,7 +8,7 @@ from datetime import datetime
 from database import database
 from services.spotify_client import create_auth_manager_with_token_dict
 from utils import util
-from utils.logger_utils import logError
+from utils.logger_utils import logError, logInfo, set_task_log_context
 
 TRACKERS_ENABLED_ATTRIBUTE_NAME = "trackers_enabled"
 TRACK_LIKED_TRACKS_ATTRIBUTE_NAME = "track_liked_tracks"
@@ -20,20 +20,23 @@ def aggregate_user_data(self, spotify_auth_dict: dict, correlation_id=None):
     """
     Return user trackers and analysis in one call
     """
-    # Store correlation_id in task metadata and request context for logging
+    # Store correlation/user ids in task metadata so every log record can be
+    # traced back to the originating request.
+    user_id = spotify_auth_dict.get("user_id") if isinstance(spotify_auth_dict, dict) else None
     if correlation_id:
         self.update_state(state='PROGRESS', meta={'correlation_id': correlation_id})
-        # Store in request context for logger_utils access
-        if not hasattr(self.request, 'meta'):
-            self.request.meta = {}
-        self.request.meta['correlation_id'] = correlation_id
-    
+    set_task_log_context(self, correlation_id=correlation_id, user_id=user_id)
+
+    logInfo(f"aggregate_user_data started user_id={user_id}")
+
     auth_manager = create_auth_manager_with_token_dict(
         current_app, spotify_auth_dict)
     spotify = spotipy.Spotify(auth_manager=auth_manager)
     if not auth_manager.validate_token(spotify_auth_dict):
+        logError("aggregate_user_data failed: invalid Spotify token")
         return {"error": "Invalid token"}, 400
     user_id = spotify.me()["id"]
+    set_task_log_context(self, user_id=user_id)
     user = database.find_user(user_id)
     user_json = json.loads(json_util.dumps(user))
 
@@ -51,17 +54,22 @@ def aggregate_user_data(self, spotify_auth_dict: dict, correlation_id=None):
             "overall_counter",
             overall_counter)
     except Exception as e:
-        logError("Error updating overall shuffle count: " + str(e))
+        logError("Error updating overall shuffle count: " + str(e), exc_info=True)
 
     try:
-        return {
+        response = {
             "status": "success",
             TRACK_LIKED_TRACKS_ATTRIBUTE_NAME: get_user_tracker_data(self, user_id, user_json,
                                                                      TRACK_LIKED_TRACKS_ATTRIBUTE_NAME, correlation_id),
             "analysis": get_user_analysis(self, current_app, spotify, correlation_id)
         }
+        logInfo(f"aggregate_user_data success user_id={user_id}")
+        return response
     except Exception as e:
-        logError("Error in aggregate_user_data: " + str(e))
+        logError(
+            f"aggregate_user_data failed user_id={user_id} error={e}",
+            exc_info=True,
+        )
         return {
             "status": "error"
         }, 400
@@ -233,7 +241,7 @@ def get_user_analysis(task, current_app, spotify: spotipy.Spotify, correlation_i
     try:
         audio_features = average_audio_features(task, spotify, all_tracks_ids)
     except Exception as e:
-        logError("Failed while retrieving/calculating audio features: " + str(e))
+        logError("Failed while retrieving/calculating audio features: " + str(e), exc_info=True)
         raise Exception(
             "Failed while retrieving/calculating audio features: " + str(e))
 
