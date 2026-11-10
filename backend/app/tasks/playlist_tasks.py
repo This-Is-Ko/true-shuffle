@@ -148,6 +148,7 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
                 "duration_seconds": duration_seconds,
                 "status": status,
                 "error_message": error_message,
+                "error_code": response.get("error_code") if isinstance(response, dict) else None,
                 "celery_task_id": celery_task_id,
                 "playlist_image_url": playlist_image_url,
                 "shuffled_at": datetime.now(timezone.utc)

@@ -109,6 +109,7 @@ def test_shuffle_playlist_shuffled_playlist_exists_success(mocker, env_patch):
     )
     mocker.patch.object(Spotify, "current_user_playlists", return_value=all_user_playlists_response_sample)
     mocker.patch.object(Spotify, "current_user_unfollow_playlist", return_value=True)
+    mocker.patch.object(Spotify, "playlist", return_value={"tracks": {"total": 0}, "images": []})
     mocker.patch.object(Spotify, "playlist_remove_all_occurrences_of_items", return_value=None)
     mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
     mocker.patch.object(Spotify, "user_playlist_create", return_value=create_user_playlist_response)
