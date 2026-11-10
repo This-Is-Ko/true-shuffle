@@ -2,15 +2,23 @@ from tests import client, env_patch
 import time
 from datetime import datetime, timedelta, timezone
 
+import pytest
+from flask import Flask
+
 from spotipy.oauth2 import SpotifyOAuth
 from spotipy import Spotify
 from database import database
+from classes.shuffle_type import Shuffle_Type
+from classes.spotify_auth import SpotifyAuth
+from services import playlist_service
 from tests.functional.helpers.mock_requests import *
 from tests.functional.helpers.mock_responses import *
 
 SHUFFLED_PLAYLIST_PREFIX = "[Shuffled] "
 LIKED_TRACKS_PLAYLIST_ID = "likedTracks"
 SPOTIFY_PLAYLIST_URL = "open.spotify.com/playlist/spotifyPlaylistUrl"
+
+app = Flask('test')
 
 
 shuffle_request = {
@@ -79,6 +87,8 @@ class MockAsyncResult:
 def test_queue_shuffle_playlist_success(mocker, client, env_patch):
     mocker.patch.object(SpotifyOAuth, "validate_token", return_value=spotify_auth_sample)
     mocker.patch("tasks.playlist_tasks.shuffle_playlist.delay", return_value=MockAsyncResult("test_id"))
+    mocker.patch.object(database, "acquire_shuffle_lock", return_value=True)
+    mocker.patch.object(database, "release_shuffle_lock", return_value=None)
     mocker.patch.object(database, "find_session",
                         return_value={
                             "user_id": "user_id",
@@ -130,6 +140,53 @@ def test_queue_shuffle_playlist_success(mocker, client, env_patch):
 
     assert response.status_code == 200
     assert response_json["shuffle_task_id"] == "test_id"
+
+
+def test_queue_create_shuffled_playlist_already_running_returns_existing_task(mocker, env_patch):
+    with app.app_context():
+        mock_delay = mocker.patch("tasks.playlist_tasks.shuffle_playlist.delay",
+                                  return_value=MockAsyncResult("test_id"))
+        mock_acquire = mocker.patch.object(database, "acquire_shuffle_lock", return_value=False)
+        mocker.patch.object(database, "find_shuffle_lock",
+                            return_value={"task_id": "running_task_id"})
+
+        response = playlist_service.queue_create_shuffled_playlist(
+            SpotifyAuth(user_id="user_id"),
+            "playlist_id",
+            "playlist_name",
+            Shuffle_Type.REUSE_EXISTING_PLAYLIST)
+
+        assert response == {
+            "status": "in_progress",
+            "shuffle_task_id": "running_task_id"
+        }
+        # A duplicate shuffle must not be queued
+        mock_delay.assert_not_called()
+        # The lock is taken with the configured TTL, not one that can expire
+        # while the slowest shuffles are still running.
+        assert mock_acquire.call_args[0][3] == playlist_service.SHUFFLE_LOCK_TTL_SECONDS
+        assert playlist_service.SHUFFLE_LOCK_TTL_SECONDS > 10 * 60
+
+
+def test_queue_create_shuffled_playlist_releases_lock_when_queueing_fails(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("tasks.playlist_tasks.shuffle_playlist.delay",
+                     side_effect=Exception("broker unavailable"))
+        mocker.patch.object(database, "acquire_shuffle_lock", return_value=True)
+        mock_release = mocker.patch.object(database, "release_shuffle_lock", return_value=None)
+
+        with pytest.raises(Exception, match="broker unavailable"):
+            playlist_service.queue_create_shuffled_playlist(
+                SpotifyAuth(user_id="user_id"),
+                "playlist_id",
+                "playlist_name",
+                Shuffle_Type.REUSE_EXISTING_PLAYLIST)
+
+        mock_release.assert_called_once()
+        release_args = mock_release.call_args[0]
+        assert release_args[0] == "user_id"
+        assert release_args[1] == "[Shuffled] playlist_name"
+        assert release_args[2]
 
 
 def test_queue_shuffle_playlist_playlist_name_missing_failure(mocker, client, env_patch):

@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from flask_pymongo import PyMongo
 from main import mongo
@@ -211,6 +211,59 @@ def count_shuffle_events():
 
 def count_shuffle_failures():
     return mongo.db.shuffle_events.count_documents({"status": "failed"})
+
+
+# Shuffle lock functions
+# Two shuffles writing to the same shuffled playlist at once will empty and
+# refill the same target in parallel, which trips Spotify's 10,000 track limit.
+# Locks are keyed on (user_id, shuffled playlist name) and expire so a crashed
+# worker cannot block a user indefinitely.
+SHUFFLE_LOCKS_COLLECTION = "shuffle_locks"
+
+
+def shuffle_lock_id(user_id, lock_key):
+    return f"{user_id}:{lock_key}"
+
+
+def acquire_shuffle_lock(user_id, lock_key, task_id, ttl_seconds):
+    """
+    Atomically claim the lock for a shuffle task.
+    Returns True when this task owns the lock, False when an unexpired lock is
+    already held (i.e. a shuffle for the same playlist is already running).
+    """
+    now = datetime.now(timezone.utc)
+    try:
+        lock = mongo.db[SHUFFLE_LOCKS_COLLECTION].find_one_and_update(
+            {
+                "_id": shuffle_lock_id(user_id, lock_key),
+                "expires_at": {"$lt": now},
+            },
+            {
+                "$set": {
+                    "task_id": task_id,
+                    "expires_at": now + timedelta(seconds=ttl_seconds),
+                }
+            },
+            upsert=True,
+            return_document=ReturnDocument.AFTER,
+        )
+    except pymongo.errors.DuplicateKeyError:
+        # An unexpired lock already exists for this playlist.
+        return False
+    return lock is not None
+
+
+def find_shuffle_lock(user_id, lock_key):
+    return mongo.db[SHUFFLE_LOCKS_COLLECTION].find_one(
+        {"_id": shuffle_lock_id(user_id, lock_key)}
+    )
+
+
+def release_shuffle_lock(user_id, lock_key, task_id):
+    """Release the lock only when it is still owned by the given task."""
+    return mongo.db[SHUFFLE_LOCKS_COLLECTION].delete_one(
+        {"_id": shuffle_lock_id(user_id, lock_key), "task_id": task_id}
+    )
 
 
 def get_shuffle_averages():

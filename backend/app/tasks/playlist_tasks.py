@@ -9,7 +9,7 @@ from flask import current_app
 from database import database
 from services.spotify_client import create_spotify_client
 from utils import util, tracker_utils
-from utils.logger_utils import logWarning, logInfo
+from utils.logger_utils import logWarning, logInfo, logError
 from classes.shuffle_type import Shuffle_Type
 
 SHUFFLED_PLAYLIST_PREFIX = "[Shuffled] "
@@ -32,6 +32,9 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
     start_time = time.time()
     celery_task_id = self.request.id if self.request else None
     user_id = spotify_auth_dict.get("user_id") if isinstance(spotify_auth_dict, dict) else None
+    # The queue-time lock is owned by the authenticated user, which can differ
+    # from the Spotify account id resolved later, so keep the original value.
+    lock_user_id = user_id
     response = None
     error_message = None
     tracks_shuffled = 0
@@ -151,6 +154,18 @@ def shuffle_playlist(self, spotify_auth_dict: dict, playlist_id, playlist_name, 
             })
         except Exception as e:
             current_app.logger.error("Unable to record shuffle event: " + str(e))
+
+        # Release the queue-time lock so the playlist can be shuffled again.
+        # Locks also expire, so failing to release is not fatal.
+        if lock_user_id and celery_task_id:
+            try:
+                database.release_shuffle_lock(
+                    lock_user_id,
+                    SHUFFLED_PLAYLIST_PREFIX + playlist_name,
+                    celery_task_id
+                )
+            except Exception as e:
+                logError("Unable to release shuffle lock: " + str(e))
 
 
 @shared_task(bind=True, ignore_result=False, expires=60)
