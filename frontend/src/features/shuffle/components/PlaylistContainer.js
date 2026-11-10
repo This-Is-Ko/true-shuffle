@@ -29,6 +29,17 @@ import { setCorrelationIdGetter } from "../../../utils/apiClient";
 import { filterPlaylists } from "../../../utils/playlistSearchUtils";
 
 /**
+ * Maps a backend error code to a user-facing message. Raw backend errors are
+ * not shown because they contain Spotify API internals.
+ */
+const getShuffleErrorMessage = (stateData) => {
+    if (stateData?.error_code === "playlist_size_limit") {
+        return ERROR_MESSAGES.PLAYLIST_SIZE_LIMIT;
+    }
+    return ERROR_MESSAGES.SHUFFLE_FAILED;
+};
+
+/**
  * AllPlaylistsContainer component - Main container for the shuffle page.
  * Manages playlist data, shuffle operations, and state polling.
  * 
@@ -182,7 +193,12 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
             shuffle_type: SHUFFLE_TYPE.REUSE_EXISTING_PLAYLIST
         })
             .then(result => {
-                setShuffleTaskId(result.data.shuffle_task_id);
+                const taskId = result?.data?.shuffle_task_id;
+                if (!taskId) {
+                    setShuffleError({ message: ERROR_MESSAGES.SHUFFLE_FAILED });
+                    return;
+                }
+                setShuffleTaskId(taskId);
                 setShuffleError(false);
             })
             .catch((responseError) => {
@@ -238,7 +254,14 @@ const AllPlaylistsContainer = ({ selectPlaylist, setSelectedPlaylist, selectedPl
                 break;
 
             case PLAYLIST_SHUFFLE_STATE.FAILURE:
-                handlePollingRetry(MAX_RETRY_ATTEMPTS.ERROR_STATE, ERROR_MESSAGES.SHUFFLE_STATE_CHECK_FAILED);
+                if (stateData.error_code) {
+                    // The task reported a handled failure, so stop polling and show it
+                    setShuffleStateMessage("");
+                    setShuffleTaskId("");
+                    setShuffleError({ message: getShuffleErrorMessage(stateData) });
+                } else {
+                    handlePollingRetry(MAX_RETRY_ATTEMPTS.ERROR_STATE, ERROR_MESSAGES.SHUFFLE_STATE_CHECK_FAILED);
+                }
                 break;
 
             case PLAYLIST_SHUFFLE_STATE.PENDING:

@@ -28,6 +28,8 @@ export const ERROR_MESSAGES = {
     AUTHENTICATION_FAILED: "Unable to authenticate your account, please logout and try again",
     CONNECTION_FAILED: "Unable to connect to Spotify, please try again later",
     SHUFFLE_STATE_FAILED: "Unable to get shuffle state. Please try again later",
-    SHUFFLE_STATE_CHECK_FAILED: "Error while checking shuffle state. Please try again later"
+    SHUFFLE_STATE_CHECK_FAILED: "Error while checking shuffle state. Please try again later",
+    SHUFFLE_FAILED: "The shuffle could not be completed. Please try again later.",
+    PLAYLIST_SIZE_LIMIT: "Spotify's 10,000-track playlist limit was reached before the shuffle could finish. Please try again."
 };
 
