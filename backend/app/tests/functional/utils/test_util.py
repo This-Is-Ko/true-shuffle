@@ -1,4 +1,5 @@
 from flask import Flask
+import pytest
 from tests import env_patch
 
 from spotipy import Spotify
@@ -188,6 +189,35 @@ def test_add_tracks_with_retry_raises_after_max_attempts(mocker, env_patch):
         assert mock_spotify.playlist_add_items.call_count == 3
 
 
+def test_add_tracks_with_retry_does_not_retry_playlist_size_limit(mocker, env_patch):
+    with app.app_context():
+        mock_sleep = mocker.patch("utils.util.time.sleep", return_value=None)
+        mock_spotify = mocker.Mock()
+        mock_spotify.playlist_add_items.side_effect = SpotifyException(
+            400, -1, "Playlist size limit reached. Consider removing items from the playlist before retrying the request")
+
+        with pytest.raises(SpotifyException):
+            add_tracks_with_retry(mock_spotify, "playlist_id", ["spotify:track:sometrack0"])
+
+        assert mock_spotify.playlist_add_items.call_count == 1
+        mock_sleep.assert_not_called()
+
+
+def test_add_tracks_with_retry_retries_rate_limited_requests(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.time.sleep", return_value=None)
+        mock_spotify = mocker.Mock()
+        mock_spotify.playlist_add_items.side_effect = [
+            SpotifyException(429, -1, "rate limited"),
+            {"snapshot_id": "snapshot_0"}
+        ]
+
+        response = add_tracks_with_retry(mock_spotify, "playlist_id", ["spotify:track:sometrack0"])
+
+        assert response == {"snapshot_id": "snapshot_0"}
+        assert mock_spotify.playlist_add_items.call_count == 2
+
+
 def test_create_new_playlist_with_tracks_success(mocker, env_patch):
     with app.app_context():
         # Prepare mocks
@@ -363,5 +393,70 @@ def test_add_all_tracks_to_playlist_missing_snapshot_logs_operation(mocker, env_
         assert response["error"] == "Unable to add tracks to playlist new_playlist_id"
         assert mock_log.call_args[0][0] == "add_tracks_missing_snapshot_id"
         assert mock_log.call_args[1]["batch_index"] == 0
+
+
+def test_add_all_tracks_to_playlist_size_limit_sets_error_code(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.logOperationFailure")
+        mocker.patch(
+            "utils.util.add_tracks_with_retry",
+            side_effect=SpotifyException(400, -1, "Playlist size limit reached"))
+
+        response = add_all_tracks_to_playlist(
+            None, Spotify(), sample_tracks_list, "user_id", SPOTIFY_PLAYLIST_URL, "new_playlist_id", False)
+
+        assert response["status"] == "error"
+        assert response["error_code"] == "playlist_size_limit"
+
+
+def test_add_all_tracks_to_playlist_other_error_has_no_error_code(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.logOperationFailure")
+        mocker.patch(
+            "utils.util.add_tracks_with_retry",
+            side_effect=SpotifyException(403, -1, "Forbidden"))
+
+        response = add_all_tracks_to_playlist(
+            None, Spotify(), sample_tracks_list, "user_id", SPOTIFY_PLAYLIST_URL, "new_playlist_id", False)
+
+        assert response["status"] == "error"
+        assert response["error_code"] is None
+
+
+def test_reuse_existing_playlist_trims_tracks_to_remaining_capacity(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.update_task_progress", return_value=None)
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch("utils.util.get_tracks_from_playlist", return_value=[{"uri": "spotify:track:existing"}])
+        mocker.patch.object(Spotify, "playlist_remove_all_occurrences_of_items", return_value=None)
+        mocker.patch.object(Spotify, "playlist", return_value={"tracks": {"total": 9997}})
+        mock_add = mocker.patch("utils.util.add_tracks_with_retry", return_value=playlist_add_items_response)
+
+        tracks_to_add = [f"spotify:track:new{i}" for i in range(5)]
+        response = reuse_existing_playlist_with_updated_tracks(
+            None, Spotify(), "shuffled_playlist_id", SPOTIFY_PLAYLIST_URL, tracks_to_add)
+
+        assert response["status"] == "success"
+        assert response["num_of_tracks"] == 3
+        assert response["playlist_trimmed"] is True
+        # Only the tracks that fit in the remaining capacity are added
+        assert mock_add.call_args[0][2] == tracks_to_add[:3]
+
+
+def test_reuse_existing_playlist_fails_when_no_capacity_remains(mocker, env_patch):
+    with app.app_context():
+        mocker.patch("utils.util.update_task_progress", return_value=None)
+        mocker.patch.object(Spotify, "me", return_value=mock_user_details_response)
+        mocker.patch("utils.util.get_tracks_from_playlist", return_value=[{"uri": "spotify:track:existing"}])
+        mocker.patch.object(Spotify, "playlist_remove_all_occurrences_of_items", return_value=None)
+        mocker.patch.object(Spotify, "playlist", return_value={"tracks": {"total": 10000}})
+        mock_add = mocker.patch("utils.util.add_tracks_with_retry", return_value=playlist_add_items_response)
+
+        response = reuse_existing_playlist_with_updated_tracks(
+            None, Spotify(), "shuffled_playlist_id", SPOTIFY_PLAYLIST_URL, sample_tracks_list)
+
+        assert response["status"] == "error"
+        assert response["error_code"] == "playlist_not_cleared"
+        mock_add.assert_not_called()
 
 

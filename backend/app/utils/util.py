@@ -13,6 +13,13 @@ PLAYLIST_MAX_TRACKS = 10000
 
 ADD_TRACKS_MAX_RETRY_ATTEMPTS = 3
 
+# Only these HTTP errors are transient enough to be worth retrying. Anything
+# else (e.g. a playlist that has reached Spotify's size limit) will fail again.
+RETRYABLE_HTTP_STATUS_CODES = frozenset({429, 500, 502, 503, 504})
+
+PLAYLIST_SIZE_LIMIT_ERROR_CODE = "playlist_size_limit"
+PLAYLIST_NOT_CLEARED_ERROR_CODE = "playlist_not_cleared"
+
 CELERY_PROGRESS_STATE_CLEAN_UP_EXISTING_PLAYLIST_TEMPLATE = "Cleaning up existing tracks {}/{} ..."
 CELERY_PROGRESS_STATE_CREATE_PLAYLIST_TEMPLATE = "Adding {}/{} tracks..."
 CELERY_PROGRESS_STATE_CREATE_PLAYLIST_LAST_TEMPLATE = "Added {}/{} tracks"
@@ -353,6 +360,37 @@ def reuse_existing_playlist_with_updated_tracks(
                     }
                 )
 
+        # Items we cannot clear (e.g. local files or unavailable tracks, which are
+        # skipped when fetching tracks) still take up capacity, so check what is
+        # left before adding to avoid tripping Spotify's playlist limit.
+        operation = "check_playlist_capacity"
+        remaining_capacity = PLAYLIST_MAX_TRACKS
+        try:
+            playlist_total = spotify.playlist(
+                shuffled_playlist_id, fields="tracks.total")["tracks"]["total"]
+            remaining_capacity = PLAYLIST_MAX_TRACKS - playlist_total
+            if playlist_total > 0:
+                logWarning(
+                    f"User: {user_id} -- {playlist_total} item(s) remain in playlist: {shuffled_playlist_id}"
+                )
+        except Exception as e:
+            logWarning(
+                f"User: {user_id} -- Unable to check capacity of playlist {shuffled_playlist_id}: {str(e)}"
+            )
+
+        if remaining_capacity <= 0:
+            return {
+                "status": "error",
+                "error": "Unable to clear existing playlist before adding new tracks",
+                "error_code": PLAYLIST_NOT_CLEARED_ERROR_CODE
+            }
+        if len(tracks_to_add) > remaining_capacity:
+            tracks_to_add = tracks_to_add[:remaining_capacity]
+            playlist_trimmed = True
+            context["track_count"] = len(tracks_to_add)
+            context["playlist_trimmed"] = playlist_trimmed
+
+        operation = "add_tracks"
         return add_all_tracks_to_playlist(task, spotify, tracks_to_add, user_id, shuffled_playlist_uri, shuffled_playlist_id, playlist_trimmed)
     except Exception as e:
         logOperationFailure(operation, e, **context)
@@ -376,6 +414,25 @@ def validate_tracks(track_list: List[str]) -> List[str]:
     return valid_tracks
 
 
+def is_retryable_error(e: Exception) -> bool:
+    """
+    Transient Spotify errors (rate limits and server errors) are worth retrying.
+    Other HTTP errors, including a playlist that has reached its size limit, are not.
+    """
+    if isinstance(e, SpotifyException):
+        return e.http_status in RETRYABLE_HTTP_STATUS_CODES
+    # Non-HTTP failures (connection resets, timeouts, ...) are treated as transient
+    return True
+
+
+def is_playlist_size_limit_error(e: Exception) -> bool:
+    return (
+        isinstance(e, SpotifyException)
+        and e.http_status == 400
+        and "playlist size limit" in str(e).lower()
+    )
+
+
 def add_tracks_with_retry(
         spotify: spotipy.Spotify,
         playlist_id: str,
@@ -389,6 +446,8 @@ def add_tracks_with_retry(
         try:
             return spotify.playlist_add_items(playlist_id, tracks)
         except Exception as e:
+            if not is_retryable_error(e):
+                raise
             wait_seconds = 2 ** attempt
             if isinstance(e, SpotifyException) and e.headers:
                 retry_after = e.headers.get("Retry-After")
@@ -438,7 +497,8 @@ def add_all_tracks_to_playlist(
             )
             return {
                 "status": "error",
-                "error": "Unable to add tracks to playlist " + new_playlist_id + ": " + str(e)
+                "error": "Unable to add tracks to playlist " + new_playlist_id + ": " + str(e),
+                "error_code": PLAYLIST_SIZE_LIMIT_ERROR_CODE if is_playlist_size_limit_error(e) else None
             }
         if "snapshot_id" not in add_items_response:
             logOperationFailure(

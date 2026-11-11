@@ -1,4 +1,5 @@
 import spotipy
+import uuid
 from bson import json_util
 import json
 from flask import current_app, g
@@ -15,6 +16,12 @@ from utils.logger_utils import logErrorWithUser, logInfoWithUser
 SHUFFLED_PLAYLIST_PREFIX = "[Shuffled] "
 LIKED_TRACKS_PLAYLIST_ID = "likedTracks"
 TRACK_SHUFFLES_ATTRIBUTE_NAME = "track_shuffles"
+
+# The slowest shuffles finish in under 10 minutes. 15 minutes leaves headroom
+# for Spotify throttling while still keeping the time a crashed worker can
+# block a playlist short.
+SHUFFLE_LOCK_TTL_SECONDS = 15 * 60
+SHUFFLE_STATUS_IN_PROGRESS = "in_progress"
 
 
 def get_user_playlists(spotify_auth: SpotifyAuth, include_stats):
@@ -138,8 +145,39 @@ def get_user_playlists(spotify_auth: SpotifyAuth, include_stats):
 
 def queue_create_shuffled_playlist(spotify_auth: SpotifyAuth, playlist_id, playlist_name, shuffle_type: Shuffle_Type):
     correlation_id = g.correlation_id if hasattr(g, 'correlation_id') else None
-    result = playlist_tasks.shuffle_playlist.delay(spotify_auth.to_dict(), playlist_id, playlist_name, correlation_id, shuffle_type.value)
+    user_id = spotify_auth.user_id
+    lock_key = SHUFFLED_PLAYLIST_PREFIX + playlist_name
+    task_id = str(uuid.uuid4())
+
+    # Only one shuffle may write to a given shuffled playlist at a time. Parallel
+    # runs empty and refill the same playlist concurrently, which can exceed
+    # Spotify's track limit and fail both shuffles.
+    lock_acquired = False
+    if user_id:
+        lock_acquired = database.acquire_shuffle_lock(
+            user_id, lock_key, task_id, SHUFFLE_LOCK_TTL_SECONDS)
+        if not lock_acquired:
+            existing_lock = database.find_shuffle_lock(user_id, lock_key) or {}
+            logInfoWithUser(
+                f"Shuffle already in progress for {lock_key!r}; returning task {existing_lock.get('task_id')}",
+                spotify_auth)
+            return {
+                "status": SHUFFLE_STATUS_IN_PROGRESS,
+                "shuffle_task_id": existing_lock.get("task_id")
+            }
+
+    try:
+        result = playlist_tasks.shuffle_playlist.delay(
+            spotify_auth.to_dict(), playlist_id, playlist_name, correlation_id,
+            shuffle_type.value, task_id=task_id)
+    except Exception:
+        if lock_acquired:
+            database.release_shuffle_lock(user_id, lock_key, task_id)
+        raise
+
     if result is None:
+        if lock_acquired:
+            database.release_shuffle_lock(user_id, lock_key, task_id)
         logErrorWithUser(f"Shuffle queue failed", spotify_auth)
         return None
     logInfoWithUser(f"Shuffle id: {result.id}", spotify_auth)

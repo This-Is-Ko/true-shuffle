@@ -34,10 +34,16 @@ def get_celery_task_state(spotify_auth: SpotifyAuth, id: str, type: str):
             response["correlation_id"] = correlation_id
         return response
     elif result.state == "SUCCESS":
+        task_result = result.get()
+        # A task may report a handled failure by returning an error dict. Treat
+        # those as FAILURE so clients do not render them as a completed operation.
+        task_failed = isinstance(task_result, dict) and task_result.get("status") == "error"
         response = {
-                    "state": result.state,
-                    "result": result.get()
+                    "state": "FAILURE" if task_failed else result.state,
+                    "result": task_result
                 }
+        if task_failed and task_result.get("error_code"):
+            response["error_code"] = task_result["error_code"]
         if correlation_id:
             response["correlation_id"] = correlation_id
         result.forget()

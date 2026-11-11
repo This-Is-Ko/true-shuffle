@@ -177,6 +177,82 @@ describe("AllPlaylistsContainer (shuffle page body)", () => {
         ).toBeInTheDocument();
     });
 
+    test("shows the size limit error and stops polling when the shuffle fails", async () => {
+        fetchShuffleState.mockResolvedValue({
+            data: {
+                state: "FAILURE",
+                error_code: "playlist_size_limit",
+                result: { status: "error", error: "http status: 400 - playlist size limit" }
+            }
+        });
+
+        renderContainer({}, { selectedPlaylist: playlist });
+
+        expect(
+            await screen.findByText(
+                "Spotify's 10,000-track playlist limit was reached before the shuffle could finish. Please try again.",
+                {},
+                { timeout: 4000 }
+            )
+        ).toBeInTheDocument();
+        // A failed shuffle must not be presented as completed
+        expect(
+            screen.queryByText("When you want a new order, just come back and shuffle again.")
+        ).not.toBeInTheDocument();
+        expect(fetchShuffleState).toHaveBeenCalledTimes(1);
+    });
+
+    test("shows a generic error for other shuffle failures", async () => {
+        fetchShuffleState.mockResolvedValue({
+            data: { state: "FAILURE", error_code: "playlist_not_cleared" }
+        });
+
+        renderContainer({}, { selectedPlaylist: playlist });
+
+        expect(
+            await screen.findByText(
+                "The shuffle could not be completed. Please try again later.",
+                {},
+                { timeout: 4000 }
+            )
+        ).toBeInTheDocument();
+    });
+
+    test("resumes polling when the backend reports a shuffle already in progress", async () => {
+        queueShufflePlaylist.mockResolvedValue({
+            data: { status: "in_progress", shuffle_task_id: "task-running" }
+        });
+        fetchShuffleState.mockResolvedValue({
+            data: {
+                state: "PROGRESS",
+                progress: { state: "Shuffling 10 tracks...", playlist_uri: null }
+            }
+        });
+
+        renderContainer({}, { selectedPlaylist: playlist });
+
+        expect(
+            await screen.findByText("Shuffling 10 tracks...", {}, { timeout: 4000 })
+        ).toBeInTheDocument();
+        expect(fetchShuffleState).toHaveBeenCalledWith("task-running");
+    });
+
+    test("shows an error when the queue response has no task id", async () => {
+        queueShufflePlaylist.mockResolvedValue({ data: {} });
+
+        renderContainer({}, { selectedPlaylist: playlist });
+
+        expect(
+            await screen.findByText(
+                "The shuffle could not be completed. Please try again later.",
+                {},
+                { timeout: 4000 }
+            )
+        ).toBeInTheDocument();
+        // No polling without a task id
+        expect(fetchShuffleState).not.toHaveBeenCalled();
+    });
+
     test("shows the mobile bottom nav and switches to the history view", async () => {
         window.matchMedia = createMatchMedia(true);
         fetchRecentShuffles.mockResolvedValue({
